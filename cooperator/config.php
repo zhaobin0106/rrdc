@@ -22,7 +22,7 @@ define('WX_SSLKEY_PATH', DIR_SYSTEM . 'library/payment/cert/apiclient_key.pem');
 
 //DB
 define('DB_DRIVER', 'mysqli');
-define('DB_HOSTNAME', '121.42.253.23');
+define('DB_HOSTNAME', 'localhost');
 define('DB_USERNAME', 'mbdc');
 define('DB_PASSWORD', 'mbdc123mm');
 define('DB_PORT', '3306');
