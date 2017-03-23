@@ -139,14 +139,14 @@ class ControllerOperationViolation extends Controller {
 
         $result = $this->sys_model_fault->getIllegalParkingList($condition, $order, $limit);
         $total = $this->sys_model_fault->getTotalIllegalParking($condition);
-
+        $total =ceil($total/$rows);
         $list = array();
         if (is_array($result) && !empty($result)) {
             foreach ($result as $v) {
                 $list[] = array(
                     'bicycle_sn' => $v['bicycle_sn'],
                     'add_time' => date('Y-m-d H:i:s', $v['add_time']),
-                    'uri' => $this->url->link('admin/index') . '#' . $v['bicycle_sn']
+                    'uri' => $this->url->link('operation/violation/info', 'parking_id='. $v['parking_id'])
                 );
             }
         }

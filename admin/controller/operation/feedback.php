@@ -136,7 +136,7 @@ class ControllerOperationFeedback extends Controller {
 
         $result = $this->sys_model_feedback->getFeedbackList($condition, $order, $limit);
         $total = $this->sys_model_feedback->getTotalFeedbacks($condition);
-
+        $total =ceil($total/$rows);
         $list = array();
         if (is_array($result) && !empty($result)) {
             foreach ($result as $v) {

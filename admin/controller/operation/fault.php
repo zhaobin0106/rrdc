@@ -164,14 +164,14 @@ class ControllerOperationFault extends Controller {
 
         $result = $this->sys_model_fault->getFaultList($condition, $order, $limit);
         $total = $this->sys_model_fault->getTotalFaults($condition);
-
+        $total =ceil($total/$rows);
         $list = array();
         if (is_array($result) && !empty($result)) {
             foreach ($result as $v) {
                 $list[] = array(
                     'bicycle_sn' => $v['bicycle_sn'],
                     'add_time' => date('Y-m-d H:i:s', $v['add_time']),
-                    'uri' => $this->url->link('admin/index') . '#' . $v['bicycle_sn']
+                    'uri' => $this->url->link('operation/info/info', 'fault_id='. $v['fault_id'])
                 );
             }
         }
