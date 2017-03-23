@@ -62,7 +62,7 @@ function loadMessageCenter(url, sendData) {
 					html += '<td>' + v[keys[f]] + '</td>';
 				}
 				if (typeof v.uri != 'undefined') {
-					html += '<td><a href="' + v.uri + '">查看</a></td>';
+					html += '<td><a onclick="javascript:window.location.href=\'' + v.uri + '\'">查看</a></td>';
 				}
 				html += '</tr>';
 			});
@@ -237,7 +237,7 @@ function loadMessageCenter(url, sendData) {
         $(this).addClass('active').siblings().removeClass('active');
 		var page = 1;
 		var url = $(this).data("action");
-		loadMessageCenter(url, {page:page});
+		loadMessageCenter(url+"&page="+page, {page:page});
     }).on('click', '.update-info > button', function() { //消息中心手动刷新
         var me = $(this);
         // $(this).find('i').addClass('fa-spin');
@@ -249,7 +249,7 @@ function loadMessageCenter(url, sendData) {
         var me = $(this);
 		var page = me.data("page");
 		var url = me.parents("ul").data("action");
-		loadMessageCenter(url, {page:page});
+		loadMessageCenter(url+"&page="+page, {page:page});
     });
 
 	// 立即触发 更新
