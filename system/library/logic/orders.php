@@ -155,7 +155,8 @@ class Orders {
 
                     $arr['order_amount'] = $amount;
                     $arr['pay_amount'] = $amount;
-
+                    $arr['end_lat'] = $data['lat'];
+                    $arr['end_lng'] = $data['lng'];
                     $user_info = $sys_model_user->getUserInfo(array('user_id' => $order_info['user_id']));
                     if (empty($user_info)) {
                         throw new \Exception('error_user_info');

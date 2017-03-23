@@ -1,7 +1,7 @@
 <?php
 //HTTP
-define('HTTP_SERVER', 'http://bike.e-stronger.com/bike/cooperator');
-define('HTTP_CATALOG', 'http://bike.e-stronger.com/bike/static/');
+define('HTTP_SERVER', 'http://121.42.254.23/cooperator');
+define('HTTP_CATALOG', 'http://121.42.254.23/static/');
 define('HTTP_IMAGE', HTTP_CATALOG);
 
 //DIR
@@ -22,11 +22,11 @@ define('WX_SSLKEY_PATH', DIR_SYSTEM . 'library/payment/cert/apiclient_key.pem');
 
 //DB
 define('DB_DRIVER', 'mysqli');
-define('DB_HOSTNAME', 'localhost');
-define('DB_USERNAME', '<USERNAME>');
-define('DB_PASSWORD', '<PASSWORD>');
+define('DB_HOSTNAME', '121.42.253.23');
+define('DB_USERNAME', 'mbdc');
+define('DB_PASSWORD', 'mbdc123mm');
 define('DB_PORT', '3306');
-define('DB_DATABASE', '<DB_NAME>');
+define('DB_DATABASE', 'mbdc');
 define('DB_PREFIX', 'rich_');
 //DB
 //define('DB_DRIVER', 'mysqli');
@@ -38,20 +38,20 @@ define('DB_PREFIX', 'rich_');
 //define('DB_PREFIX', 'rich_');
 
 //CACHE
-define('CACHE_HOSTNAME', 'localhost');
+define('CACHE_HOSTNAME', '121.42.253.23');
 define('CACHE_PORT', '11211');
 define('CACHE_PREFIX', 'roachBike');
 define('QUEUE_OPEN', true);
 
 //Redis
-define('REDIS_HOST', 'localhost');
+define('REDIS_HOST', '121.42.253.23');
 define('REDIS_PORT', '6379');
 
 define('TIMESTAMP', time());
 
 define('SMS_TIMEOUT', 60 * 3);//短信失效时间，单位是秒
-define('USER_ID', '2016121288yiqiang');
-define('USER_KEY', 'yiqiang');
+define('USER_ID', '20170315chicilon');
+define('USER_KEY', 'chicilon');
 define('MIN_RECHARGE', '1'); //最小的充值金额
 define('MAX_RECHARGE', '100');//最大的充值金额
 define('GAP_TIME', '120');//回传时间120秒

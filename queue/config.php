@@ -1,7 +1,7 @@
 <?php
 //HTTP
-define('HTTP_SERVER', 'http://bike.xiaoqiang.com/cooperator');
-define('HTTP_CATALOG', 'http://bike.xiaoqiang.com/static/');
+define('HTTP_SERVER', 'http://121.42.254.23/cooperator');
+define('HTTP_CATALOG', 'http://121.42.254.23/static/');
 define('HTTP_IMAGE', HTTP_CATALOG);
 
 //DIR
@@ -23,11 +23,11 @@ define('WX_SSLKEY_PATH', DIR_SYSTEM . 'library/payment/cert/apiclient_key.pem');
 
 //DB
 define('DB_DRIVER', 'mysqli');
-define('DB_HOSTNAME', 'localhost');
-define('DB_USERNAME', '<USERNAME>');
-define('DB_PASSWORD', '<PASSWORD>');
+define('DB_HOSTNAME', '121.42.254.23');
+define('DB_USERNAME', 'mbdc');
+define('DB_PASSWORD', 'mbdc123mm');
 define('DB_PORT', '3306');
-define('DB_DATABASE', '<DB_NAME>');
+define('DB_DATABASE', 'mbdc');
 define('DB_PREFIX', 'rich_');
 
 //cache

@@ -193,7 +193,7 @@ class ControllerBicycleBicycle extends Controller {
 
                 // 生成二维码图片
                 $qrcodeInfo = array(
-                    'qrcodeText' => sprintf('http://bike.e-stronger.com/bike/app.php?b=%03d%02d%06d', $region['region_city_code'], $region['region_city_ranking'], $data['bicycle_sn']),
+                    'qrcodeText' => sprintf('http://121.42.254.23/app.php?b=%03d%02d%06d', $region['region_city_code'], $region['region_city_ranking'], $data['bicycle_sn']),
                     'code' => $data['bicycle_sn']
                 );
                 $this->load->controller('common/qrcode/buildQrCode', $qrcodeInfo);
@@ -274,7 +274,7 @@ class ControllerBicycleBicycle extends Controller {
 
             // 生成二维码图片
             $data = array(
-                'qrcodeText' => sprintf('http://bike.e-stronger.com/bike/app.php?b=%03d%02d%06d', $region['region_city_code'], $region['region_city_ranking'], $input['bicycle_sn']),
+                'qrcodeText' => sprintf('http://121.42.254.23/app.php?b=%03d%02d%06d', $region['region_city_code'], $region['region_city_ranking'], $input['bicycle_sn']),
                 'code' => $input['bicycle_sn']
             );
             $this->load->controller('common/qrcode/buildQrCode', $data);
@@ -332,7 +332,7 @@ class ControllerBicycleBicycle extends Controller {
 
             // 生成二维码图片
             $data = array(
-                'qrcodeText' => sprintf('http://bike.e-stronger.com/bike/app.php?b=%03d%02d%06d', $region['region_city_code'], $region['region_city_ranking'], $input['bicycle_sn']),
+                'qrcodeText' => sprintf('http://121.42.254.23/app.php?b=%03d%02d%06d', $region['region_city_code'], $region['region_city_ranking'], $input['bicycle_sn']),
                 'code' => $input['bicycle_sn']
             );
             $this->load->controller('common/qrcode/buildQrCode', $data);

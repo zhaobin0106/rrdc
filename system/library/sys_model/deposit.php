@@ -393,7 +393,7 @@ class Deposit {
             'partner' => trim($alipay_config['partner']),
             '_input_charset' => strtolower('utf-8'),
             'sign_type' => strtoupper('MD5'),
-            'notify_url' => 'http://bike.e-stronger.com/bike/admin/payment/alipay.php',
+            'notify_url' => 'http://121.42.254.23/admin/payment/alipay.php',
             'seller_email' => trim($alipay_config['seller_id']),
             'refund_date' => date('Y-m-d H:i:s'),
             'batch_no' => '',

@@ -1,8 +1,8 @@
 <?php
 //HTTP
-define('HTTP_SERVER', 'http://bike.e-stronger.com/ebike/api');
-define('HTTP_IMAGE', 'http://bike.e-stronger.com/ebike/static/');
-define('HTTP_STATIC', 'http://bike.e-stronger.com/ebike/static/');
+define('HTTP_SERVER', 'http://121.42.254.23/api');
+define('HTTP_IMAGE', 'http://121.42.254.23/static/');
+define('HTTP_STATIC', 'http://121.42.254.23/static/');
 
 //DIR
 define('DIR_BASE', dirname(dirname(__FILE__)));
@@ -21,10 +21,10 @@ define('DIR_UPLOAD', DIR_BASE . '/system/storage/upload/');
 //DB
 define('DB_DRIVER', 'mysqli');
 define('DB_HOSTNAME', 'localhost');
-define('DB_USERNAME', '<USERNAME>');
-define('DB_PASSWORD', '<PASSWORD>');
+define('DB_USERNAME', 'mbdc');
+define('DB_PASSWORD', 'mbdc123mm');
 define('DB_PORT', '3306');
-define('DB_DATABASE', '<DB_NAME>');
+define('DB_DATABASE', 'mbdc');
 define('DB_PREFIX', 'rich_');
 
 //CACHE
@@ -39,8 +39,8 @@ define('REDIS_PORT', '6379');
 define('TIMESTAMP', time());
 
 define('SMS_TIMEOUT', 60 * 5);//短信失效时间，单位是秒
-define('USER_ID', '2016121288yiqiang');
-define('USER_KEY', 'yiqiang');
+define('USER_ID', '20170315chicilon');
+define('USER_KEY', 'chicilon');
 define('MIN_RECHARGE', 0.01); //最小的充值金额
 define('MAX_RECHARGE', 100);//最大的充值金额
 define('GAP_TIME', 120);//回传时间120秒

@@ -19,10 +19,10 @@ define('DIR_UPLOAD', DIR_BASE . '/system/storage/upload/');
 //DB
 define('DB_DRIVER', 'mysqli');
 define('DB_HOSTNAME', 'localhost');
-define('DB_USERNAME', '<USERNAME>');
-define('DB_PASSWORD', '<PASSWORD>');
+define('DB_USERNAME', 'mbdc');
+define('DB_PASSWORD', 'mbdc123mm');
 define('DB_PORT', '3306');
-define('DB_DATABASE', '<DB_NAME>');
+define('DB_DATABASE', 'mbdc');
 define('DB_PREFIX', 'rich_');
 
 //CACHE
@@ -36,8 +36,8 @@ define('REDIS_HOST', 'localhost');
 define('REDIS_PORT', '6379');
 define('TIMESTAMP', time());
 
-define('USER_ID', '2016121288yiqiang');
-define('USER_KEY', 'yiqiang');
+define('USER_ID', '20170315chicilon');
+define('USER_KEY', 'chicilon');
 define('MIN_RECHARGE', 10); //最小的充值金额
 define('MAX_RECHARGE', '100');//最大的充值金额
 define('GAP_TIME', '120');//回传时间120秒
