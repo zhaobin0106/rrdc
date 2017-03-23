@@ -171,7 +171,7 @@ class ControllerOperationFault extends Controller {
                 $list[] = array(
                     'bicycle_sn' => $v['bicycle_sn'],
                     'add_time' => date('Y-m-d H:i:s', $v['add_time']),
-                    'uri' => $this->url->link('operation/info/info', 'fault_id='. $v['fault_id'])
+                    'uri' => $this->url->link('operation/fault/info', 'fault_id='. $v['fault_id'])
                 );
             }
         }
