@@ -1,0 +1,280 @@
+2017-02-14 10:32:00 - Array
+(
+    [state] => SUCCESS
+    [url] => http://bike.e-stronger.com/ebike/static/app/20170214103200101.apk
+    [title] => 20170214103200101.apk
+    [original] => xiaoqiang1.5-2.apk
+    [type] => .apk
+    [size] => 11734626
+    [filePath] => app/20170214103200101.apk
+)
+
+2017-02-14 10:32:18 - Array
+(
+    [state] => SUCCESS
+    [url] => http://bike.e-stronger.com/ebike/static/app/20170214103218132.apk
+    [title] => 20170214103218132.apk
+    [original] => xiaoqiang1.5-2.apk
+    [type] => .apk
+    [size] => 11734626
+    [filePath] => app/20170214103218132.apk
+)
+
+2017-02-14 11:12:53 - Array
+(
+    [state] => SUCCESS
+    [url] => http://bike.e-stronger.com/ebike/static/app/20170214111253100.apk
+    [title] => 20170214111253100.apk
+    [original] => xiaoqiang1.5-2.apk
+    [type] => .apk
+    [size] => 11734626
+    [filePath] => app/20170214111253100.apk
+)
+
+2017-02-17 15:21:29 - PHP Notice: Undefined variable: header in D:\phpStudy\WWW\ebike\admin\view\template\admin\index.tpl on line1
+2017-02-17 15:21:35 - PHP Notice: Undefined variable: header in D:\phpStudy\WWW\ebike\admin\view\template\admin\index.tpl on line1
+2017-02-17 15:21:39 - PHP Notice: Undefined variable: header in D:\phpStudy\WWW\ebike\admin\view\template\admin\index.tpl on line1
+2017-02-17 15:21:42 - PHP Notice: Undefined variable: header in D:\phpStudy\WWW\ebike\admin\view\template\admin\index.tpl on line1
+2017-02-17 15:21:59 - PHP Notice: Undefined variable: header in D:\phpStudy\WWW\ebike\admin\view\template\admin\index.tpl on line1
+2017-02-17 15:22:15 - PHP Notice: Undefined variable: header in D:\phpStudy\WWW\ebike\admin\view\template\admin\index.tpl on line1
+2017-02-17 15:22:52 - PHP Notice: Undefined variable: header in D:\phpStudy\WWW\ebike\admin\view\template\admin\index.tpl on line1
+2017-02-17 15:23:11 - PHP Notice: Undefined variable: header in D:\phpStudy\WWW\ebike\admin\view\template\admin\index.tpl on line1
+2017-02-17 15:24:02 - PHP Notice: Undefined variable: header in D:\phpStudy\WWW\ebike\admin\view\template\admin\index.tpl on line1
+2017-03-01 16:08:51 - -----EVENT------
+2017-03-01 16:08:51 - Array
+(
+)
+
+2017-03-01 16:08:51 - #####EVENT######
+2017-03-01 16:09:07 - -----EVENT------
+2017-03-01 16:09:07 - Array
+(
+)
+
+2017-03-01 16:09:07 - #####EVENT######
+2017-03-01 16:11:07 - -----EVENT------
+2017-03-01 16:11:07 - {encrypt_code:"mB-Srk0jrtAo6DWQqxWf7d-oa4NHBYi9zOf"}
+2017-03-01 16:11:07 - #####EVENT######
+2017-03-01 16:17:43 - -----EVENT------
+2017-03-01 16:17:43 - 
+2017-03-01 16:17:43 - #####EVENT######
+2017-03-01 16:39:40 - -----EVENT------
+2017-03-01 16:39:40 - Array
+(
+    [encrypt_code] => mB-Srk0jrtAo6DWQqxWf7d-oa4NHBYi9zOf
+)
+
+2017-03-01 16:39:40 - #####EVENT######
+2017-03-08 13:31:04 - 
+2017-03-08 13:31:41 - Array
+(
+    [user_id] => 13
+    [sign] => 6a554c2a2e3bb7b2d3ffa5cec246888c
+    [real_name] => 罗剑波
+    [identity] => 440981197906126170
+)
+
+2017-03-08 13:35:31 - Array
+(
+    [user_id] => 13
+    [sign] => 21c7115a7d75f5a849bf5209a3c5f589
+    [real_name] => 罗剑波
+    [identity] => 440981197906126170
+)
+
+2017-03-08 13:35:48 - Array
+(
+    [user_id] => 13
+    [sign] => 21c7115a7d75f5a849bf5209a3c5f589
+    [real_name] => 罗剑波
+    [identity] => 440981197906126170
+)
+
+2017-03-08 13:36:16 - Array
+(
+    [user_id] => 13
+    [sign] => 21c7115a7d75f5a849bf5209a3c5f589
+    [real_name] => 罗剑波
+    [identity] => 440981197906126170
+)
+
+2017-03-08 13:36:17 - stdClass Object
+(
+    [header] => stdClass Object
+        (
+            [qryBatchNo] => 2017030813361652635
+            [version] => 1.0
+            [userCode] => CNYH20161221000001
+            [qryReason] => 实名认证
+            [qryDate] => 20170308
+            [qryTime] => 013609
+        )
+
+    [data] => Array
+        (
+            [0] => stdClass Object
+                (
+                    [name] => 身份证实名认证信息
+                    [recordNum] => 1
+                    [record] => Array
+                        (
+                            [0] => stdClass Object
+                                (
+                                    [realName] => 罗剑波
+                                    [idCard] => 440981197906126170
+                                    [resCode] => 00
+                                    [resDesc] => 认证通过
+                                )
+
+                        )
+
+                )
+
+        )
+
+)
+
+2017-03-08 13:49:38 - Array
+(
+    [user_id] => 13
+    [sign] => 21c7115a7d75f5a849bf5209a3c5f589
+    [real_name] => 罗剑波
+    [identity] => 440981197906126170
+)
+
+2017-03-08 13:49:39 - stdClass Object
+(
+    [header] => stdClass Object
+        (
+            [qryBatchNo] => 2017030813493871432
+            [version] => 1.0
+            [userCode] => CNYH20161221000001
+            [qryReason] => 实名认证
+            [qryDate] => 20170308
+            [qryTime] => 014930
+        )
+
+    [data] => Array
+        (
+            [0] => stdClass Object
+                (
+                    [name] => 身份证实名认证信息
+                    [recordNum] => 1
+                    [record] => Array
+                        (
+                            [0] => stdClass Object
+                                (
+                                    [realName] => 罗剑波
+                                    [idCard] => 440981197906126170
+                                    [resCode] => 00
+                                    [resDesc] => 认证通过
+                                )
+
+                        )
+
+                )
+
+        )
+
+)
+
+2017-03-13 20:09:03 - PHP Notice: Undefined variable: menu_id in D:\phpStudy\WWW\ebike\admin\view\template\error\permission.tpl on line6
+2017-03-13 20:09:03 - PHP Notice: Undefined variable: menu_collect_status in D:\phpStudy\WWW\ebike\admin\view\template\error\permission.tpl on line6
+2017-03-13 20:09:03 - PHP Notice: Undefined variable: total_bicycle in D:\phpStudy\WWW\ebike\admin\view\template\error\permission.tpl on line11
+2017-03-13 20:09:03 - PHP Notice: Undefined variable: using_bicycle in D:\phpStudy\WWW\ebike\admin\view\template\error\permission.tpl on line14
+2017-03-13 20:09:03 - PHP Notice: Undefined variable: fault_bicycle in D:\phpStudy\WWW\ebike\admin\view\template\error\permission.tpl on line17
+2017-03-14 14:44:48 - PHP Notice: Undefined index: min_lat in D:\phpStudy\WWW\ebike\admin\controller\admin\index.php on line13
+2017-03-14 14:44:48 - PHP Notice: Undefined index: min_lng in D:\phpStudy\WWW\ebike\admin\controller\admin\index.php on line14
+2017-03-14 14:44:48 - PHP Notice: Undefined index: max_lat in D:\phpStudy\WWW\ebike\admin\controller\admin\index.php on line15
+2017-03-14 14:44:48 - PHP Notice: Undefined index: max_lng in D:\phpStudy\WWW\ebike\admin\controller\admin\index.php on line16
+2017-03-14 14:45:18 - PHP Notice: Undefined index: min_lat in D:\phpStudy\WWW\ebike\admin\controller\admin\index.php on line13
+2017-03-14 14:45:18 - PHP Notice: Undefined index: min_lng in D:\phpStudy\WWW\ebike\admin\controller\admin\index.php on line14
+2017-03-14 14:45:18 - PHP Notice: Undefined index: max_lat in D:\phpStudy\WWW\ebike\admin\controller\admin\index.php on line15
+2017-03-14 14:45:18 - PHP Notice: Undefined index: max_lng in D:\phpStudy\WWW\ebike\admin\controller\admin\index.php on line16
+2017-03-16 11:26:53 - PHP Notice: Undefined variable: import_action in D:\phpStudy\WWW\ebike\admin\view\template\operation\fault_list.tpl on line57
+2017-03-16 11:26:53 - PHP Notice: Undefined variable: export_action in D:\phpStudy\WWW\ebike\admin\view\template\operation\fault_list.tpl on line58
+2017-03-16 11:27:02 - PHP Notice: Undefined variable: import_action in D:\phpStudy\WWW\ebike\admin\view\template\operation\fault_list.tpl on line57
+2017-03-16 11:27:02 - PHP Notice: Undefined variable: export_action in D:\phpStudy\WWW\ebike\admin\view\template\operation\fault_list.tpl on line58
+2017-03-16 11:27:04 - PHP Notice: Undefined variable: import_action in D:\phpStudy\WWW\ebike\admin\view\template\operation\violation_list.tpl on line57
+2017-03-16 11:27:04 - PHP Notice: Undefined variable: export_action in D:\phpStudy\WWW\ebike\admin\view\template\operation\violation_list.tpl on line58
+2017-03-16 11:27:14 - PHP Notice: Undefined variable: import_action in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line51
+2017-03-16 11:27:14 - PHP Notice: Undefined variable: export_action in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line52
+2017-03-16 11:27:14 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 11:27:14 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 11:27:14 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 11:27:14 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 11:27:14 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 11:27:14 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 11:27:14 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 11:27:14 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 11:27:14 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 11:27:14 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 13:48:08 - PHP Notice: Undefined variable: import_action in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line51
+2017-03-16 13:48:08 - PHP Notice: Undefined variable: export_action in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line52
+2017-03-16 13:48:08 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 13:48:08 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 13:48:08 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 13:48:08 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 13:48:08 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 13:48:08 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 13:48:08 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 13:48:08 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 13:48:08 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 13:48:08 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 13:53:35 - PHP Notice: Undefined variable: import_action in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line51
+2017-03-16 13:53:35 - PHP Notice: Undefined variable: export_action in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line52
+2017-03-16 13:53:35 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 13:53:35 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 13:53:35 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 13:53:35 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 13:53:35 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 13:53:35 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 13:53:35 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 13:53:35 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 13:53:35 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 13:53:35 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 13:54:42 - PHP Notice: Undefined variable: import_action in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line51
+2017-03-16 13:54:42 - PHP Notice: Undefined variable: export_action in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line52
+2017-03-16 13:54:42 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 13:54:42 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 13:54:42 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 13:54:42 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 13:54:42 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 13:54:42 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 13:54:42 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 13:54:42 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 13:54:42 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-16 13:54:42 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\user\points_list.tpl on line77
+2017-03-17 16:36:30 - PHP Notice: Undefined variable: import_action in D:\phpStudy\WWW\ebike\admin\view\template\cooperator\cooperator_list.tpl on line38
+2017-03-17 16:36:30 - PHP Notice: Undefined variable: export_action in D:\phpStudy\WWW\ebike\admin\view\template\cooperator\cooperator_list.tpl on line39
+2017-03-20 15:56:00 - PHP Notice: Undefined index: lock_sn in D:\phpStudy\WWW\ebike\admin\controller\lock\lock.php on line236
+2017-03-20 15:56:28 - PHP Notice: Undefined index: lock_sn in D:\phpStudy\WWW\ebike\admin\controller\lock\lock.php on line236
+2017-03-20 15:57:27 - PHP Notice: Undefined index: lock_sn in D:\phpStudy\WWW\ebike\admin\controller\lock\lock.php on line236
+2017-03-20 15:57:56 - PHP Notice: Undefined index: lock_sn in D:\phpStudy\WWW\ebike\admin\controller\lock\lock.php on line236
+2017-03-20 15:58:39 - PHP Notice: Undefined index: lock_sn in D:\phpStudy\WWW\ebike\admin\controller\lock\lock.php on line236
+2017-03-20 15:58:56 - PHP Notice: Undefined index: lock_sn in D:\phpStudy\WWW\ebike\admin\controller\lock\lock.php on line236
+2017-03-20 15:59:30 - PHP Notice: Undefined index: lock_sn in D:\phpStudy\WWW\ebike\admin\controller\lock\lock.php on line236
+2017-03-20 15:59:44 - PHP Notice: Undefined index: lock_sn in D:\phpStudy\WWW\ebike\admin\controller\lock\lock.php on line236
+2017-03-20 16:27:08 - PHP Notice: Undefined variable: import_action in D:\phpStudy\WWW\ebike\admin\view\template\user\cash_apply_list.tpl on line64
+2017-03-20 16:27:08 - PHP Notice: Undefined variable: export_action in D:\phpStudy\WWW\ebike\admin\view\template\user\cash_apply_list.tpl on line65
+2017-03-20 16:27:21 - PHP Notice: Undefined variable: import_action in D:\phpStudy\WWW\ebike\admin\view\template\user\cash_apply_list.tpl on line64
+2017-03-20 16:27:21 - PHP Notice: Undefined variable: export_action in D:\phpStudy\WWW\ebike\admin\view\template\user\cash_apply_list.tpl on line65
+2017-03-20 16:27:24 - PHP Notice: Undefined variable: import_action in D:\phpStudy\WWW\ebike\admin\view\template\user\cash_apply_list.tpl on line64
+2017-03-20 16:27:24 - PHP Notice: Undefined variable: export_action in D:\phpStudy\WWW\ebike\admin\view\template\user\cash_apply_list.tpl on line65
+2017-03-20 16:27:27 - PHP Notice: Undefined variable: import_action in D:\phpStudy\WWW\ebike\admin\view\template\user\cash_apply_list.tpl on line64
+2017-03-20 16:27:27 - PHP Notice: Undefined variable: export_action in D:\phpStudy\WWW\ebike\admin\view\template\user\cash_apply_list.tpl on line65
+2017-03-20 16:27:29 - PHP Notice: Undefined variable: import_action in D:\phpStudy\WWW\ebike\admin\view\template\user\cash_apply_list.tpl on line64
+2017-03-20 16:27:29 - PHP Notice: Undefined variable: export_action in D:\phpStudy\WWW\ebike\admin\view\template\user\cash_apply_list.tpl on line65
+2017-03-20 16:27:31 - PHP Notice: Undefined variable: import_action in D:\phpStudy\WWW\ebike\admin\view\template\user\cash_apply_list.tpl on line64
+2017-03-20 16:27:31 - PHP Notice: Undefined variable: export_action in D:\phpStudy\WWW\ebike\admin\view\template\user\cash_apply_list.tpl on line65
+2017-03-20 16:27:33 - PHP Notice: Undefined variable: import_action in D:\phpStudy\WWW\ebike\admin\view\template\user\cash_apply_list.tpl on line64
+2017-03-20 16:27:33 - PHP Notice: Undefined variable: export_action in D:\phpStudy\WWW\ebike\admin\view\template\user\cash_apply_list.tpl on line65
+2017-03-20 16:29:13 - PHP Notice: Undefined variable: import_action in D:\phpStudy\WWW\ebike\admin\view\template\user\cash_apply_list.tpl on line64
+2017-03-20 16:29:13 - PHP Notice: Undefined variable: export_action in D:\phpStudy\WWW\ebike\admin\view\template\user\cash_apply_list.tpl on line65
+2017-03-20 16:54:08 - PHP Notice: Undefined variable: import_action in D:\phpStudy\WWW\ebike\admin\view\template\user\cash_apply_list.tpl on line64
+2017-03-20 16:54:08 - PHP Notice: Undefined variable: export_action in D:\phpStudy\WWW\ebike\admin\view\template\user\cash_apply_list.tpl on line65
+2017-03-20 17:34:07 - PHP Notice: Undefined variable: import_action in D:\phpStudy\WWW\ebike\admin\view\template\system\role_list.tpl on line35
+2017-03-20 17:34:07 - PHP Notice: Undefined variable: export_action in D:\phpStudy\WWW\ebike\admin\view\template\system\role_list.tpl on line36
+2017-03-20 17:34:07 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\system\role_list.tpl on line62
+2017-03-20 17:34:07 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\system\role_list.tpl on line62
+2017-03-20 17:34:07 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\system\role_list.tpl on line62

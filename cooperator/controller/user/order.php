@@ -1,0 +1,261 @@
+<?php
+class ControllerUserOrder extends Controller {
+    private $cur_url = null;
+    private $error = null;
+    
+    public function __construct($registry) {
+        parent::__construct($registry);
+
+        // 当前网址
+        $this->cur_url = $this->url->link($this->request->get['route']);
+
+        // 加载bicycle Model
+        $this->load->library('sys_model/orders', true);
+    }
+
+    /**
+     * 消费记录列表
+     */
+    public function index() {
+        $filter = $this->request->get(array('order_sn', 'lock_sn', 'bicycle_sn', 'user_name', 'region_name', 'order_state', 'add_time'));
+
+        $condition = array();
+        if (!empty($filter['order_sn'])) {
+            $condition['order_sn'] = array('like', "%{$filter['order_sn']}%");
+        }
+        if (!empty($filter['lock_sn'])) {
+            $condition['lock_sn'] = array('like', "%{$filter['lock_sn']}%");
+        }
+        if (!empty($filter['bicycle_sn'])) {
+            $condition['bicycle_sn'] = array('like', "%{$filter['bicycle_sn']}%");
+        }
+        if (!empty($filter['user_name'])) {
+            $condition['user_name'] = array('like', "%{$filter['user_name']}%");
+        }
+        if (!empty($filter['region_name'])) {
+            $condition['region_name'] = array('like', "%{$filter['region_name']}%");
+        }
+        if (is_numeric($filter['order_state'])) {
+            $condition['order_state'] = (int)$filter['order_state'];
+        }
+        if (!empty($filter['add_time'])) {
+            $pdr_add_time = explode(' 至 ', $filter['add_time']);
+            $condition['add_time'] = array(
+                array('gt', strtotime($pdr_add_time[0])),
+                array('lt', bcadd(86399, strtotime($pdr_add_time[1])))
+            );
+        }
+        if (isset($this->request->get['page'])) {
+            $page = (int)$this->request->get['page'];
+        } else {
+            $page = 1;
+        }
+
+        $order = 'add_time DESC';
+        $rows = $this->config->get('config_limit_admin');
+        $offset = ($page - 1) * $rows;
+        $limit = sprintf('%d, %d', $offset, $rows);
+
+        $result = $this->sys_model_orders->getOrdersList($condition, $order, $limit);
+        $total = $this->sys_model_orders->getTotalOrders($condition);
+
+        $order_state = get_order_state();
+
+        if (is_array($result) && !empty($result)) {
+            foreach ($result as &$item) {
+                $item['order_state'] = isset($order_state[$item['order_state']]) ? $order_state[$item['order_state']] : '';
+                $item['add_time'] = !empty($item['add_time']) ? date('Y-m-d H:i:s', $item['add_time']) : '';
+
+                $item['edit_action'] = $this->url->link('user/order/edit', 'order_id='.$item['order_id']);
+                $item['delete_action'] = $this->url->link('user/order/delete', 'order_id='.$item['order_id']);
+                $item['info_action'] = $this->url->link('user/order/info', 'order_id='.$item['order_id']);
+            }
+        }
+
+        $data_columns = $this->getDataColumns();
+        $this->assign('data_columns', $data_columns);
+        $this->assign('data_rows', $result);
+        $this->assign('filter', $filter);
+        $this->assign('order_state', $order_state);
+        $this->assign('action', $this->cur_url);
+        $this->assign('add_action', $this->url->link('user/order/add'));
+
+        if (isset($this->session->data['success'])) {
+            $this->assign('success', $this->session->data['success']);
+            unset($this->session->data['success']);
+        }
+
+        $pagination = new Pagination();
+        $pagination->total = $total;
+        $pagination->page = $page;
+        $pagination->page_size = $rows;
+        $pagination->url = $this->cur_url . '&amp;page={page}' . '&amp;' . str_replace('&', '&amp;', http_build_query($filter));
+        $pagination = $pagination->render();
+        $results = sprintf($this->language->get('text_pagination'), ($total) ? $offset + 1 : 0, ($offset > ($total - $rows)) ? $total : ($offset + $rows), $total, ceil($total / $rows));
+
+        $this->assign('pagination', $pagination);
+        $this->assign('results', $results);
+
+        $this->response->setOutput($this->load->view('user/order_list', $this->output));
+    }
+
+    /**
+     * 表格字段
+     * @return mixed
+     */
+    protected function getDataColumns() {
+        $this->setDataColumn('订单sn');
+        $this->setDataColumn('锁sn');
+        $this->setDataColumn('单车sn');
+        $this->setDataColumn('手机号');
+        $this->setDataColumn('景区');
+        $this->setDataColumn('状态');
+        $this->setDataColumn('下单时间');
+        return $this->data_columns;
+    }
+
+    /**
+     * 添加消费记录
+     */
+    public function add() {
+        if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
+            $input = $this->request->post(array('bicycle_sn', 'type', 'lock_sn'));
+            $now = time();
+            $data = array(
+                'bicycle_sn' => $input['bicycle_sn'],
+                'type' => (int)$input['type'],
+                'lock_sn' => $input['lock_sn'],
+                'add_time' => $now
+            );
+            $this->sys_model_bicycle->addBicycle($data);
+
+            $this->session->data['success'] = '添加消费记录成功！';
+            
+            $filter = $this->request->get(array('bicycle_sn', 'type', 'lock_sn', 'is_using'));
+
+            $this->load->controller('common/base/redirect', $this->url->link('user/order', $filter, true));
+        }
+
+        $this->assign('title', '消费记录添加');
+        $this->getForm();
+    }
+
+    /**
+     * 编辑消费记录
+     */
+    public function edit() {
+        if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
+            $input = $this->request->post(array('bicycle_sn', 'type', 'lock_sn'));
+            $bicycle_id = $this->request->get['bicycle_id'];
+            $data = array(
+                'bicycle_sn' => $input['bicycle_sn'],
+                'type' => (int)$input['type'],
+                'lock_sn' => $input['lock_sn']
+            );
+            $condition = array(
+                'bicycle_id' => $bicycle_id
+            );
+            $this->sys_model_bicycle->updateBicycle($condition, $data);
+
+            $this->session->data['success'] = '编辑消费记录成功！';
+
+            $filter = $this->request->get(array('bicycle_sn', 'type', 'lock_sn', 'is_using'));
+
+            $this->load->controller('common/base/redirect', $this->url->link('user/order', $filter, true));
+        }
+
+        $this->assign('title', '编辑消费记录');
+        $this->getForm();
+    }
+
+    /**
+     * 删除消费记录
+     */
+    public function delete() {
+        if (isset($this->request->get['bicycle_id']) && $this->validateDelete()) {
+            $condition = array(
+                'bicycle_id' => $this->request->get['bicycle_id']
+            );
+            $this->sys_model_bicycle->deleteBicycle($condition);
+
+            $this->session->data['success'] = '删除消费记录成功！';
+        }
+        $filter = $this->request->get(array('bicycle_sn', 'type', 'lock_sn', 'is_using'));
+        $this->load->controller('common/base/redirect', $this->url->link('user/order', $filter, true));
+    }
+
+    /**
+     * 消费记录详情
+     */
+    public function info() {
+        // 编辑时获取已有的数据
+        $order_id = $this->request->get('order_id');
+        $condition = array(
+            'order_id' => $order_id
+        );
+        $info = $this->sys_model_orders->getOrdersInfo($condition);
+        if (!empty($info)) {
+            $info['order_status'] = $info['order_state'];
+            $model = array(
+                'order_state' => get_order_state()
+            );
+            foreach ($model as $k => $v) {
+                $info[$k] = isset($v[$info[$k]]) ? $v[$info[$k]] : '';
+            }
+
+            $info['add_time'] = (isset($info['add_time']) && !empty($info['add_time'])) ? date('Y-m-d H:i:s', $info['add_time']) : '';
+            $info['start_time'] = (isset($info['start_time']) && !empty($info['start_time'])) ? date('Y-m-d H:i:s', $info['start_time']) : '';
+            $info['end_time'] = (isset($info['end_time']) && !empty($info['end_time'])) ? date('Y-m-d H:i:s', $info['end_time']) : '';
+            $info['pdr_payment_time'] = (isset($info['pdr_payment_time']) && !empty($info['pdr_payment_time'])) ? date('Y-m-d H:i:s', $info['pdr_payment_time']) : '';
+        }
+
+        $this->assign('data', $info);
+
+        $this->response->setOutput($this->load->view('user/order_info', $this->output));
+    }
+
+    private function getForm() {
+        // 编辑时获取已有的数据
+        $info = $this->request->post(array('bicycle_sn', 'type', 'lock_sn'));
+        $bicycle_id = $this->request->get('bicycle_id');
+        if (isset($this->request->get['bicycle_id']) && ($this->request->server['REQUEST_METHOD'] != 'POST')) {
+            $condition = array(
+                'bicycle_id' => $this->request->get['bicycle_id']
+            );
+            $info = $this->sys_model_bicycle->getBicycleInfo($condition);
+        }
+
+        $this->assign('data', $info);
+        $this->assign('types', get_bicycle_type());
+        $this->assign('action', $this->cur_url . '&bicycle_id=' . $bicycle_id);
+        $this->assign('error', $this->error);
+
+        $this->response->setOutput($this->load->view('user/order_form', $this->output));
+    }
+
+    /**
+     * 验证表单数据
+     * @return bool
+     */
+    private function validateForm() {
+        $input = $this->request->post(array('bicycle_sn', 'type', 'lock_sn'));
+
+        foreach ($input as $k => $v) {
+            if (empty($v)) {
+                $this->error[$k] = '请输入完整！';
+            }
+        }
+
+        if ($this->error) {
+            $this->error['warning'] = '警告: 存在错误，请检查！';
+        }
+        return !$this->error;
+    }
+
+    /**
+     * 验证删除条件
+     */
+    private function validateDelete() {
+        return !$this->error;
+    }
+}
