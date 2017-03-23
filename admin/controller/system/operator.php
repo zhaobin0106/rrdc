@@ -72,7 +72,7 @@ class ControllerSystemOperator extends Controller {
             $this->assign('success', $this->session->data['success']);
             unset($this->session->data['success']);
         }
-        var_dump($data);exit;
+
         $this->assign('data', $data);
         $this->assign('action', $this->cur_url);
         $this->assign('error', $this->error);
