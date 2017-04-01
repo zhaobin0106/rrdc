@@ -40,7 +40,7 @@ class Queue_Db {
 
     public function pop($key, $time = '') {
         try {
-            if ($result = $this->_redis->brPop($key, $time)) {
+            if ($result = $this->_redis->brPop($key)) {
                 return $result[1];
             }
         } catch (\Exception $e) {

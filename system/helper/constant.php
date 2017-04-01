@@ -140,3 +140,16 @@ if (!function_exists('get_common_result'))
         );
     }
 }
+
+/**
+ * 故障处理
+ */
+if (!function_exists('get_fault_processed'))
+{
+    function get_fault_processed() {
+        return array(
+            '1' => '已处理',
+            '0' => '未处理',
+        );
+    }
+}

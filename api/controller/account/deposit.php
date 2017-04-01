@@ -132,7 +132,7 @@ class ControllerAccountDeposit extends Controller {
             if ($type == 'APP') {
                 $this->response->showSuccessResult($this->sign_to_app($return_data['prepay_id'], $type));
             } else {
-                $this->response->showSuccessResult($this->getJsApiParameters($this->sign_to_app($return_data['prepay_id'], $type)), $this->language->get('success_recharge_checkout'));
+                $this->response->showSuccessResult($this->getJsApiParameters($this->sign_to_app($return_data['prepay_id'], $type)), $this->language->get('success_checkout'));
             }
         } else {
             $this->response->showErrorResult($this->language->get('error_database_operation_failure'), 4);
@@ -183,6 +183,7 @@ class ControllerAccountDeposit extends Controller {
         $config['curl_proxy_host'] = '0.0.0.0';
         $config['curl_proxy_port'] = 0;
         $config['report_level'] = 1;
+        //$config['notify_url'] = 'https://bike.e-stronger.com/bike/wxapp/api/payment/wxpay.php';
         $config['notify_url'] = $this->config->get('config_wxpay_notify_url');
 
         return $config;

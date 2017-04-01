@@ -9,12 +9,17 @@ class ControllerTransferOperator extends Controller
     {
         if (strtolower($_SERVER['REQUEST_METHOD']) == 'post') {
             $post = file_get_contents("php://input");
-
+            date_default_timezone_set('PRC');
+            file_put_contents('/data/wwwroot/default/bike/transfer/controller/transfer/reply.log', date('Y-m-d H:i:s ') . $post . "\n", FILE_APPEND);
+            if(strpos($post, 'open')!==FALSE) {
+                file_put_contents('/data/wwwroot/default/bike/transfer/controller/transfer/open_reply.log', date('Y-m-d H:i:s ') . $post . "\n", FILE_APPEND);
+            }
+//            $post = $this->request->post;
             if (empty($post)) {
                 die('empty post');
             }
+
             $this->request->post = json_decode($post, true);
-            file_put_contents('aaa.log', print_r($this->request->post, true));
             $user_id = $this->request->post['userid'];
             $cmd = $this->request->post['cmd'];
             $device_id = $this->request->post['deviceid'];
@@ -39,7 +44,7 @@ class ControllerTransferOperator extends Controller
 
             $this->load->library('sys_model/instruction', true);
             $result = $this->sys_model_instruction->addInstructionRecord($data);
-
+//            file_put_contents('ucc.log', json_encode($data), 8);
             switch (strtolower($data['cmd'])) {
                 case 'open':
                     $result = $this->logic_orders->effectOrders($data);
@@ -48,6 +53,7 @@ class ControllerTransferOperator extends Controller
                         $arr['data'] = $result['data'];
                         $this->load->library('JPush/JPush', true);
                         $send_result = $this->JPush_JPush->message($result['data']['user_id'], json_encode($arr));
+                        file_put_contents('jpush_log.txt', $send_result, FILE_APPEND);
                     }
                     break;
                 case 'select':

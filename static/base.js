@@ -255,3 +255,9 @@ function loadMessageCenter(url, sendData) {
 	// 立即触发 更新
 	messageDropdown.find('.update-info > button').trigger("click");
 })(jQuery);
+
+$(document).on('click','#open-marker',function(){
+	var bicycle_id = $(this).data('bicycleId');
+	localStorage.open_marker_bicycle_id = bicycle_id;
+	window.location.href = $(this).data('action');
+});

@@ -4,7 +4,6 @@
     include(__DIR__."/list_tbody.php");
 
     $tbody_html = ob_get_clean();
-    ob_end_clean();
 ?>
 
 <?php

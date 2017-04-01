@@ -20,21 +20,18 @@ class ControllerCommonUpload extends Controller {
         $tage = $this->request->post('tage');
         switch ($tage) {
             case 'app' :
-                $filePath = 'app/';
-                $fileName = date('YmdHis').token(3, 'number');
-                $maxSize = 10 * 1024 * 1024;         // 2M
-                $allowFiles = array('apk');
+                $pathFormat = 'app/{yyyy}{mm}{dd}{hh}{ii}{ss}{rand:3}';
+                $maxSize = 20 * 1024 * 1024;         // 20M
+                $allowFiles = array('.apk');
                 break;
             case 'image' :
-                $filePath = 'img/';
-                $fileName = date('YmdHis') . token(3, 'number');
+                $pathFormat = 'img/{yyyy}{mm}{dd}{hh}{ii}{ss}{rand:3}';
                 $maxSize = 2 * 1024 * 1024;         // 2M
-                $allowFiles = array('jpg', 'png', 'gif');
+                $allowFiles = array('.jpg', '.jpeg', '.png', '.gif');
                 break;
         }
         $config = array(
-            "filePath" => $filePath,
-            "fileName" => $fileName,
+            'pathFormat'=>$pathFormat,
             "maxSize" => $maxSize,
             "allowFiles" => $allowFiles
         );
@@ -44,6 +41,7 @@ class ControllerCommonUpload extends Controller {
         $type = 'upload';
         $up =  new Uploader($fileField, $config, $type, $this->request->files);
         $info = $up->getFileInfo();
+        $this->log->write($info);
         if ($info['state'] == 'SUCCESS') { // 上传成功
             $data = array();
             switch ($tage) {
@@ -53,6 +51,12 @@ class ControllerCommonUpload extends Controller {
                         'filepath' => $info['filePath'],
                         'version_name' => $apkInfo['version_name'],
                         'version_code' => $apkInfo['version_code'],
+                    );
+                    break;
+                case 'image' :
+                    $data = array(
+                        'imageurl' => $info['url'],
+                        'filepath' => $info['filePath']
                     );
                     break;
             }

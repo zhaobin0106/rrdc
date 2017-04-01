@@ -1,11 +1,22 @@
 <?php echo $header; ?>
 <!-- Content Header (Page header) -->
-<section class="content-header">
-    <h1><?php echo $title; ?><small><?php echo $title; ?></small></h1>
-    <ol class="breadcrumb">
-        <li><i class="fa fa-dashboard"></i>首页</li>
-        <li><?php echo $title; ?></li>
-    </ol>
+<section class="content-header clearfix">
+    <h1 class="pull-left">
+        <span><?php echo $title; ?></span>
+        <a href="javascript:;" onclick="collect('<?php echo $menu_id ?>',this)"><i class="<?php echo $menu_collect_status == 1? 'fa fa-star no-margin text-yellow' : 'fa fa-star-o text-gray'; ?>"></i></a>
+    </h1>
+    <div class="pull-right">
+        <div class="pull-left" style="margin-right: 20px;">
+            <i class="fa fa-bicycle"></i>
+            <span>总数：<?php echo $total_bicycle; ?>台</span>
+        </div>
+        <div class="pull-left" style="margin-right: 20px;">
+            <span>使用中：<?php echo $using_bicycle; ?>台</span>
+        </div>
+        <div class="pull-left" style="margin-right: 20px;">
+            <span>故障：<?php echo $fault_bicycle; ?>台</span>
+        </div>
+    </div>
 </section>
 <!-- Main content -->
 <section class="content">
@@ -23,7 +34,7 @@
                         <div class="row">
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">锁编号</label>
-                                <div class="col-sm-8">
+                                <div class="col-sm-5">
                                     <?php if (empty($lock_sn)) { ?>
                                     <input type="text" name="lock_sn" value="<?php echo $data['lock_sn']; ?>" class="form-control" />
                                     <?php if (isset($error['lock_sn'])) { ?><div class="text-danger"><?php echo $error['lock_sn']; ?></div><?php } ?>
@@ -34,7 +45,7 @@
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">锁名称</label>
-                                <div class="col-sm-8">
+                                <div class="col-sm-5">
                                     <input type="text" name="lock_name" value="<?php echo $data['lock_name']; ?>" class="form-control">
                                     <?php if (isset($error['lock_name'])) { ?><div class="text-danger"><?php echo $error['lock_name']; ?></div><?php } ?>
                                 </div>
@@ -42,8 +53,11 @@
                         </div>
 
                         <div class="form-group">
-                            <div class="col-sm-10">
-                                <button type="submit" class="btn btn-large btn-success pull-right">提交</button>
+                            <div class="col-sm-7">
+                                <div class="pull-right">
+                                    <button type="submit" class="btn btn-success margin-r-5 btn-sm">提交</button>
+                                    <a href="<?php echo $return_action; ?>" class="btn btn-default btn-sm">返回</a>
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -52,4 +66,5 @@
         </div>
     </div>
 </section>
+
 <?php echo $footer;?>

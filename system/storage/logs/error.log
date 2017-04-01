@@ -278,3 +278,17 @@
 2017-03-20 17:34:07 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\system\role_list.tpl on line62
 2017-03-20 17:34:07 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\system\role_list.tpl on line62
 2017-03-20 17:34:07 - PHP Notice: Undefined index: bicycle_id in D:\phpStudy\WWW\ebike\admin\view\template\system\role_list.tpl on line62
+2017-04-01 13:15:30 - PHP Notice: Undefined variable: import_action in E:\web\dc\rrdc\admin\view\template\system\admin_list.tpl on line57
+2017-04-01 13:15:30 - PHP Notice: Undefined variable: export_action in E:\web\dc\rrdc\admin\view\template\system\admin_list.tpl on line58
+2017-04-01 13:15:30 - PHP Notice: Undefined index: bicycle_id in E:\web\dc\rrdc\admin\view\template\system\admin_list.tpl on line84
+2017-04-01 13:15:32 - PHP Notice: Undefined variable: import_action in E:\web\dc\rrdc\admin\view\template\system\role_list.tpl on line35
+2017-04-01 13:15:32 - PHP Notice: Undefined variable: export_action in E:\web\dc\rrdc\admin\view\template\system\role_list.tpl on line36
+2017-04-01 13:15:32 - PHP Notice: Undefined index: bicycle_id in E:\web\dc\rrdc\admin\view\template\system\role_list.tpl on line62
+2017-04-01 13:15:32 - PHP Notice: Undefined index: bicycle_id in E:\web\dc\rrdc\admin\view\template\system\role_list.tpl on line62
+2017-04-01 13:15:32 - PHP Notice: Undefined index: bicycle_id in E:\web\dc\rrdc\admin\view\template\system\role_list.tpl on line62
+2017-04-01 13:15:32 - PHP Notice: Undefined index: bicycle_id in E:\web\dc\rrdc\admin\view\template\system\role_list.tpl on line62
+2017-04-01 13:15:32 - PHP Notice: Undefined index: bicycle_id in E:\web\dc\rrdc\admin\view\template\system\role_list.tpl on line62
+2017-04-01 13:15:32 - PHP Notice: Undefined index: bicycle_id in E:\web\dc\rrdc\admin\view\template\system\role_list.tpl on line62
+2017-04-01 13:15:37 - PHP Notice: Undefined variable: import_action in E:\web\dc\rrdc\admin\view\template\system\admin_list.tpl on line57
+2017-04-01 13:15:37 - PHP Notice: Undefined variable: export_action in E:\web\dc\rrdc\admin\view\template\system\admin_list.tpl on line58
+2017-04-01 13:15:37 - PHP Notice: Undefined index: bicycle_id in E:\web\dc\rrdc\admin\view\template\system\admin_list.tpl on line84

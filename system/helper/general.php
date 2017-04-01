@@ -410,3 +410,10 @@ function retrieve($url) {
     preg_match('/\/([^\/]+\.[a-z]+)[^\/]*$/',$url,$match);
     return $match[1];
 }
+
+/**
+ * 获取默认图片
+ */
+function getDefaultImage() {
+    return HTTP_IMAGE . 'images/default.jpg';
+}

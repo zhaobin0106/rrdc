@@ -416,7 +416,7 @@ class DB {
 //        if (strpos($key, 'MIN') || strpos($key, 'min')) return $key;
 //        if (strpos($key, 'MAX') || strpos($key, 'max')) return $key;
 //        if (strpos($key, 'AVG') || strpos($key, 'avg')) return $key;
-        $filter = '/(count|sum|avg|min|max)/i';
+        $filter = '/(count|sum|avg|min|max|distinct)/i';
         if (preg_match($filter, $key)) return $key;
 
         if (strstr($key, '`')) {

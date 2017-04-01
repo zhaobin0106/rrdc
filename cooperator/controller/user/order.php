@@ -1,5 +1,6 @@
 <?php
 class ControllerUserOrder extends Controller {
+    private $cooperator_id = null;
     private $cur_url = null;
     private $error = null;
     
@@ -8,6 +9,7 @@ class ControllerUserOrder extends Controller {
 
         // 当前网址
         $this->cur_url = $this->url->link($this->request->get['route']);
+        $this->cooperator_id = $this->logic_admin->getParam('cooperator_id');
 
         // 加载bicycle Model
         $this->load->library('sys_model/orders', true);
@@ -17,9 +19,11 @@ class ControllerUserOrder extends Controller {
      * 消费记录列表
      */
     public function index() {
-        $filter = $this->request->get(array('order_sn', 'lock_sn', 'bicycle_sn', 'user_name', 'region_name', 'order_state', 'add_time'));
+        $filter = $this->request->get(array('filter_type', 'order_sn', 'lock_sn', 'bicycle_sn', 'user_name', 'region_name', 'order_state', 'add_time'));
 
-        $condition = array();
+        $condition = array(
+            'cooperator_id' => $this->cooperator_id
+        );
         if (!empty($filter['order_sn'])) {
             $condition['order_sn'] = array('like', "%{$filter['order_sn']}%");
         }
@@ -45,6 +49,20 @@ class ControllerUserOrder extends Controller {
                 array('lt', bcadd(86399, strtotime($pdr_add_time[1])))
             );
         }
+
+        $filter_types = array(
+            'order_sn' => '订单sn',
+            'lock_sn' => '锁sn',
+            'bicycle_sn' => '单车sn',
+            'user_name' => '手机号',
+            'region_name' => '区域',
+        );
+        $filter_type = $this->request->get('filter_type');
+        if (empty($filter_type)) {
+            reset($filter_types);
+            $filter_type = key($filter_types);
+        }
+
         if (isset($this->request->get['page'])) {
             $page = (int)$this->request->get['page'];
         } else {
@@ -76,9 +94,12 @@ class ControllerUserOrder extends Controller {
         $this->assign('data_columns', $data_columns);
         $this->assign('data_rows', $result);
         $this->assign('filter', $filter);
+        $this->assign('filter_type', $filter_type);
+        $this->assign('filter_types', $filter_types);
         $this->assign('order_state', $order_state);
         $this->assign('action', $this->cur_url);
         $this->assign('add_action', $this->url->link('user/order/add'));
+        $this->assign('chart_action', $this->url->link('user/order/chart'));
 
         if (isset($this->session->data['success'])) {
             $this->assign('success', $this->session->data['success']);
@@ -96,6 +117,8 @@ class ControllerUserOrder extends Controller {
         $this->assign('pagination', $pagination);
         $this->assign('results', $results);
 
+        $this->assign('export_action', $this->url->link('user/order/export'));
+
         $this->response->setOutput($this->load->view('user/order_list', $this->output));
     }
 
@@ -108,7 +131,7 @@ class ControllerUserOrder extends Controller {
         $this->setDataColumn('锁sn');
         $this->setDataColumn('单车sn');
         $this->setDataColumn('手机号');
-        $this->setDataColumn('景区');
+        $this->setDataColumn('区域');
         $this->setDataColumn('状态');
         $this->setDataColumn('下单时间');
         return $this->data_columns;
@@ -130,8 +153,8 @@ class ControllerUserOrder extends Controller {
             $this->sys_model_bicycle->addBicycle($data);
 
             $this->session->data['success'] = '添加消费记录成功！';
-            
-            $filter = $this->request->get(array('bicycle_sn', 'type', 'lock_sn', 'is_using'));
+
+            $filter = $this->request->get(array('filter_type', 'bicycle_sn', 'type', 'lock_sn', 'is_using'));
 
             $this->load->controller('common/base/redirect', $this->url->link('user/order', $filter, true));
         }
@@ -159,7 +182,7 @@ class ControllerUserOrder extends Controller {
 
             $this->session->data['success'] = '编辑消费记录成功！';
 
-            $filter = $this->request->get(array('bicycle_sn', 'type', 'lock_sn', 'is_using'));
+            $filter = $this->request->get(array('filter_type', 'bicycle_sn', 'type', 'lock_sn', 'is_using'));
 
             $this->load->controller('common/base/redirect', $this->url->link('user/order', $filter, true));
         }
@@ -180,7 +203,7 @@ class ControllerUserOrder extends Controller {
 
             $this->session->data['success'] = '删除消费记录成功！';
         }
-        $filter = $this->request->get(array('bicycle_sn', 'type', 'lock_sn', 'is_using'));
+        $filter = $this->request->get(array('filter_type', 'bicycle_sn', 'type', 'lock_sn', 'is_using'));
         $this->load->controller('common/base/redirect', $this->url->link('user/order', $filter, true));
     }
 
@@ -210,8 +233,140 @@ class ControllerUserOrder extends Controller {
         }
 
         $this->assign('data', $info);
+        $this->assign('return_action', $this->url->link('user/order'));
 
         $this->response->setOutput($this->load->view('user/order_info', $this->output));
+    }
+
+    /**
+     * 统计图表
+     */
+    public function chart() {
+        $filter = $this->request->get(array('add_time'));
+        $condition = array();
+        if (!empty($filter['add_time'])) {
+            $pdr_add_time = explode(' 至 ', $filter['add_time']);
+
+            $firstday = strtotime($pdr_add_time[0]);
+            $lastday  = bcadd(86399, strtotime($pdr_add_time[1]));
+            $condition['add_time'] = array(
+                array('egt', $firstday),
+                array('elt', $lastday)
+            );
+        } else {
+            $firstday = strtotime(date('Y-m-01'));
+            $lastday  = bcadd(86399, strtotime(date('Y-m-d')));
+            $condition['add_time'] = array(
+                array('egt', $firstday),
+                array('elt', $lastday)
+            );
+        }
+        // 初始化订单统计数据
+        $dailyAmount = array();
+        while ($firstday <= $lastday) {
+            $tempDay = date('Y-m-d', $firstday);
+            $dailyAmount[$tempDay] = 0;
+            $firstday = strtotime('+1 day', $firstday);
+        }
+
+        $order = 'add_time DESC';
+        $result = $this->sys_model_orders->getOrdersList($condition, $order);
+        if (is_array($result) && !empty($result)) {
+            foreach ($result as $item) {
+                $tempDay = date('Y-m-d', $item['add_time']);
+                $dailyAmount[$tempDay] += $item['pay_amount'];
+            }
+        }
+
+        $orderData = array();
+        $orderTotal = 0;
+        if (is_array($dailyAmount) && !empty($dailyAmount)) {
+            foreach ($dailyAmount as $key => $val) {
+                $orderData[] = array(
+                    'date' => $key,
+                    'amount' => $val
+                );
+                $orderTotal += $val;
+            }
+        }
+        $orderData = json_encode($orderData);
+        $orderTotal = sprintf('%0.2f', $orderTotal);
+
+        $this->assign('filter', $filter);
+        $this->assign('orderData', $orderData);
+        $this->assign('orderTotal', $orderTotal);
+        $this->assign('action', $this->cur_url);
+        $this->assign('index_action', $this->url->link('user/order'));
+
+        $this->response->setOutput($this->load->view('user/order_chart', $this->output));
+    }
+
+    /**
+     * 导出
+     */
+    public function export() {
+        $filter = $this->request->post(array('filter_type', 'order_sn', 'lock_sn', 'bicycle_sn', 'user_name', 'region_name', 'order_state', 'add_time'));
+
+        $condition = array();
+        if (!empty($filter['order_sn'])) {
+            $condition['order_sn'] = array('like', "%{$filter['order_sn']}%");
+        }
+        if (!empty($filter['lock_sn'])) {
+            $condition['lock_sn'] = array('like', "%{$filter['lock_sn']}%");
+        }
+        if (!empty($filter['bicycle_sn'])) {
+            $condition['bicycle_sn'] = array('like', "%{$filter['bicycle_sn']}%");
+        }
+        if (!empty($filter['user_name'])) {
+            $condition['user_name'] = array('like', "%{$filter['user_name']}%");
+        }
+        if (!empty($filter['region_name'])) {
+            $condition['region_name'] = array('like', "%{$filter['region_name']}%");
+        }
+        if (is_numeric($filter['order_state'])) {
+            $condition['order_state'] = (int)$filter['order_state'];
+        }
+        if (!empty($filter['add_time'])) {
+            $pdr_add_time = explode(' 至 ', $filter['add_time']);
+            $condition['add_time'] = array(
+                array('gt', strtotime($pdr_add_time[0])),
+                array('lt', bcadd(86399, strtotime($pdr_add_time[1])))
+            );
+        }
+        $order = 'add_time DESC';
+        $limit = '';
+
+        $result = $this->sys_model_orders->getOrdersList($condition, $order, $limit);
+        $list = array();
+        if (is_array($result) && !empty($result)) {
+            $order_state = get_order_state();
+            foreach ($result as $v) {
+                $list[] = array(
+                    'order_sn' => $v['order_sn'],
+                    'lock_sn' => $v['lock_sn'],
+                    'bicycle_sn' => $v['bicycle_sn'],
+                    'user_name' => $v['user_name'],
+                    'region_name' => $v['region_name'],
+                    'order_state' =>$order_state[$v['order_state']],
+                    'add_time' => date("Y-m-d h:m:s",$v['add_time']),
+                );
+            }
+        }
+
+        $data = array(
+            'title' => '消费记录列表',
+            'header' => array(
+                'order_sn' => '订单sn',
+                'lock_sn' => '锁sn',
+                'bicycle_sn' => '单车sn',
+                'user_name' => '手机号',
+                'region_name' => '区域',
+                'order_state' => '	状态',
+                'add_time' => '下单时间',
+            ),
+            'list' => $list
+        );
+        $this->load->controller('common/base/exportExcel', $data);
     }
 
     private function getForm() {

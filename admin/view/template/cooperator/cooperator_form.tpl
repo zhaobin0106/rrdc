@@ -43,26 +43,44 @@
                                         <input type="text" name="cooperator_name" value="<?php echo $data['cooperator_name']; ?>" class="form-control" />
                                         <?php if (isset($error['cooperator_name'])) { ?><div class="text-danger"><?php echo $error['cooperator_name']; ?></div><?php } ?>
                                         <?php } else { ?>
-                                        <span><?php echo $data['cooperator_name']; ?></span>
+                                        <h5><?php echo $data['cooperator_name']; ?></h5>
                                         <?php } ?>
                                     </div>
                                 </div>
+                                <?php if (empty($cooperator_id)) { ?>
                                 <div class="form-group">
-                                    <label class="col-sm-2 control-label">密码</label>
+                                    <label class="col-sm-2 control-label">管理员账号</label>
                                     <div class="col-sm-5">
-                                        <input type="password" name="password" class="form-control"  placeholder="不修改密码时可不填" />
-                                        <?php if (isset($error['password'])) { ?><div class="text-danger"><?php echo $error['password']; ?></div><?php } ?>
+                                        <input type="text" name="admin_name" value="<?php echo $data['admin_name']; ?>" class="form-control" />
+                                        <?php if (isset($error['admin_name'])) { ?><div class="text-danger"><?php echo $error['admin_name']; ?></div><?php } ?>
                                     </div>
                                 </div>
+                                <?php } ?>
+                                <?php if (empty($cooperator_id)) { ?>
                                 <div class="form-group">
-                                    <label class="col-sm-2 control-label">重复密码</label>
+                                    <label class="col-sm-2 control-label">管理员密码</label>
                                     <div class="col-sm-5">
-                                        <input type="password" name="confirm" class="form-control"  placeholder="不修改密码时可不填" />
-                                        <?php if (isset($error['confirm'])) { ?><div class="text-danger"><?php echo $error['confirm']; ?></div><?php } ?>
+                                        <input type="text" name="password" value="<?php echo $data['password']; ?>" class="form-control" />
                                     </div>
                                 </div>
+                                <?php } ?>
+                                <?php if (empty($cooperator_id)) { ?>
                                 <div class="form-group">
-                                    <label class="col-sm-2 control-label">管辖景区</label>
+                                    <label class="col-sm-2 control-label">管理员角色</label>
+                                    <div class="col-sm-5">
+                                        <select name="role_id" class="form-control">
+                                            <?php if (!empty($roles)) { ?>
+                                            <?php foreach($roles as $role) { ?>
+                                            <option value="<?php echo $role['role_id']; ?>" <?php echo $role['role_id'] == $data['role_id'] ? 'selected' : ''; ?>><?php echo $role['role_name']; ?></option>
+                                            <?php } ?>
+                                            <?php } ?>
+                                        </select>
+                                        <?php if (isset($error['role_id'])) { ?><div class="text-danger"><?php echo $error['role_id']; ?></div><?php } ?>
+                                    </div>
+                                </div>
+                                <?php } ?>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">区域管辖</label>
                                     <div class="col-sm-5">
                                         <ul style="max-height: 150px;overflow-y: auto;list-style-type: none;padding: 0;">
                                             <?php if ($regions) { ?>

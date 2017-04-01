@@ -37,7 +37,7 @@ class ControllerMeInformation extends Controller {
             $this->load->controller('common/base/redirect', $this->url->link('me/information', '', true));
         }
 
-        $this->assign('title', '账号信息');
+        $this->assign('title', '编辑合伙人');
         $this->getForm();
     }
 

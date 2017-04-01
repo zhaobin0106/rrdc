@@ -7,14 +7,11 @@
 class ControllerCommonLogin extends Controller {
     private $error = array();
 
-    private $cooperator_id;
-    private $cooperator_name;
-
     public function __construct($registry) {
         parent::__construct($registry);
 
         // 加载管理员 Model
-        $this->load->library('sys_model/cooperator', true);
+        $this->load->library('sys_model/admin', true);
     }
 
     /**
@@ -23,20 +20,23 @@ class ControllerCommonLogin extends Controller {
     public function index() {
         $this->load->language('common/login');
 
-        if ($this->isLogged() && isset($this->request->cookie['token']) && ($this->request->cookie['token'] == $this->session->data['token'])) {
-            $this->response->redirect($this->url->link('cooperator/index', 'token=' . $this->session->data['token'], true));
-        }
-
         if (check_submit() && $this->validate()) {
             $token = token(32);
             $expire = TIMESTAMP + 86400;
             setcookie('token', $token, $expire);
             $this->session->data['token'] = $token;
 
+            $this->load->library('sys_model/cooperator', true);
+            $condition = array(
+                'cooperator_id' => $this->logic_admin->getParam('cooperator_id')
+            );
+            $cooperatorInfo = $this->sys_model_cooperator->getCooperatorInfo($condition);
+            $this->session->data['cooperator'] = $cooperatorInfo;
+
             if (isset($this->request->post['redirect']) && (strpos($this->request->post['redirect'], HTTP_SERVER) === 0 || strpos($this->request->post['redirect'], HTTPS_SERVER) === 0)) {
                 $this->response->redirect($this->request->post['redirect']);
             } else {
-                $this->response->redirect($this->url->link('bicycle/bicycle', '', true));
+                $this->response->redirect($this->url->link('admin/index', '', true));
             }
         }
 
@@ -44,7 +44,7 @@ class ControllerCommonLogin extends Controller {
         $this->assign($languages);
         $this->assign('is_login_page', true);
         $this->assign('static', HTTP_IMAGE);
-        $this->assign('title', 'Ebike单车 | 登录');
+        $this->assign('title', '小强单车 | 合伙人登录');
         $this->assign('error', $this->error);
 
         $this->assign('action', $this->url->link('common/login', '', true));
@@ -72,20 +72,12 @@ class ControllerCommonLogin extends Controller {
 
     /**
      * 登录，数据库操作
-     * @param $cooperator_name
+     * @param $admin_name
      * @param $password
      * @return mixed
      */
-    function login($cooperator_name, $password) {
-        $rec = $this->logic_cooperator->login($cooperator_name, $password);
+    function login($admin_name, $password) {
+        $rec = $this->logic_admin->login($admin_name, $password, 2);
         return $rec['state'];
-    }
-
-    /**
-     * 是否已登录
-     * @return mixed
-     */
-    public function isLogged() {
-        return $this->cooperator_id;
     }
 }

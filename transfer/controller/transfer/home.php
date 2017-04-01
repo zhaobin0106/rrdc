@@ -9,7 +9,7 @@ class ControllerTransferHome extends Controller {
     public function receiptData() {
         if (strtolower($_SERVER['REQUEST_METHOD']) == 'post') {
             $post = file_get_contents("php://input");
-            //file_put_contents('/data/wwwroot/default/bike/transfer/controller/transfer/receive.log', date('Y-m-d H:i:s ') . $post . "\n", FILE_APPEND);
+            file_put_contents('/data/wwwroot/default/bike/transfer/controller/transfer/receive.log', date('Y-m-d H:i:s ') . $post . "\n", FILE_APPEND);
             $post = json_decode($post, true);
 
             if (isset($post['time'])) {
@@ -82,6 +82,8 @@ class ControllerTransferHome extends Controller {
                             $arr['data'] = $result['data'];
                             $this->load->library('JPush/JPush', true);
                             $send_result = $this->JPush_JPush->message($result['data']['user_id'], json_encode($arr));
+                        } else {
+                            file_put_contents('open_order_error.log', json_encode($result) . "\n" , 8);
                         }
                     }
                     else { // 开锁指令之后开锁失败
@@ -100,7 +102,7 @@ class ControllerTransferHome extends Controller {
                         }
                         $i++;
                     } else {
-                        $this->log->write(json_encode($result));
+                        file_put_contents('close_order_error.log', json_encode($result) . "\n" , 8);
                     }
                     break;
                 case 'normal':

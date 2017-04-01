@@ -199,7 +199,7 @@ class ControllerOperationCoupon extends Controller {
 //        }
 //
 //        $data = array(
-//            'title' => '违规停放列表',
+//            'title' => '优惠券列表',
 //            'header' => array(
 //                'user_name' => '用户名称',
 //                'coupon_code' => '优惠券号码',

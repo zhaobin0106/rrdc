@@ -191,7 +191,7 @@ class ControllerUserUser extends Controller {
         }
 
         $data = array(
-            'title' => '违规停放列表',
+            'title' => '用户列表',
             'header' => array(
                 'mobile' => '手机号码',
                 'deposit' => '押金(元)',
@@ -203,5 +203,64 @@ class ControllerUserUser extends Controller {
             'list' => $list
         );
         $this->load->controller('common/base/exportExcel', $data);
+    }
+
+    public function getUserList() {
+        $filter = $this->request->get(array('mobile'));
+        $condition = array();
+
+        if (!empty($filter['mobile'])) {
+            $condition['mobile'] = array('like', "%{$filter['mobile']}%");
+        }
+
+        if (isset($this->request->get['page'])) {
+            $page = (int)$this->request->get['page'];
+        } else {
+            $page = 1;
+        }
+
+        $order = 'add_time DESC';
+        $rows = $this->config->get('config_limit_admin');
+        $offset = ($page - 1) * $rows;
+        $limit = sprintf('%d, %d', $offset, $rows);
+
+        $result = $this->sys_model_user->getUserList($condition, 'user_id, mobile', $order, $limit);
+        $total = $this->sys_model_user->getTotalUsers($condition);
+
+        $available_states = get_common_boolean();
+//        if (is_array($result) && !empty($result)) {
+//            foreach ($result as &$item) {
+//
+//            }
+//        }
+
+//        $data_columns = $this->getDataColumns();
+//        $this->assign('data_columns', $data_columns);
+//        $this->assign('available_states', $available_states);
+        $this->assign('data_rows', $result);
+        $this->assign('filter', $filter);
+
+//        $this->assign('action', $this->cur_url);
+//        $this->assign('add_action', $this->url->link('user/user/add'));
+
+        if (isset($this->session->data['success'])) {
+            $this->assign('success', $this->session->data['success']);
+            unset($this->session->data['success']);
+        }
+
+        $pagination = new Pagination();
+        $pagination->total = $total;
+        $pagination->page = $page;
+        $pagination->page_size = $rows;
+        $pagination->url = $this->cur_url . '&amp;page={page}' . '&amp;' . str_replace('&', '&amp;', http_build_query($filter));
+        $pagination = $pagination->render();
+        $results = sprintf($this->language->get('text_pagination'), ($total) ? $offset + 1 : 0, ($offset > ($total - $rows)) ? $total : ($offset + $rows), $total, ceil($total / $rows));
+
+        $this->assign('pagination', $pagination);
+        $this->assign('results', $results);
+        $this->assign('static', HTTP_CATALOG);
+//        $this->assign('export_action', $this->url->link('user/user/export'));
+
+        $this->response->setOutput($this->load->view('user/modal_user_list', $this->output));
     }
 }

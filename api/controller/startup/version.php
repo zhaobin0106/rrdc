@@ -33,7 +33,8 @@ class ControllerStartupVersion extends Controller {
         $in = array(
             'operator/operator/openlock',
             'operator/operator/beeplock',
-            'account/order/book'
+            'operator/operator/lockposition',
+            'account/order/book',
         );
         $route = $this->request->get['route'];
         $route = strtolower($route);
@@ -54,16 +55,18 @@ class ControllerStartupVersion extends Controller {
 
             $condition = array(
                 'bicycle_sn' => $bicycle_sn,
-                'region_id' => $region['region_id']
+                //'region_id' => $region['region_id']
             );
 
-            $device_info = $this->sys_model_bicycle->getBicycleInfo($condition, 'bicycle_sn, lock_sn');
+            $device_info = $this->sys_model_bicycle->getBicycleInfo($condition, 'bicycle_id, bicycle_sn, lock_sn');
             if (empty($device_info)) {
                 $this->response->showErrorResult('系统不存在此单车编号');
             }
             if (empty($device_info['lock_sn'])) {
                 $this->response->showErrorResult('此单车未绑定锁');
             }
+            $this->request->post['bicycle_id'] = $device_info['bicycle_id'];
+            $this->request->post['bicycle_sn'] = $this->request->post['device_id'];
             $this->request->post['device_id'] = $device_info['lock_sn'];
         }
     }

@@ -1,55 +1,74 @@
 <?php echo $header; ?>
 <!-- Content Header (Page header) -->
-<section class="content-header">
-    <h1><?php echo $title; ?><small><?php echo $title; ?></small></h1>
-    <ol class="breadcrumb">
-        <li><i class="fa fa-dashboard"></i>首页</li>
-        <li><?php echo $title; ?></li>
-    </ol>
+<section class="content-header clearfix">
+    <h1 class="pull-left">
+        <span>角色权限</span>
+        <a href="javascript:;" onclick="collect('<?php echo $menu_id ?>',this)"><i class="<?php echo $menu_collect_status == 1? 'fa fa-star no-margin text-yellow' : 'fa fa-star-o text-gray'; ?>"></i></a>
+    </h1>
+    <div class="pull-right">
+        <div class="pull-left" style="margin-right: 20px;">
+            <i class="fa fa-bicycle"></i>
+            <span>总数：<?php echo $total_bicycle; ?>台</span>
+        </div>
+        <div class="pull-left" style="margin-right: 20px;">
+            <span>使用中：<?php echo $using_bicycle; ?>台</span>
+        </div>
+        <div class="pull-left" style="margin-right: 20px;">
+            <span>故障：<?php echo $fault_bicycle; ?>台</span>
+        </div>
+    </div>
 </section>
 <!-- Main content -->
 <section class="content">
     <div class="row">
         <div class="col-xs-12">
-            <div class="box box-primary">
-                <div class="box-header with-border"></div>
-                <div class="box-body">
-                    <?php if (isset($error['warning'])) { ?>
-                    <div class="alert alert-danger" style="opacity: 0.8;"><i class="fa fa-exclamation-circle"></i>&nbsp;<span><?php echo $error['warning']; ?></span>
-                        <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    </div>
-                    <?php } ?>
-                    <form class="form-horizontal" method="post" action="<?php echo $action; ?>">
-                        <div class="row">
-                            <div class="form-group">
-                                <label class="col-sm-2 control-label">角色名</label>
-                                <div class="col-sm-8">
-                                    <input type="text" name="role_name" value="<?php echo $data['role_name']; ?>" class="form-control" />
-                                    <?php if (isset($error['role_name'])) { ?><div class="text-danger"><?php echo $error['role_name']; ?></div><?php } ?>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-2 control-label">权限</label>
-                                <div class="col-sm-8">
-                                    <input type="hidden" name="role_permission" value='<?php echo $role_permission; ?>' />
-                                    <ul id="permission-tree" class="ztree"></ul>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-2 control-label">状态</label>
-                                <div class="col-sm-8">
-                                    <input type="checkbox" name="state" value="1" placeholder="状态" class="bootstrap-switch in-list" data-on-text="启用" data-off-text="停用" data-label-width="5" <?php echo $data['state']==1 ? 'checked' : ''; ?> />
-                                    <?php if (isset($error['state'])) { ?><div class="text-danger"><?php echo $error['state']; ?></div><?php } ?>
-                                </div>
-                            </div>
+            <div class="nav-tabs-custom">
+                <!-- tab 标签 -->
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="javascript:;" data-toggle="tab"><?php echo $title; ?></a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="bicycle">
+                        <?php if (isset($error['warning'])) { ?>
+                        <div class="alert alert-danger" style="opacity: 0.8;"><i class="fa fa-exclamation-circle"></i>&nbsp;<span><?php echo $error['warning']; ?></span>
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
                         </div>
+                        <?php } ?>
+                        <form class="form-horizontal" method="post" action="<?php echo $action; ?>">
+                            <div class="row">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">角色名</label>
+                                    <div class="col-sm-5">
+                                        <input type="text" name="role_name" value="<?php echo $data['role_name']; ?>" class="form-control" />
+                                        <?php if (isset($error['role_name'])) { ?><div class="text-danger"><?php echo $error['role_name']; ?></div><?php } ?>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">权限</label>
+                                    <div class="col-sm-5">
+                                        <input type="hidden" name="role_permission" value='<?php echo $role_permission; ?>' />
+                                        <ul id="permission-tree" class="ztree"></ul>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">状态</label>
+                                    <div class="col-sm-5">
+                                        <input type="checkbox" name="state" value="1" placeholder="状态" class="bootstrap-switch in-list" data-on-text="启用" data-off-text="停用" data-label-width="5" <?php echo $data['state']==1 ? 'checked' : ''; ?> />
+                                        <?php if (isset($error['state'])) { ?><div class="text-danger"><?php echo $error['state']; ?></div><?php } ?>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <div class="form-group">
-                            <div class="col-sm-10">
-                                <button type="submit" class="btn btn-large btn-success pull-right">提交</button>
+                            <div class="form-group">
+                                <div class="col-sm-7">
+                                    <div class="pull-right">
+                                        <button type="submit" class="btn btn-sm btn-success margin-r-5">提交</button>
+                                        <a href="<?php echo $return_action; ?>" class="btn btn-sm btn-default">返回</a>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -99,5 +118,4 @@
         $('[name="role_permission"]').val(JSON.stringify(checkedIds));
     }
 </script>
-
 <?php echo $footer;?>

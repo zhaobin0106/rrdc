@@ -11,24 +11,12 @@ $_['db_password'] = DB_PASSWORD;
 $_['db_database'] = DB_DATABASE;
 $_['db_port'] = DB_PORT;
 
-// Autoload Libraries
-$_['library_autoload'] = array(
+$_['action_pre_action'] = array (
+    //'startup/router',
+    'startup/startup'
 );
 
-// Actions
-$_['action_default']       = 'oauth/token';
-$_['action_pre_action'] = array(
-    'startup/startup',		//
-//    'startup/error',
-//    'oauth/authenticate', 	//接口认证
-//    'startup/event',
-//    'startup/login',
-//    'startup/deposit',
-//    'startup/order'
-);
+//$_['action_default'] = 'transfer/home';
 
-// Action Events
 $_['action_event'] = array(
-    //'model/*/before' => 'event/debug/before'
-    //'model/*/after' => 'event/debug/after'
 );

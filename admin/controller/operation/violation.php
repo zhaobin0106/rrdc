@@ -1,5 +1,6 @@
 <?php
 class ControllerOperationViolation extends Controller {
+    private $cooperator_id = null;
     private $cur_url = null;
     private $error = null;
 
@@ -11,6 +12,7 @@ class ControllerOperationViolation extends Controller {
 
         // 加载fault Model
         $this->load->library('sys_model/fault', true);
+        $this->cooperator_id = $this->logic_admin->getParam('cooperator_id');
     }
 
     /**
@@ -27,7 +29,9 @@ class ControllerOperationViolation extends Controller {
 
         $filter = $this->request->get(array('filter_type', 'bicycle_sn', 'user_name', 'content', 'type', 'add_time'));
 
-        $condition = array();
+        $condition = array(
+            'cooperator_id' => $this->cooperator_id
+        );
         if (!empty($filter['bicycle_sn'])) {
             $condition['bicycle_sn'] = array('like', "%{$filter['bicycle_sn']}%");
         }
@@ -131,7 +135,9 @@ class ControllerOperationViolation extends Controller {
             $page = 1;
         }
 
-        $condition = array();
+        $condition = array(
+            'cooperator_id' => $this->cooperator_id
+        );
         $order = 'add_time DESC';
         $rows = $this->config->get('config_limit_admin');
         $offset = ($page - 1) * $rows;
@@ -139,14 +145,16 @@ class ControllerOperationViolation extends Controller {
 
         $result = $this->sys_model_fault->getIllegalParkingList($condition, $order, $limit);
         $total = $this->sys_model_fault->getTotalIllegalParking($condition);
-        $total =ceil($total/$rows);
+        $this->load->library('sys_model/bicycle');
+		$total =ceil($total/$rows);
         $list = array();
         if (is_array($result) && !empty($result)) {
             foreach ($result as $v) {
                 $list[] = array(
                     'bicycle_sn' => $v['bicycle_sn'],
                     'add_time' => date('Y-m-d H:i:s', $v['add_time']),
-                    'uri' => $this->url->link('operation/violation/info', 'parking_id='. $v['parking_id'])
+                    'uri' => $this->url->link('operation/violation/info', 'parking_id='. $v['parking_id']),
+                    'bicycle_id'=> $this->sys_model_bicycle->getBicycleInfo(array('bicycle_sn'=> $v['bicycle_sn']))['bicycle_id'],
                 );
             }
         }
@@ -186,7 +194,8 @@ class ControllerOperationViolation extends Controller {
     public function delete() {
         if (isset($this->request->get['violation_id']) && $this->validateDelete()) {
             $condition = array(
-                'violation_id' => $this->request->get['violation_id']
+                'violation_id' => $this->request->get['violation_id'],
+                'cooperator_id' => $this->cooperator_id
             );
             $this->sys_model_fault->deleteFault($condition);
 
@@ -203,7 +212,8 @@ class ControllerOperationViolation extends Controller {
         // 编辑时获取已有的数据
         $parking_id = $this->request->get('parking_id');
         $condition = array(
-            'parking_id' => $parking_id
+            'parking_id' => $parking_id,
+            'cooperator_id' => $this->cooperator_id
         );
         $info = $this->sys_model_fault->getIllegalParkingInfo($condition);
         if (!empty($info)) {
@@ -230,7 +240,9 @@ class ControllerOperationViolation extends Controller {
     public function export() {
         $filter = $this->request->post(array('filter_type', 'bicycle_sn', 'user_name', 'content', 'type', 'add_time'));
 
-        $condition = array();
+        $condition = array(
+            'cooperator_id' => $this->cooperator_id
+        );
         if (!empty($filter['bicycle_sn'])) {
             $condition['bicycle_sn'] = array('like', "%{$filter['bicycle_sn']}%");
         }

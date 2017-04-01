@@ -1,4 +1,5 @@
 <?php
+header("Content-type: text/html; charset=utf-8");
 class ControllerStartupLogin extends Controller {
     public function index() {
         $route = isset($this->request->get['route']) ? $this->request->get['route'] : '';

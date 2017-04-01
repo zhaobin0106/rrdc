@@ -28,6 +28,7 @@ class ControllerCommonHeader extends Controller {
         $this->assign('lang', $this->language->get('code'));
         $this->assign('direction', $this->language->get('direction'));
         $this->assign('logout_url', $this->url->link('common/logout'));
+        $this->assign('information', $this->url->link('me/information'));
 
         $this->assign('violation_action', $this->url->link('operation/violation', 'method=json'));
         $this->assign('fault_action', $this->url->link('operation/fault', 'method=json'));
@@ -40,6 +41,12 @@ class ControllerCommonHeader extends Controller {
         $this->assign('menu', $this->load->controller('common/menu'));
 
         $this->assign('http_server', $data['base']);
+
+        //最后登录时间
+        $this->load->library('sys_model/admin',true);
+        $admin = $this->sys_model_admin->getAdminInfoById($this->logic_admin->getId());
+        $this->assign('login_time', date('Y-m-d H:m:s', $admin['login_time']));
+        $this->assign('admin_name', $admin['admin_name']);
 
         $this->load->language('common/header');
         $languages = $this->language->all();

@@ -70,7 +70,7 @@ class Menu {
      * 获取菜单位置信息
      */
     public function getMenuLockMarker($where = array(), $field = '', $limit = '') {
-        $field .= 'b.menu_id,b.menu_sn,b.type,b.fee,b.scenic_spot_id,b.region_name,';
+        $field .= 'b.menu_id,b.menu_sn,b.type,b.fee,b.scenic_spot_id,b.scenic_spot_name,';
         $field .= 'l.lock_sn,l.lat,l.lng';
         $on = 'b.lock_sn=l.lock_sn';
         $result = $this->db->table('menu as b,lock as l')->where($where)->field($field)->join('left')->on($on)->limit($limit)->select();

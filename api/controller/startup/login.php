@@ -19,6 +19,7 @@ class ControllerStartupLogin extends Controller {
             'payment/alipay/notify',
             'payment/wxpay/notify',
             'location/location/getbicyclelocation',
+            'location/location/getlocalprice',
             'system/common/wechat_jssdk',
             'system/common/wechat',
             'system/common/wechatapp',
@@ -26,6 +27,7 @@ class ControllerStartupLogin extends Controller {
             'system/test',
             'system/common/contact',
             'system/common/version',
+			'wechat/mp',
         );
 
         if (!in_array($route, $ignore)) {

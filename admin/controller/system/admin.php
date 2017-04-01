@@ -270,7 +270,6 @@ class ControllerSystemAdmin extends Controller {
         $this->assign('roles', $roles);
         $this->assign('data', $info);
         $this->assign('action', $this->cur_url . '&admin_id=' . $admin_id);
-        $this->assign('return_action', $this->url->link('system/admin'));
         $this->assign('error', $this->error);
         $this->assign('static', HTTP_IMAGE);
 

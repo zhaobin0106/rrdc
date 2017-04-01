@@ -10,8 +10,8 @@ class Orders {
         return $this->db->table('orders')->insert($data);
     }
 
-    public function getOrdersList($where, $order = '', $limit = '') {
-        return $this->db->table('orders')->field('*')->where($where)->order($order)->limit($limit)->select();
+    public function getOrdersList($where, $order = '', $limit = '', $field = '*') {
+        return $this->db->table('orders')->field($field)->where($where)->order($order)->limit($limit)->select();
     }
 
     public function getTotalOrders($where) {
@@ -26,8 +26,8 @@ class Orders {
         return $this->db->table('orders_line')->insert($data);
     }
 
-    public function getOrderLine($where, $order = 'add_time asc', $limit = '') {
-        return $this->db->table('orders_line')->field('*')->where($where)->order($order)->limit($limit)->select();
+    public function getOrderLine($where, $fields = '*', $order = 'add_time asc', $limit = '') {
+        return $this->db->table('orders_line')->field($fields)->where($where)->order($order)->limit($limit)->select();
     }
 
     public function updateOrders($where, $data) {

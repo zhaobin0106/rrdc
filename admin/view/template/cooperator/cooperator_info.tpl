@@ -72,11 +72,4 @@
         </div>
     </div>
 </section>
-<link rel="stylesheet" href="<?php echo $static . "AdminLTE-2.3.7/";?>plugins/bootstrap-switch/bootstrap-switch.min.css" />
-<script type="text/javascript" src="<?php echo $static . "AdminLTE-2.3.7/";?>plugins/bootstrap-switch/bootstrap-switch.min.js"></script>
-<script type="text/javascript">
-        $(document).ready(function() {
-            $('input.bootstrap-switch').bootstrapSwitch();
-        });
-</script>
 <?php echo $footer;?>

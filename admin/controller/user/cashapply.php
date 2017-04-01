@@ -198,7 +198,7 @@ class ControllerUserCashApply extends Controller {
         }
 
         $data = array(
-            'title' => '违规停放列表',
+            'title' => '充值记录列表',
             'header' => array(
                 'pdc_sn' => '申请编号',
                 'pdc_user_name' => '申请人',

@@ -9,8 +9,8 @@ class ControllerMeInformation extends Controller {
         // 当前网址
         $this->cur_url = $this->url->link($this->request->get['route']);
 
-        // 加载cooperator Model
-        $this->load->library('sys_model/cooperator', true);
+        // 加载admin Model
+        $this->load->library('sys_model/admin', true);
     }
 
     /**
@@ -19,7 +19,7 @@ class ControllerMeInformation extends Controller {
     public function index() {
         if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
             $input = $this->request->post(array('password'));
-            $cooperator_id = $this->logic_cooperator->getId();
+            $admin_id = $this->logic_admin->getId();
             // 修改的用户数据
             $data = array();
             // 是否需要更改密码
@@ -28,23 +28,23 @@ class ControllerMeInformation extends Controller {
             }
             // 更新用户信息条件
             $condition = array(
-                'cooperator_id' => $cooperator_id
+                'admin_id' => $admin_id
             );
-            $this->logic_cooperator->update($condition, $data);
+            $this->logic_admin->update($condition, $data);
 
             $this->session->data['success'] = '修改成功！';
 
             $this->load->controller('common/base/redirect', $this->url->link('me/information', '', true));
         }
 
-        $this->assign('title', '编辑合伙人');
+        $this->assign('title', '账号信息');
         $this->getForm();
     }
 
     private function getForm() {
         $input = $this->request->post(array('password', 'confirm'));
 
-        $info = $this->logic_cooperator->getData();
+        $info = $this->logic_admin->getData();
 
         $info['add_time'] = isset($info['add_time']) && !empty($info['add_time']) ? date('Y-m-d H:i:s', $info['add_time']) : '';
 
@@ -76,7 +76,7 @@ class ControllerMeInformation extends Controller {
 
         $password = $this->request->post('password');
         $confirm = $this->request->post('confirm');
-        if (!empty($password) && !$this->logic_cooperator->checkPasswordFormat($password)) {
+        if (!empty($password) && !$this->logic_admin->checkPasswordFormat($password)) {
             $this->error['password'] = '请输入6-16位字母数字的密码！';
         } else {
             if ($password !== $confirm) {

@@ -265,7 +265,7 @@ class ControllerUserPoints extends Controller {
         }
 
         $data = array(
-            'title' => '违规停放列表',
+            'title' => '用户信用列表',
             'header' => array(
                 'mobile' => '手机号',
                 'credit_point' => '积分值',

@@ -1,30 +1,37 @@
 <?php echo $header; ?>
 <!-- Content Header (Page header) -->
-<section class="content-header">
-    <h1>管理员列表<small>管理员列表</small></h1>
-    <ol class="breadcrumb">
-        <li><i class="fa fa-dashboard"></i>首页</li>
-        <li>管理员列表</li>
-    </ol>
+<section class="content-header clearfix">
+    <h1 class="pull-left">
+        <span>管理员</span>
+        <a href="javascript:;"><i class="fa fa-star-o text-gray"></i></a>
+    </h1>
 </section>
 <!-- Main content -->
 <section class="content">
     <div class="row">
         <div class="col-xs-12">
-            <div class="box box-primary">
-                <div class="box-header with-border">
-                    <form action="" method="post" id="export-form" style="display: none">
-                        <input type="hidden" name="page_export" id="page_export">
-                        <input type="hidden" name="current_page" id="current_page" value="1">
-                    </form>
-                </div>
-                <div class="box-header with-border">
-                    <a href="<?php echo $add_action; ?>" class="btn btn-success">
-                        <i class="fa fa-plus"></i>添加
-                    </a>
-                </div>
-                <form class="search_form" action="<?php echo $action; ?>" method="get">
-                    <div class="box-body">
+            <div class="nav-tabs-custom">
+                <!-- tab 标签 -->
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="javascript:;">管理员列表</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="bicycle">
+                        <form class="search_form" action="<?php echo $action; ?>" method="get">
+                            <!-- 搜索 -->
+                            <div class="dataTables_length fa-border" style="margin: 10px 0; padding: 10px">
+                                <input type="text" name="admin_name" value="<?php echo $filter['admin_name']; ?>" class="input-sm" placeholder="登录名" style="border: 1px solid #a9a9a9;">
+                                <div class="pull-right">
+                                    <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-search"></i>&nbsp;搜索</button>
+                                </div>
+                            </div>
+                        </form>
+                        <!-- 新增 -->
+                        <div class="form-group">
+                            <a href="<?php echo $add_action; ?>" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>&nbsp;新增</a>
+                            <button class="btn btn-default btn-sm button-upload" data-action="<?php echo $import_action; ?>"><i class="fa fa-upload"></i>&nbsp;导入</button>
+                            <button class="btn btn-default btn-sm" form="table_form" formaction="<?php echo $export_action; ?>"><i class="fa fa-download"></i>&nbsp;导出</button>
+                        </div>
                         <?php if (isset($error['warning'])) { ?>
                         <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i>&nbsp;<?php echo $error['warning']; ?>
                             <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -35,144 +42,111 @@
                             <button type="button" class="close" data-dismiss="alert">&times;</button>
                         </div>
                         <?php } ?>
-                        <table class="table table-bordered table-hover dataTable" role="grid">
-                            <thead>
-                            <tr>
-                                <?php foreach ($data_columns as $column) { ?>
-                                <th><?php echo $column['text']; ?></th>
+                        <form id="table_form" class="table_form" method="post">
+                            <table class="table table-bordered table-hover dataTable" role="grid">
+                                <thead>
+                                <tr>
+                                    <?php foreach ($data_columns as $column) { ?>
+                                    <th><?php echo $column['text']; ?></th>
+                                    <?php } ?>
+                                    <th style="min-width:130px;">操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <?php foreach ($data_rows as $data) { ?>
+                                <tr>
+                                    <td><?php echo $data['admin_name']?></td>
+                                    <td><?php echo $data['role_name']?></td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn btn-default btn-flat btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                共 <span class="number"><?php echo $data['regions_num']; ?></span> 个区域 <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu ztree" id="region-tree-<?php echo $data['admin_id']?>" data-admin_id="<?php echo $data['admin_id']?>"></ul>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button data-url="<?php echo $data['edit_action']; ?>" type="button" class="btn btn-info link btn-sm"><i class="fa fa-fw fa-eye"></i>编辑</button>
+                                            <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown">
+                                                <span class="caret"></span>
+                                                <span class="sr-only">Toggle Dropdown</span>
+                                            </button>
+                                            <ul class="dropdown-menu" role="menu">
+                                                <li><a href="<?php echo $data['delete_action']; ?>">删除</a></li>
+                                            </ul>
+                                        </div>
+
+                                    </td>
+                                </tr>
                                 <?php } ?>
-                                <th style="min-width:130px;">操作</th>
-                            </tr>
-                            <tr class="searchbar">
-                                <th><input type="text" class="search_input form-control" name="admin_name" value="<?php echo $filter['admin_name']; ?>" /></th>
-                                <th>
-                                    <select name="role_id" class="search_input form-control">
-                                        <option value>全选</option>
-                                        <?php foreach($roles as $k => $v) { ?>
-                                        <option value="<?php echo $k; ?>" <?php echo (string)$k == $filter['role_id'] ? 'selected' : ''; ?>><?php echo $v; ?></option>
-                                        <?php } ?>
-                                    </select>
-                                </th>
-                                <th><input type="text" class="search_input form-control date-range" name="login_time" value="<?php echo $filter['login_time']; ?>" /></th>
-                                <th>
-                                    <select class="search_input form-control" name="state">
-                                        <option value>全选</option>
-                                        <?php foreach($state as $k => $v) { ?>
-                                        <option value="<?php echo $k; ?>" <?php echo (string)$k == $filter['state'] ? 'selected' : ''; ?>><?php echo $v; ?></option>
-                                        <?php } ?>
-                                    </select>
-                                </th>
-                                <th>
-                                    <!--<div class="btn-group">
-                                        <button type="submit" class="btn btn-info" id="submit-btn">
-                                            <i class="fa fa-fw fa-search"></i>搜索
-                                        </button>
-                                        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
-                                            <span class="caret"></span>
-                                            <span class="sr-only">Toggle Dropdown</span>
-                                        </button>
-                                        <ul class="dropdown-menu" role="menu">
-                                            <li><a href="#" class="page-excel-data">导出当前页(Excel)</a></li>
-                                            <li><a href="#" class="excel-data">导出全部(Excel)</a></li>
-                                            <li class="divider"></li>
-                                            <li><a href="#" class="page-pdf-data">导出当前页(PDF)</a></li>
-                                            <li><a href="#" class="pdf-data">导出全部(PDF)</a></li>
-                                        </ul>
-                                    </div>-->
-                                    <button type="submit" class="btn btn-info" id="submit-btn">
-                                        <i class="fa fa-fw fa-search"></i>搜索
-                                    </button>
-                                </th>
-                            </thead>
-                            <tbody>
-                            <?php foreach ($data_rows as $data) { ?>
-                            <tr>
-                                <td><?php echo $data['admin_name']?></td>
-                                <td><?php echo $data['role_name']?></td>
-                                <td><?php echo $data['login_time']?></td>
-                                <td><?php echo $data['state']?></td>
-                                <td>
-                                    <!--<div class="btn-group">
-                                        <button data-url="<?php echo $data['edit_action']; ?>" type="button" class="btn btn-info link"><i class="fa fa-fw fa-edit"></i>编辑</button>
-                                        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
-                                            <span class="caret"></span>
-                                            <span class="sr-only">Toggle Dropdown</span>
-                                        </button>
-                                        <ul class="dropdown-menu" role="menu">
-                                            <li><a href="<?php echo $data['delete_action']; ?>">删除</a></li>
-                                        </ul>
-                                    </div>-->
-                                    <button data-url="<?php echo $data['edit_action']; ?>" type="button" class="btn btn-info link"><i class="fa fa-fw fa-edit"></i>编辑</button>
-                                </td>
-                            </tr>
-                            <?php } ?>
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
+                        </form>
                         <div class="row"><div class="col-sm-6 text-left"><?php echo $pagination; ?></div></div>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>
 </section>
-<!-- /.content -->
+<link rel="stylesheet" href="<?php echo $static . 'AdminLTE-2.3.7/'; ?>plugins/jquery.treegrid/css/jquery.treegrid.css" />
+<link rel="stylesheet" href="<?php echo $static . 'AdminLTE-2.3.7/'; ?>plugins/ztree/zTreeStyle/zTreeStyle.css" />
+<script type="text/javascript" src="<?php echo $static . 'AdminLTE-2.3.7/'; ?>plugins/jquery.treegrid/js/jquery.treegrid.js"></script>
+<script type="text/javascript" src="<?php echo $static . 'AdminLTE-2.3.7/'; ?>plugins/jquery.treegrid/js/jquery.treegrid.bootstrap3.js"></script>
+<script type="text/javascript" src="<?php echo $static . 'AdminLTE-2.3.7/'; ?>plugins/ztree/jquery.ztree.core.js"></script>
+<script type="text/javascript" src="<?php echo $static . 'AdminLTE-2.3.7/'; ?>plugins/ztree/jquery.ztree.excheck.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        var regions = <?php echo $regions; ?>;
+        $('table.treegrid').treegrid({
+            treeColumn: 1,
+            expanderExpandedClass: 'fa fa-angle-down',
+            expanderCollapsedClass: 'fa fa-angle-right'
+        });
 
-<script>
-    $('.search_input').bind('keydown change', function (e) {
-        var key = e.which;
-        if (key == 13) {
-            $('.search_form').submit();
+        // 异步更新数据
+        function update(event, treeId, treeNode) {
+            var tree = $('#' + treeId),
+                    admin_id = tree.data('admin_id'),
+                    checkedNodes = $.fn.zTree.getZTreeObj(treeId).getCheckedNodes(true),
+                    theButton = tree.parents('.dropdown').children('button'),
+                    checkedIds = [];
+
+            theButton.find(".number").html(checkedNodes.length);
+
+            for(var i in checkedNodes) {
+                checkedIds.push(checkedNodes[i].id);
+            }
+
+            var url = '<?php echo $update_admin_region_action; ?>';
+            var params = {admin_id: admin_id, regions: checkedIds.join()};
+            console.log(params);
+            $.post(url, params, function(data) {
+                // 区域变更提示
+            });
         }
-        if(e.type=='change'){
+
+        var setting = {
+            check: {
+                enable: true
+            },
+            callback: {
+                onCheck: update
+            },
+            data: {
+                simpleData: {
+                    enable: true
+                }
+            }
+        };
+
+        for (var i in regions) {
+            $.fn.zTree.init($("#region-tree-" + i), setting, regions[i]);
         }
+        $("#filter_type").change(function() {
+            $("#filter_text").attr("name", $(this).val());
+        });
     });
-
-    $('.date-range').daterangepicker({
-        locale:{
-            format: 'YYYY-MM-DD',
-            isAutoVal:false,
-        }
-    });
-
-    $('.excel-data').on('click',function(){
-        $('#page_export').val(0);
-        var query=$('.search_form').serialize();
-        if (confirm('确定要导出吗?')) {
-            var url = '/orders/Index/carpool_orders_excel?' + query;
-            $('#export-form').attr('action', url);
-            $('#export-form').submit();
-        }
-    });
-
-    $('.page-excel-data').on('click',function(){
-        $('#page_export').val(1);
-        var query=$('.search_form').serialize();
-        if (confirm('确定要导出吗?')) {
-            var url = '/orders/Index/carpool_orders_excel?' + query;
-            $('#export-form').attr('action', url);
-            $('#export-form').submit();
-        }
-    });
-
-    $('.pdf-data').on('click',function(){
-        $('#page_export').val(0);
-        var query=$('.search_form').serialize();
-        if (confirm('确定要导出吗?')) {
-            var url = '/orders/Index/carpool_orders_pdf?' + query;
-            $('#export-form').attr('action', url);
-            $('#export-form').submit();
-        }
-    });
-
-    $('.page-pdf-data').on('click',function(){
-        $('#page_export').val(1);
-        var query=$('.search_form').serialize();
-        if (confirm('确定要导出吗?')) {
-            var url = '/orders/Index/carpool_orders_pdf?' + query;
-            $('#export-form').attr('action', url);
-            $('#export-form').submit();
-        }
-    });
-
 </script>
 <?php echo $footer;?>

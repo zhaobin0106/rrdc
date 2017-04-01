@@ -32,17 +32,16 @@ class ControllerAccountAccount extends Controller {
             'register_lat' => $register_lat,
             'register_lng' => $register_lng
         );
-        if($mobile != '18612560278' && $mobile != '13501002355' && $mobile != '18811562913'){
-            if (!$this->logic_sms->disableInvalid($mobile, $code)) {
-                $this->response->showErrorResult($this->language->get('error_invalid_message_code'), 3);
-            }
 
-            //更新短信的
-            $update = $this->logic_sms->enInvalid($mobile, $code);
+        if (!$this->logic_sms->disableInvalid($mobile, $code)) {
+            $this->response->showErrorResult($this->language->get('error_invalid_message_code'), 3);
+        }
 
-            if (!$update) {
-                $this->response->showErrorResult($this->language->get('error_database_failure'), 4);
-            }
+        //更新短信的
+        $update = $this->logic_sms->enInvalid($mobile, $code);
+
+        if (!$update) {
+            $this->response->showErrorResult($this->language->get('error_database_failure'), 4);
         }
         //防止前端状态码判断错误，即把登录接口的数据传到注册接口，产生重复的手机注册用户
         $user_info = $this->logic_user->getUserInfo(array('mobile' => $mobile));
@@ -124,7 +123,7 @@ class ControllerAccountAccount extends Controller {
             $where = array('order_id' => $this->request->post['order_id'], 'user_id' => $result['user_id']);
             $coupon_info = $this->sys_model_coupon->getCouponInfo($where);
             if ($coupon_info) {
-                $this->response->showErrorResult($this->language->get('error_repeat_receive'), 202);
+                $this->response->showErrorResult($this->language->get('error_repeat_receive'), 202, $coupon_info);
             }
         }
 
@@ -211,17 +210,16 @@ class ControllerAccountAccount extends Controller {
 
         $this->load->library('logic/sms', true);
         $this->load->library('logic/user', true);
-        if($mobile != '18612560278' && $mobile != '13501002355' && $mobile != '18811562913'){
-            if (!$this->logic_sms->disableInvalid($mobile, $code, 'login')) {
-                $this->response->showErrorResult($this->language->get('error_invalid_message_code'), 3);
-            }
 
-            //更新短信的
-            $update = $this->logic_sms->enInvalid($mobile, $code, 'login');
+        if (!$this->logic_sms->disableInvalid($mobile, $code, 'login')) {
+            $this->response->showErrorResult($this->language->get('error_invalid_message_code'), 3);
+        }
 
-            if (!$update) {
-                $this->response->showErrorResult($this->language->get('error_database_operation_failure'), 4);
-            }
+        //更新短信的
+        $update = $this->logic_sms->enInvalid($mobile, $code, 'login');
+
+        if (!$update) {
+            $this->response->showErrorResult($this->language->get('error_database_operation_failure'), 4);
         }
 
         $result = $this->logic_user->login($mobile, $device_id);
@@ -493,6 +491,21 @@ class ControllerAccountAccount extends Controller {
         $this->load->library('logic/orders', true);
 
         $result = $this->logic_orders->getOrderDetail($this->request->post['order_id']);
+        if (empty($result)) {
+            $this->response->showErrorResult($this->language->get('error_empty_order_id'), 124);
+        }
+        //有订单信息并且订单状态是在进行中的
+        if (!empty($result) && $result['order_info']['order_state'] == 1) {
+            $lock_sn = $result['order_info']['lock_sn'];
+            $this->load->library('sys_model/lock');
+            $lock_info = $this->sys_model_lock->getLockInfo(array('lock_sn' => $lock_sn));
+            if ($lock_info['lock_status'] == 0) {
+                $finish_time = $lock_info['system_time'];//系统更新时间
+//                $this->load->library('logic/orders');
+//                $callback = $this->logic_orders->closeOrder(array('order_id' => $result['order_info']['order_id'], 'finish_time' => $finish_time));
+            }
+        }
+
         if (isset($result['order_info']['coupon_info'])) {
             $coupon_info = &$result['order_info']['coupon_info'][0];
             if ($coupon_info['coupon_type'] == 1) {
@@ -507,8 +520,19 @@ class ControllerAccountAccount extends Controller {
             }
         }
 
+        if ($result['order_info']['coupon_id'] == 0) {
+            $result['order_info']['coupon_info'] = array();
+        }
         $user_info = $this->startup_user->getUserInfo();
-        $result['user_info'] = $user_info;
+        $fields = array('nickname', 'avatar', 'real_name', 'available_deposit');
+        //直接输出用户所有信息太危险
+        $output_user_info = array();
+        foreach ($fields as $field) {
+            if (isset($user_info[$field])) {
+                $output_user_info[$field] = $user_info[$field];
+            }
+        }
+        $result['user_info'] = $output_user_info;
         $this->response->showSuccessResult($result);
     }
 
@@ -535,6 +559,9 @@ class ControllerAccountAccount extends Controller {
         $result = $this->logic_orders->getOrderDetail($this->request->post['order_id']);
         $user_info = $this->sys_model_user->getUserInfo(array('user_id' => $user_id), 'avatar,nickname,mobile');
         $user_info['mobile'] = substr($user_info['mobile'], 0, 3) . '****' . substr($user_info['mobile'], -4);
+        if (is_numeric($user_info['nickname'])) {
+            $user_info['nickname'] = $user_info['mobile'];
+        }
 
         $result['user_info'] = $user_info;
         $this->response->showSuccessResult($result);
@@ -550,6 +577,14 @@ class ControllerAccountAccount extends Controller {
 
         $count = $this->logic_message->getMessagesCount(array('user_id' => $userInfo = $this->startup_user->userId()));
         $items = $this->logic_message->getMessages(array('user_id' => $userInfo = $this->startup_user->userId()),$page);
+
+        if (!empty($items) && is_array($items)) {
+            foreach ($items as &$item) {
+                if (isset($item['msg_image']) && !empty($item['msg_image'])) {
+                    $item['msg_image'] = HTTP_IMAGE . $item['msg_image'];
+                }
+            }
+        }
 
         $result = array(
             'total_items_count' => $count,
@@ -786,7 +821,7 @@ class ControllerAccountAccount extends Controller {
         $arr = explode('_', $code);
         $user_id = $arr[0];
         $this->load->library('sys_model/user');
-        $user_info = $this->sys_model_user->getUserInfo(array('user_id' => $user_id), 'avatar,real_name,mobile');
+        $user_info = $this->sys_model_user->getUserInfo(array('user_id' => $user_id), 'avatar, nickname, mobile');
         if (empty($user_info)) {
             $this->response->showErrorResult($this->language->get('error_get_user_infomation'));
         }

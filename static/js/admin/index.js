@@ -126,19 +126,19 @@ jQuery(function ($) {
                 pos = wgs84togcj02(Number(bike.lng), Number(bike.lat)); //坐标转换
             // 根据电量决定图标
             if(bike.online=="0") {
-                bike.iconContent = '<img src="../static/images/map_icon/j4.png">';
+                bike.iconContent = '<img src="' + imageUrlBase + 'images/map_icon/j4.png">';
                 bike.textContent = '<div class="bike-number-text-marker offline">' + bike.bicycle_sn + '</div>';
             }
             else if(battery>50) {
-                bike.iconContent = '<img src="../static/images/map_icon/j1.png">';
+                bike.iconContent = '<img src="' + imageUrlBase + 'images/map_icon/j1.png">';
                 bike.textContent = '<div class="bike-number-text-marker battery-ok">' + bike.bicycle_sn + '</div>';
             }
             else if(battery>25) {
-                bike.iconContent = '<img src="../static/images/map_icon/j3.png">';
+                bike.iconContent = '<img src="' + imageUrlBase + 'images/map_icon/j3.png">';
                 bike.textContent = '<div class="bike-number-text-marker battery-warning">' + bike.bicycle_sn + '</div>';
             }
             else {
-                bike.iconContent = '<img src="../static/images/map_icon/j2.png">';
+                bike.iconContent = '<img src="' + imageUrlBase + 'images/map_icon/j2.png">';
                 bike.textContent = '<div class="bike-number-text-marker battery-low">' + bike.bicycle_sn + '</div>';
             }
 
@@ -149,6 +149,7 @@ jQuery(function ($) {
                     offset:showBikeNumber ? new AMap.Pixel(-30,-25) : new AMap.Pixel(-17,-32),//X轴Y轴
                     map: map
                 });
+                marker.bike = bike;
                 marker.on('click', onMarkerClick);
                 _markers[bike.bicycle_id] = marker;
             }
@@ -162,9 +163,9 @@ jQuery(function ($) {
                 if((Math.abs(oldPos.getLng() - pos[0]) > 0.000001) || (Math.abs(oldPos.getLat() - pos[1]) > 0.000001) ) {
                     marker.setPosition(pos);
                 }
+                marker.bike = bike; //把单车数据更新给Marker点（记录下来）
             }
             bike.showingNumber = showBikeNumber;
-            marker.bike = bike; //把单车数据更新给Marker点（记录下来）
 
             if(infoWindowOpened == bike.bicycle_id) { //如果infoWindow已经打开，立刻更新上面的内容
                 updateInfoWindow(bike);
@@ -178,6 +179,8 @@ jQuery(function ($) {
 
         $('.btn-refresh-marker').prop('disabled', false);
         $('.btn-refresh-marker > i').removeClass('fa-spin');
+
+        openMarker();
     }
 
     /**
@@ -204,7 +207,7 @@ jQuery(function ($) {
                         '<li>故障</li>' +
                         '<li>违停</li>' +
                         '<li>停车</li>' +
-                        '<li>反馈</li>' +
+                        // '<li>反馈</li>' +
                         '<li>使用</li>' +
                         '<li>指令</li>' +
                     '</ul>' +
@@ -233,7 +236,7 @@ jQuery(function ($) {
                             '<div class="horizontal-info">' +
                                 '<div>故障：<i class="fa fa-circle"></i></div>' +
                                 '<div>违停：<i class="fa fa-circle"></i></div>' +
-                                '<div>反馈：<i class="fa fa-circle"></i></div>' +
+                                // '<div>反馈：<i class="fa fa-circle"></i></div>' +
                             '</div>' +
                             '<hr>' +
                             '<div class="bike-location font14"><i class="fa fa-map-marker fa-fw"></i> <span>广东省东莞市南城区新基路新基地创意产业园H座</span></div>' +
@@ -250,13 +253,13 @@ jQuery(function ($) {
                         '<div><ul class="bike-info-list"></ul></div>' + // 故障
                         '<div><ul class="bike-info-list"></ul></div>' + // 违停
                         '<div><ul class="bike-info-list"></ul></div>' + // 停车
-                        '<div><ul class="bike-info-list"></ul></div>' + // 反馈
+                        // '<div><ul class="bike-info-list"></ul></div>' + // 反馈
                         '<div><ul class="bike-info-list"></ul></div>' + // 使用
                         '<div class="bike-instruction">' +  // 指令 start
                             '<button class="btn btn-default"><i class="fa fa-lock fa-fw"></i> 关锁</button>' +
-                            '<button class="btn btn-default"><i class="fa fa-unlock-alt fa-fw"></i> 开锁</button><br/>' +
+                            '<button class="btn btn-default"><i class="fa fa-unlock-alt fa-fw"></i> 开锁</button>' +
                             '<button class="btn btn-default"><i class="fa fa-bell fa-fw"></i> 开蜂鸣器</button>' +
-                            '<button class="btn btn-default"><i class="fa fa-bell-slash fa-fw"></i> 关蜂鸣器</button><br/>' +
+                            // '<button class="btn btn-default"><i class="fa fa-bell-slash fa-fw"></i> 关蜂鸣器</button><br/>' +
                             '<div class="input-group">' +
                                 '<span class="input-group-addon">关锁时：每隔</span>' +
                                 '<input type="number" class="form-control" value="1800">' +
@@ -329,7 +332,26 @@ jQuery(function ($) {
         }).on('click', '.bike-info-list > li.has-more > button', function() { // 故障、违停、停车、反馈、使用等内部的“加载更多”按钮
             var index = $(this).parent().parent().parent().index(),
                 page = $(this).parent().data('next');
-            loadTabData(index, page);
+            var bike_sn = $bikeInfo.find('.bike-sn').html();
+            loadTabData(index, page, bike_sn);
+        }).on('click', '.bike-instruction > button:eq(0)', function(){ //关锁
+            var lock_sn = $bikeInfo.find('.bike-lock-sn > span').html();
+            shut(lock_sn);
+        }).on('click', '.bike-instruction > button:eq(1)', function(){ //开锁
+            var lock_sn = $bikeInfo.find('.bike-lock-sn > span').html();
+            openLock(lock_sn);
+        }).on('click', '.bike-instruction > button:eq(2)', function(){ //响铃
+            console.log('1');
+            var lock_sn = $bikeInfo.find('.bike-lock-sn > span').html();
+            beepLock(lock_sn);
+        }).on('click', '.bike-instruction > div:eq(0) > span:eq(2) > button', function(){ //设置设备锁关是位置回传间隔
+            var lock_sn = $bikeInfo.find('.bike-lock-sn > span').html();
+            var time = $bikeInfo.find('.bike-instruction > div:eq(0) > input').val();
+            setGapTime2(lock_sn,time);
+        }).on('click', '.bike-instruction > div:eq(1) > span:eq(2) > button', function(){ //设置设备锁开是位置回传间隔
+            var lock_sn = $bikeInfo.find('.bike-lock-sn > span').html();
+            var time = $bikeInfo.find('.bike-instruction > div:eq(1) > input').val();
+            setGapTime(lock_sn,time);
         });
         $bikeInfo.magnificPopup({
             delegate: '.bike-info-list-img > img',
@@ -355,6 +377,82 @@ jQuery(function ($) {
 
         infoWindow.open(map, marker.getPosition());
         infoWindowOpened = bike.bicycle_id;
+    }
+
+    //地图右侧搜索列表点击
+    $('.bike-list').on('click', 'li', function () {
+        var bicycle_id = $(this).data('bicycle_id');
+        $.each(_markers, function (index, marker) {
+            if(typeof marker == 'undefined') return;
+            if(marker.bike.bicycle_id == bicycle_id) {
+                updateInfoWindow(marker.bike);
+                infoWindow.open(map, marker.getPosition());
+            }
+        })
+    });
+
+    //点击上方信息管理（邮件图标）
+    function openMarker(){
+        var bicycle_id = localStorage.open_marker_bicycle_id;
+        if(bicycle_id){
+            $.each(_markers, function (index, marker) {
+                // console.log(_markers);
+                if(typeof marker == 'undefined') return;
+                if(marker.bike.bicycle_id == bicycle_id) {
+                    updateInfoWindow(marker.bike);
+                    infoWindow.open(map, marker.getPosition());
+                }
+            });
+        }
+        // map.setZoomAndCenter(11);
+    }
+
+    //地图右侧搜索输入触发
+    // $("input[name = 'q']").bind('input propertychange',function(){
+    $(document).on('click','#search-btn',function(){
+        if($("input[name = 'query']").val() == '') {
+            $('.bike-list').html('');
+            return;
+        }
+        var fault = $('.show-bike-type-select li:eq(0) input[type="checkbox"]').prop('checked') ? 1 : 0;
+        var illegal_parking = $('.show-bike-type-select li:eq(1) input[type="checkbox"]').prop('checked') ? 1 : 0;
+        var low_battery = $('.show-bike-type-select li:eq(2) input[type="checkbox"]').prop('checked') ? 1 : 0;
+        search($("input[name = 'query']").val(), fault, illegal_parking, low_battery);
+    });
+    $(document).bind('keydown','#search-btn',function(event){
+    if(event.keyCode == "13")
+    {
+        if($("input[name = 'query']").val() == '') {
+            $('.bike-list').html('');
+            return;
+        }
+        var fault = $('.show-bike-type-select li:eq(0) input[type="checkbox"]').prop('checked') ? 1 : 0;
+        var illegal_parking = $('.show-bike-type-select li:eq(1) input[type="checkbox"]').prop('checked') ? 1 : 0;
+        var low_battery = $('.show-bike-type-select li:eq(2) input[type="checkbox"]').prop('checked') ? 1 : 0;
+        search($("input[name = 'query']").val(), fault, illegal_parking, low_battery);
+    }
+});
+
+    //地图右侧搜索请求
+    function search(bike_sn, fault, illegal_parking, low_battery) {
+        $.ajax('index.php?route=admin/index/search', {
+            dataType: 'json',
+            data: {
+                bicycle_sn: bike_sn,
+                fault: fault,
+                illegal_parking: illegal_parking,
+                low_battery: low_battery
+            },
+            method: 'POST',
+            global: false,
+            success: function (result) {
+                var html = '';
+                $.each(result.data, function(index, data){
+                    html += '<li data-bicycle_id="'+ data.bicycle_id +'">'+ data.bicycle_sn +'</li>';
+                });
+                $('.bike-list').html(html);
+            }
+        });
     }
 
     /**
@@ -466,9 +564,13 @@ jQuery(function ($) {
         $bikeInfo.find('.bike-lock-sn > span').html(bike.lock_sn);
         // 地区
         $bikeInfo.find('.bike-region').html('<i class="fa fa-map-pin fa-fw"></i> ' + bike.region_name);
+        // 地区
+        $bikeInfo.find('.bike-cooperator').html('<i class="fa fa-user fa-fw"></i> ' + bike.region_name);
 
         // 二维码
         $bikeInfo.find('.bike-info-qrcode > img').attr("src", window.imageUrlBase + "images/qrcode/" + bike.bicycle_sn + '.png');
+
+        refreshTab()
     }
 
     /**
@@ -477,6 +579,9 @@ jQuery(function ($) {
     function refreshTab() {
         var $tabDiv = $bikeInfo.find('.bike-info-body > div.active'),
             index = $tabDiv.index();
+
+        var bike_sn = $bikeInfo.find('.bike-sn').html();
+        var lock_sn = $bikeInfo.find('.bike-lock-sn > span').html();
 
         if(index<0 || index>6) return; //只有7个标签（0-6）
 
@@ -490,10 +595,13 @@ jQuery(function ($) {
             case 1:
             case 2:
             case 3:
+            // case 4:
             case 4:
-            case 5:
                 $tabDiv.find('ul').empty();
-                loadTabData(index, 1);
+                loadTabData(index, 1, bike_sn);
+                break;
+            case 5:
+                lockInfo(lock_sn);
                 break;
         }
     }
@@ -503,24 +611,24 @@ jQuery(function ($) {
      * @param index
      * @param page
      */
-    function loadTabData(index, page) {
+    function loadTabData(index, page, bike_sn) {
         $bikeInfo.find('.bike-info-body').addClass('loading');
         $bikeInfo.find('.bike-info-body > div.active > ul.bike-info-list > li.has-more').remove();
         switch (index) {
             case 1: // 故障
-                loadFault(page);
+                loadFault(page, bike_sn);
                 break;
             case 2: // 违停
-                loadIlleagleParking(page);
+                loadIlleagleParking(page, bike_sn);
                 break;
             case 3: // 停车
-                loadNormalParking(page);
+                loadNormalParking(page, bike_sn);
                 break;
-            case 4: // 反馈
-                loadFeekback(page);
-                break;
-            case 5: // 使用
-                loadUsedHistory(page);
+            // case 4: // 反馈
+            //     loadFeekback(page, bike_sn);
+            //     break;
+            case 4: // 使用
+                loadUsedHistory(page, bike_sn);
                 break;
         }
     }
@@ -537,12 +645,13 @@ jQuery(function ($) {
     /**
      * 加载故障列表
      * @param page
+     * @param bike_sn
      */
-    function loadFault(page) {
+    function loadFault(page, bike_sn) {
         var $tabDiv = $bikeInfo.find('.bike-info-body > div:eq(1)');
         $.ajax('index.php?route=admin/index/apiGetFaults', {
             dataType: 'html',
-            data: {page: page},
+            data: {page: page, bike_sn: bike_sn},
             method: 'POST',
             global: false,
             success: function (html) {
@@ -555,12 +664,13 @@ jQuery(function ($) {
     /**
      * 加载违停列表
      * @param page
+     * @param bike_sn
      */
-    function loadIlleagleParking(page) {
+    function loadIlleagleParking(page, bike_sn) {
         var $tabDiv = $bikeInfo.find('.bike-info-body > div:eq(2)');
         $.ajax('index.php?route=admin/index/apiGetIllegalParking', {
             dataType: 'html',
-            data: {page: page},
+            data: {page: page, bike_sn: bike_sn},
             method: 'POST',
             global: false,
             success: function (html) {
@@ -573,12 +683,13 @@ jQuery(function ($) {
     /**
      * 加载停车列表
      * @param page
+     * @param bike_sn
      */
-    function loadNormalParking(page) {
+    function loadNormalParking(page, bike_sn) {
         var $tabDiv = $bikeInfo.find('.bike-info-body > div:eq(3)');
         $.ajax('index.php?route=admin/index/apiGetNormalParking', {
             dataType: 'html',
-            data: {page: page},
+            data: {page: page, bike_sn: bike_sn},
             method: 'POST',
             global: false,
             success: function (html) {
@@ -591,12 +702,13 @@ jQuery(function ($) {
     /**
      * 加载反馈列表
      * @param page
+     * @param bike_sn
      */
-    function loadFeekback(page) {
+    function loadFeekback(page, bike_sn) {
         var $tabDiv = $bikeInfo.find('.bike-info-body > div:eq(4)');
         $.ajax('index.php?route=admin/index/apiGetFeekbacks', {
             dataType: 'html',
-            data: {page: page},
+            data: {page: page, bike_sn: bike_sn},
             method: 'POST',
             global: false,
             success: function (html) {
@@ -609,17 +721,117 @@ jQuery(function ($) {
     /**
      * 加载使用记录列表
      * @param page
+     * @param bike_sn
      */
-    function loadUsedHistory(page) {
-        var $tabDiv = $bikeInfo.find('.bike-info-body > div:eq(5)');
+    function loadUsedHistory(page, bike_sn) {
+        var $tabDiv = $bikeInfo.find('.bike-info-body > div:eq(4)');
         $.ajax('index.php?route=admin/index/apiGetUsedHistory', {
             dataType: 'html',
-            data: {page: page},
+            data: {page: page, bike_sn: bike_sn},
             method: 'POST',
             global: false,
             success: function (html) {
                 $tabDiv.find('ul').append(html);
                 tabDataLoaded($tabDiv);
+            }
+        });
+    }
+
+    /**
+     * 关锁
+     * @param lock_sn
+     */
+    function shut(lock_sn) {
+        $.ajax('index.php?route=admin/index/shut', {
+            dataType: 'json',
+            data: {device_id: lock_sn},
+            method: 'POST',
+            global: false,
+            success: function (result) {
+                console.log(result);
+            }
+        });
+    }
+
+    /**
+     * 开锁
+     * @param lock_sn
+     */
+    function openLock(lock_sn) {
+        $.ajax('index.php?route=admin/index/openLock', {
+            dataType: 'json',
+            data: {device_id: lock_sn},
+            method: 'POST',
+            global: false,
+            success: function (result) {
+                console.log(result);
+            }
+        });
+    }
+
+    /**
+     * 设置设备锁关是位置回传间隔
+     * @param lock_sn
+     * @param time
+     */
+    function setGapTime2(lock_sn, time) {
+        $.ajax('index.php?route=admin/index/setGapTime2', {
+            dataType: 'json',
+            data: {device_id: lock_sn,time: time},
+            method: 'POST',
+            global: false,
+            success: function (result) {
+                if(result.errorCode == 0) alert('操作成功');
+            }
+        });
+    }
+
+    /**
+     * 设置设备锁开是位置回传间隔
+     * @param lock_sn
+     * @param time
+     */
+    function setGapTime(lock_sn, time) {
+        $.ajax('index.php?route=admin/index/setGapTime', {
+            dataType: 'json',
+            data: {device_id: lock_sn, time: time},
+            method: 'POST',
+            global: false,
+            success: function (result) {
+                if(result.errorCode == 0) alert('操作成功');
+            }
+        });
+    }
+
+    /**
+     * 响铃
+     * @param lock_sn
+     */
+    function beepLock(lock_sn) {
+        $.ajax('index.php?route=admin/index/beepLock', {
+            dataType: 'json',
+            data: {device_id: lock_sn},
+            method: 'POST',
+            global: false,
+            success: function (result) {
+                console.log(result);
+            }
+        });
+    }
+
+    /**
+     * 锁资料
+     * @param lock_sn
+     */
+    function lockInfo(lock_sn) {
+        $.ajax('index.php?route=admin/index/lockInfo', {
+            dataType: 'json',
+            data: {device_id: lock_sn},
+            method: 'POST',
+            global: false,
+            success: function (result) {
+                $bikeInfo.find('.bike-instruction > div:eq(0) > input').val(result.data.set_gap_time2);
+                $bikeInfo.find('.bike-instruction > div:eq(1) > input').val(result.data.set_gap_time);
             }
         });
     }
@@ -634,11 +846,75 @@ jQuery(function ($) {
         $tabDiv.data('data-loaded', true);
     }
 
+    $(document).on('click',".amap-marker",function(){
+        refreshTab();
+    });
 
     /////////////////////////////////////////---工具栏---////////////////////////////////////////
 
+    //地图工具栏合伙人区域列表
+    $.ajax('index.php?route=admin/index/cooperator', {
+        dataType: 'json',
+        data: {},
+        method: 'POST',
+        global: false,
+        success: function (result) {
+            //初始化合伙人区域下拉列表
+            $.each(result.data.cooperator, function(index, data){
+                html = '<option value="'+ data.cooperator_id +'">'+ data.cooperator_name +'</option>';
+                $("#map-toolbar select:eq(0)").append(html);
+            });
+            $.each(result.data.region, function(index, data){
+                html = '<option value="'+ data.region_name +'">'+ data.region_name +'</option>';
+                $("#map-toolbar select:eq(1)").append(html);
+            });
+
+            //选择合伙人后区域发生改变
+            $("#map-toolbar select:eq(0)").change(function(){
+                if($(this).val() == ''){
+                    $("#map-toolbar select:eq(1)").html('<option value="">区域</option>');
+                    $.each(result.data.region, function(index, data){
+                        html = '<option value="'+ data.region_name +'">'+ data.region_name +'</option>';
+                        $("#map-toolbar select:eq(1)").append(html);
+                    });
+                    return;
+                }
+                $("#map-toolbar select:eq(1)").html('<option value="">区域</option>');
+                var cooperator_id = $(this).val();
+                $.each(result.data.cooperatorToRegion, function(index, data){
+                    if(data.cooperator_id == cooperator_id){
+                        $.each(result.data.region, function(index ,region){
+                            if(region.region_id == data.region_id){
+                                html = '<option value="'+ region.region_name +'">'+ region.region_name +'</option>';
+                                $("#map-toolbar select:eq(1)").append(html);
+                            }
+                        });
+                    }
+                });
+            });
+
+            //选择区域后地图定位偏移到该地区
+            $("#map-toolbar select:eq(1)").change(function(){
+                var city = $(this).val();
+                $("[name = 'region_name']").val(city);
+                geocoder = new AMap.Geocoder({
+                });
+                geocoder.getLocation(city, function(status, result) {
+                    if (status === 'complete' && result.info === 'OK') {
+                        console.log(result);
+                        map.setZoomAndCenter(11, [result.geocodes[0].location.lng, result.geocodes[0].location.lat]);
+                        //TODO:获得了有效经纬度，可以做一些展示工作
+                        //比如在获得的经纬度上打上一个Marker
+                    }else{
+                        //获取经纬度失败
+                    }
+                });
+            })
+        }
+    });
+
     /**
-     * 合伙人和景区列表（树）
+     * 合伙人和区域列表（树）
      */
     var data = [{
         text: '西通电子',
@@ -658,7 +934,7 @@ jQuery(function ($) {
     treeview.treeview({data: data});
 
     /**
-     * 合伙人和景区列表（树）的事件处理
+     * 合伙人和区域列表（树）的事件处理
      */
     treeview.on('click', 'ul li span.expand-icon', function(e){ // 点击树上的展开或者收缩按钮
         e.preventDefault();
@@ -780,6 +1056,8 @@ jQuery(function ($) {
     });
 
     function updateBikeListType() {
+        $('.bike-list').html('');
+        $("input[name = 'q']").val('');
         var types = [];
         $('.show-bike-type-select input[type="checkbox"]:checked').each(function() {
             var t = $.trim($(this).parent().text());
@@ -798,5 +1076,4 @@ jQuery(function ($) {
     function setActive($dom) {
         $dom.addClass('active').siblings().removeClass('active');
     }
-
 });

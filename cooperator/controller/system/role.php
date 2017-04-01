@@ -1,5 +1,6 @@
 <?php
 class ControllerSystemRole extends Controller {
+    private $cooperator_id = null;
     private $cur_url = null;
     private $error = null;
     
@@ -8,19 +9,20 @@ class ControllerSystemRole extends Controller {
 
         // 当前网址
         $this->cur_url = $this->url->link($this->request->get['route']);
+        $this->cooperator_id = $this->logic_admin->getParam('cooperator_id');
 
         // 加载role Model
         $this->load->library('sys_model/rbac', true);
-
+        $this->load->library('sys_model/cooperator', true);
     }
 
     /**
      * 角色列表
      */
     public function index() {
-
-        $condition = array();
-
+        $condition = array(
+            'cooperator_id' => $this->cooperator_id
+        );
         if (isset($this->request->get['page'])) {
             $page = (int)$this->request->get['page'];
         } else {
@@ -42,7 +44,6 @@ class ControllerSystemRole extends Controller {
 
                 $item['edit_action'] = $this->url->link('system/role/edit', 'role_id='.$item['role_id']);
                 $item['delete_action'] = $this->url->link('system/role/delete', 'role_id='.$item['role_id']);
-                $item['info_action'] = $this->url->link('system/role/info', 'role_id='.$item['role_id']);
             }
         }
 
@@ -52,6 +53,7 @@ class ControllerSystemRole extends Controller {
         $this->assign('state', $state);
         $this->assign('action', $this->cur_url);
         $this->assign('add_action', $this->url->link('system/role/add'));
+        $this->assign('update_admin_region_action', $this->url->link('system/role/update_admin_region'));
 
         if (isset($this->session->data['success'])) {
             $this->assign('success', $this->session->data['success']);
@@ -89,6 +91,8 @@ class ControllerSystemRole extends Controller {
         if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
             $input = $this->request->post(array('role_name', 'role_permission', 'state'));
             $data = array(
+                'cooperator_id' => $this->cooperator_id,
+                'type' => 2,
                 'role_name' => $input['role_name'],
                 'state' => $input['state'] ? 1 : 0
             );
@@ -109,9 +113,20 @@ class ControllerSystemRole extends Controller {
 
             $this->session->data['success'] = '添加角色成功！';
 
+            //加载管理员操作日志 model
+            $this->load->library('sys_model/admin_log', true);
+            $data = array(
+                'admin_id' => $this->logic_admin->getId(),
+                'admin_name' => $this->logic_admin->getadmin_name(),
+                'log_description' => '添加角色：' . $data['role_name'],
+                'log_ip' => $this->request->ip_address(),
+                'log_time' => date('Y-m-d H:i:s')
+            );
+            $this->sys_model_admin_log->addAdminLog($data);
+
             $filter = $this->request->get(array('role_name', 'login_time', 'role_id', 'state'));
 
-            $this->load->controller('common/base/redirect', $this->url->link('system/role', $filter, true));
+            $this->load->controller('common/base/redirect', $this->url->link('system/role') . '&' . http_build_query($filter));
         }
 
         $this->assign('title', '角色添加');
@@ -154,9 +169,20 @@ class ControllerSystemRole extends Controller {
 
             $this->session->data['success'] = '编辑角色成功！';
 
+            //加载管理员操作日志 model
+            $this->load->library('sys_model/admin_log', true);
+            $data = array(
+                'admin_id' => $this->logic_admin->getId(),
+                'admin_name' => $this->logic_admin->getadmin_name(),
+                'log_description' => '编辑角色：' . $data['role_name'],
+                'log_ip' => $this->request->ip_address(),
+                'log_time' => date('Y-m-d H:i:s')
+            );
+            $this->sys_model_admin_log->addAdminLog($data);
+
             $filter = $this->request->get(array('role_name', 'login_time', 'role_id', 'state'));
 
-            $this->load->controller('common/base/redirect', $this->url->link('system/role', $filter, true));
+            $this->load->controller('common/base/redirect', $this->url->link('system/role') . '&' . http_build_query($filter));
         }
 
         $this->assign('title', '编辑角色');
@@ -181,9 +207,20 @@ class ControllerSystemRole extends Controller {
             $this->sys_model_rbac->deleteRolePermission($condition);
 
             $this->session->data['success'] = '删除角色成功！';
+
+            //加载管理员操作日志 model
+            $this->load->library('sys_model/admin_log', true);
+            $data = array(
+                'admin_id' => $this->logic_admin->getId(),
+                'admin_name' => $this->logic_admin->getadmin_name(),
+                'log_description' => '删除角色：' . $role_id,
+                'log_ip' => $this->request->ip_address(),
+                'log_time' => date('Y-m-d H:i:s')
+            );
+            $this->sys_model_admin_log->addAdminLog($data);
         }
         $filter = $this->request->get(array('role_name', 'login_time', 'role_id', 'state'));
-        $this->load->controller('common/base/redirect', $this->url->link('system/role', $filter, true));
+        $this->load->controller('common/base/redirect', $this->url->link('system/role') . '&' . http_build_query($filter));
     }
 
     /**
@@ -209,12 +246,12 @@ class ControllerSystemRole extends Controller {
     }
 
     private function getForm() {
+        $this->load->library('sys_model/admin', true);
         // 编辑时获取已有的数据
         $info = $this->request->post(array('role_name', 'role_permission', 'state'));
         $role_id = $this->request->get('role_id');
         // 转换role_permission数据类型
-
-        $permissions = empty($info['role_permission']) ? array() : json_encode($info['role_permission'], true);
+        $permissions = empty($info['role_permission']) ? array() : json_decode($info['role_permission'], true);
 
         // 编辑时没post数据读取数据库原有的数据
         if (isset($this->request->get['role_id']) && ($this->request->server['REQUEST_METHOD'] != 'POST')) {
@@ -233,8 +270,32 @@ class ControllerSystemRole extends Controller {
             }
         }
 
+        // 合伙人信息
+        $condition = array(
+            'cooperator_id' => $this->cooperator_id
+        );
+        $cooperator = $this->sys_model_cooperator->getCooperatorInfo($condition);
+        // 合伙人拥有的权限
+        $condition = array(
+            'admin_id' => $cooperator['admin_id']
+        );
+        $adminInfo = $this->sys_model_admin->getAdminInfo($condition);
+
+        $condition = array(
+            'role_id' => $adminInfo['role_id']
+        );
+        $rolePermissionList = $this->sys_model_rbac->getRolePermissionList($condition);
+        $rootPermissions = array();
+        if (!empty($rolePermissionList)) {
+            foreach ($rolePermissionList as $v) {
+                $rootPermissions[] = (int)$v['permission_id'];
+            }
+        }
         // 所有权限
-        $permissionList = $this->sys_model_rbac->getPermissionList();
+        $condition = array(
+            'permission_id' => array('in', $rootPermissions)
+        );
+        $permissionList = $this->sys_model_rbac->getPermissionList($condition);
         // 组成zTree数组
         $selectPermission = json_encode($this->_getPermissionTreeData($permissionList, $permissions));
 
@@ -243,6 +304,7 @@ class ControllerSystemRole extends Controller {
         $this->assign('role_permission', json_encode($permissions));
         $this->assign('data', $info);
         $this->assign('action', $this->cur_url . '&role_id=' . $role_id);
+        $this->assign('return_action', $this->url->link('system/role'));
         $this->assign('error', $this->error);
         $this->assign('static', HTTP_IMAGE);
 

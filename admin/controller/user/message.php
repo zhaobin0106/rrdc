@@ -27,24 +27,21 @@ class ControllerUserMessage extends Controller {
             $page = 1;
         }
 
-        $fields = 'm.*,user.mobile';
+        $fields = 'm.*';
         $order = 'msg_time DESC';
         $rows = $this->config->get('config_limit_admin');
         $offset = ($page - 1) * $rows;
         $limit = sprintf('%d, %d', $offset, $rows);
-        $join = array(
-            'user' => 'user.user_id=m.user_id'
-        );
 
-        $result = $this->sys_model_message->getMessageList($condition, $fields, $order, $limit, $join);
-        $total = $this->sys_model_message->getTotalMessages($condition, $join);
+        $result = $this->sys_model_message->getMessageList($condition, $fields, $order, $limit);
+        $total = $this->sys_model_message->getTotalMessages($condition);
 
         if (is_array($result) && !empty($result)) {
             foreach ($result as &$item) {
                 if ($item['user_id'] == '0') {
-                    $item['user_name'] = '所用用户';
+                    $item['user_name'] = '所有用户';
                 } else {
-                    $item['user_name'] = isset($item['mobile']) ? $item['mobile'] : '';
+                    $item['user_name'] = '自定义用户';
                 }
                 $item['msg_time'] = isset($item['msg_time']) && $item['msg_time'] > 0 ? date('Y-m-d H:i:s', $item['msg_time']) : '';
                 $item['delete_action'] = $this->url->link('user/message/delete', 'msg_id='.$item['msg_id']);
@@ -93,29 +90,36 @@ class ControllerUserMessage extends Controller {
      */
     public function add() {
         if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
-            $input = $this->request->post(array('msg_title', 'msg_image', 'mobiles', 'msg_abstract', 'msg_link', 'msg_content'));
+            $input = $this->request->post(array('msg_title', 'msg_image', 'user_type', 'user', 'msg_abstract', 'msg_link', 'msg_content'));
             $now = time();
 
-
-            $mobiles = explode(PHP_EOL, $input['mobiles']);
-            if (is_array($mobiles) && !empty($mobiles)) {
-                foreach ($mobiles as $mobile) {
-                    $condition = array(
-                        'mobile' => $mobile
+            // 全部用户
+            $msg_id = '';
+            if ($input['user_type'] == 0) {
+                $data = array(
+                    'user_id' => 0,
+                    'msg_time' => $now,
+                    'msg_image' => $input['msg_image'],
+                    'msg_title' => $input['msg_title'],
+                    'msg_abstract' => $input['msg_abstract'],
+                    'msg_content' => $input['msg_content'],
+                    'msg_link' => $input['msg_link'],
+                );
+                $msg_id = $this->sys_model_message->addMessage($data);
+            } elseif ($input['user_type'] == 1) {
+                // 自定义用户
+                if (is_array($input['user']) && !empty($input['user'])) {
+                    $user_id = implode(',', $input['user']);
+                    $data = array(
+                        'user_id' => $user_id,
+                        'msg_time' => $now,
+                        'msg_image' => $input['msg_image'],
+                        'msg_title' => $input['msg_title'],
+                        'msg_abstract' => $input['msg_abstract'],
+                        'msg_content' => $input['msg_content'],
+                        'msg_link' => $input['msg_link'],
                     );
-                    $user = $this->sys_model_user->getUserInfo($condition, 'user_id');
-                    if ($user) {
-                        $data = array(
-                            'user_id' => $user['user_id'],
-                            'msg_time' => $now,
-                            'msg_image' => $input['msg_image'],
-                            'msg_title' => $input['msg_title'],
-                            'msg_abstract' => $input['msg_abstract'],
-                            'msg_content' => $input['msg_content'],
-                            'msg_link' => $input['msg_link'],
-                        );
-                        $this->sys_model_message->addMessage($data);
-                    }
+                    $msg_id = $this->sys_model_message->addMessage($data);
                 }
             }
 
@@ -126,7 +130,7 @@ class ControllerUserMessage extends Controller {
             $data = array(
                 'admin_id' => $this->logic_admin->getId(),
                 'admin_name' => $this->logic_admin->getadmin_name(),
-                'log_description' => '添加系统消息：',
+                'log_description' => '添加系统消息：ID ' . $msg_id,
                 'log_ip' => $this->request->ip_address(),
                 'log_time' => date('Y-m-d H:i:s')
             );
@@ -152,11 +156,23 @@ class ControllerUserMessage extends Controller {
         $info = $this->sys_model_message->getMessageInfo($condition);
         $info['msg_image_url'] = HTTP_IMAGE . $info['msg_image'];
 
-        $condition =array(
-            'user_id' => $info['user_id']
-        );
-        $user = $this->sys_model_user->getUserInfo($condition);
-        $info['user_name'] = $user['mobile'];
+        $info['user_name'] = '';
+        if ($info['user_id'] == 0) {
+            $info['user_name'] = '所有的用户';
+        } else {
+            $user_names = array();
+            $condition =array(
+                'user_id' => array('in', $info['user_id'])
+            );
+            $users = $this->sys_model_user->getUserList($condition);
+            if (is_array($users) && !empty($users)) {
+                foreach ($users as $user) {
+                    $user_names[] = $user['mobile'];
+                }
+            }
+            $info['user_name'] = implode('<br/>', $user_names);
+        }
+
         
         $this->assign('data', $info);
         $this->assign('return_action', $this->url->link('user/message'));
@@ -166,11 +182,14 @@ class ControllerUserMessage extends Controller {
 
     private function getForm() {
         // 编辑时获取已有的数据
-        $info = $this->request->post(array('msg_title', 'msg_image', 'mobiles', 'msg_abstract', 'msg_link', 'msg_content'));
+        $info = $this->request->post(array('msg_title', 'msg_image', 'user_type', 'msg_abstract', 'msg_link', 'msg_content'));
 
-        $info['msg_image_url'] = !empty($info['msg_image']) ? HTTP_IMAGE . $info['msg_image'] : '';
+        $info['msg_image_url'] = !empty($info['msg_image']) ? HTTP_IMAGE . $info['msg_image'] : getDefaultImage();
+
+        $users = $this->sys_model_user->getUserList();
 
         $this->assign('data', $info);
+        $this->assign('users', $users);
         $this->assign('action', $this->cur_url);
         $this->assign('return_action', $this->url->link('user/message'));
         $this->assign('upload_action', $this->url->link('common/upload'));
@@ -184,8 +203,7 @@ class ControllerUserMessage extends Controller {
      * @return bool
      */
     private function validateForm() {
-        print_r($this->request->post(NULL));
-        $input = $this->request->post(array('msg_title', 'msg_image', 'mobiles', 'msg_abstract', 'msg_link', 'msg_content'));
+        $input = $this->request->post(array('msg_title', 'msg_image', 'msg_abstract', 'msg_link', 'msg_content'));
 
         foreach ($input as $k => $v) {
             if (empty($v)) {

@@ -6,7 +6,7 @@
  * Time: 13:16
  */
 namespace Cache;
-class Cache_Redis {
+class CacheRedis {
     private $params;
     private $enable;
     private $handler;
@@ -34,9 +34,6 @@ class Cache_Redis {
         }
     }
 
-    /**
-     * 初始化主服务
-     */
     private function init_master() {
         static $_cache;
         if (isset($_cache)) {
@@ -49,9 +46,6 @@ class Cache_Redis {
         }
     }
 
-    /**
-     * 初始化从服务
-     */
     private function init_slave() {
         static $_cache;
         if (isset($_cache)) {

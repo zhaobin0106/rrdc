@@ -1,5 +1,6 @@
 <?php
 class ControllerOperationViolation extends Controller {
+    private $cooperator_id = null;
     private $cur_url = null;
     private $error = null;
 
@@ -8,32 +9,28 @@ class ControllerOperationViolation extends Controller {
 
         // 当前网址
         $this->cur_url = $this->url->link($this->request->get['route']);
+        $this->cooperator_id = $this->logic_admin->getParam('cooperator_id');
 
         // 加载fault Model
         $this->load->library('sys_model/fault', true);
-        $this->load->library('sys_model/bicycle', true);
     }
 
     /**
      * 故障记录列表
      */
     public function index() {
-        $filter = $this->request->get(array('bicycle_sn', 'user_name', 'content', 'type', 'add_time'));
-
-        // 合伙人所有的单车
-        $condition = array(
-            'cooperator_id' => $this->logic_cooperator->getId()
-        );
-        $bicycles = array();
-        $bicycleList = $this->sys_model_bicycle->getBicycleList($condition);
-        if (!empty($bicycleList) && is_array($bicycleList)) {
-            foreach ($bicycleList as $bicycle) {
-                $bicycles[] = $bicycle['bicycle_sn'];
+        if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+            //AJAX请求
+            if ($this->request->get('method') == 'json') {
+                $this->apiIndex();
+                return;
             }
         }
 
+        $filter = $this->request->get(array('filter_type', 'bicycle_sn', 'user_name', 'content', 'type', 'add_time'));
+
         $condition = array(
-            'bicycle_sn' => array('in', $bicycles)
+            'cooperator_id' => $this->cooperator_id
         );
         if (!empty($filter['bicycle_sn'])) {
             $condition['bicycle_sn'] = array('like', "%{$filter['bicycle_sn']}%");
@@ -53,6 +50,17 @@ class ControllerOperationViolation extends Controller {
                 array('gt', strtotime($add_time[0])),
                 array('lt', bcadd(86399, strtotime($add_time[1])))
             );
+        }
+
+        $filter_types = array(
+            'bicycle_sn' => '单车编号',
+            'user_name' => '上报用户',
+            'content' => '上报描述'
+        );
+        $filter_type = $this->request->get('filter_type');
+        if (empty($filter_type)) {
+            reset($filter_types);
+            $filter_type = key($filter_types);
         }
 
         if (isset($this->request->get['page'])) {
@@ -91,6 +99,8 @@ class ControllerOperationViolation extends Controller {
         $this->assign('data_rows', $result);
         $this->assign('model', $model);
         $this->assign('filter', $filter);
+        $this->assign('filter_type', $filter_type);
+        $this->assign('filter_types', $filter_types);
         $this->assign('action', $this->cur_url);
         $this->assign('add_action', $this->url->link('operation/violation/add'));
 
@@ -110,7 +120,57 @@ class ControllerOperationViolation extends Controller {
         $this->assign('pagination', $pagination);
         $this->assign('results', $results);
 
+        $this->assign('export_action', $this->url->link('operation/violation/export'));
+
         $this->response->setOutput($this->load->view('operation/violation_list', $this->output));
+    }
+
+    /**
+     * index AJAX请求
+     */
+    protected function apiIndex() {
+        if (isset($this->request->get['page'])) {
+            $page = (int)$this->request->get['page'];
+        } else {
+            $page = 1;
+        }
+
+        $condition = array(
+            'cooperator_id' => $this->cooperator_id
+        );
+        $order = 'add_time DESC';
+        $rows = $this->config->get('config_limit_admin');
+        $offset = ($page - 1) * $rows;
+        $limit = sprintf('%d, %d', $offset, $rows);
+
+        $result = $this->sys_model_fault->getIllegalParkingList($condition, $order, $limit);
+        $total = $this->sys_model_fault->getTotalIllegalParking($condition);
+
+        $list = array();
+        if (is_array($result) && !empty($result)) {
+            foreach ($result as $v) {
+                $list[] = array(
+                    'bicycle_sn' => $v['bicycle_sn'],
+                    'add_time' => date('Y-m-d H:i:s', $v['add_time']),
+                    'uri' => $this->url->link('admin/index') . '#' . $v['bicycle_sn']
+                );
+            }
+        }
+
+        $statisticsMessages = $this->load->controller('common/base/statisticsMessages', array());
+
+        $data = array(
+            'title' => array(
+                'bicycle_sn' => '单车编号',
+                'add_time' => '上报时间',
+            ),
+            'list' => $list,
+            'page' => $page,
+            'total' => $total,
+            'statistics' => $statisticsMessages
+        );
+
+        $this->response->showSuccessResult($data, '获取成功');
     }
 
     /**
@@ -132,13 +192,14 @@ class ControllerOperationViolation extends Controller {
     public function delete() {
         if (isset($this->request->get['violation_id']) && $this->validateDelete()) {
             $condition = array(
-                'violation_id' => $this->request->get['violation_id']
+                'violation_id' => $this->request->get['violation_id'],
+                'cooperator_id' => $this->cooperator_id
             );
             $this->sys_model_fault->deleteFault($condition);
 
             $this->session->data['success'] = '删除故障记录成功！';
         }
-        $filter = $this->request->get(array('violation_sn', 'type', 'lock_sn', 'is_using'));
+        $filter = $this->request->get(array('filter_type', 'violation_sn', 'type', 'lock_sn', 'is_using'));
         $this->load->controller('common/base/redirect', $this->url->link('operation/violation', $filter, true));
     }
 
@@ -149,7 +210,8 @@ class ControllerOperationViolation extends Controller {
         // 编辑时获取已有的数据
         $parking_id = $this->request->get('parking_id');
         $condition = array(
-            'parking_id' => $parking_id
+            'parking_id' => $parking_id,
+            'cooperator_id' => $this->cooperator_id
         );
         $info = $this->sys_model_fault->getIllegalParkingInfo($condition);
         if (!empty($info)) {
@@ -165,46 +227,69 @@ class ControllerOperationViolation extends Controller {
         }
 
         $this->assign('data', $info);
+        $this->assign('return_action', $this->url->link('operation/violation'));
 
         $this->response->setOutput($this->load->view('operation/violation_info', $this->output));
     }
 
-    private function getForm() {
-        // 编辑时获取已有的数据
-        $info = $this->request->post(array('violation_sn', 'type', 'lock_sn'));
-        $violation_id = $this->request->get('violation_id');
-        if (isset($this->request->get['violation_id']) && ($this->request->server['REQUEST_METHOD'] != 'POST')) {
-            $condition = array(
-                'violation_id' => $this->request->get['violation_id']
-            );
-            $info = $this->sys_model_fault->getFaultInfo($condition);
-        }
-
-        $this->assign('data', $info);
-        $this->assign('types', get_violation_type());
-        $this->assign('action', $this->cur_url . '&violation_id=' . $violation_id);
-        $this->assign('error', $this->error);
-
-        $this->response->setOutput($this->load->view('operation/violation_form', $this->output));
-    }
-
     /**
-     * 验证表单数据
-     * @return bool
+     * 导出
      */
-    private function validateForm() {
-        $input = $this->request->post(array('violation_sn', 'type', 'lock_sn'));
+    public function export() {
+        $filter = $this->request->post(array('filter_type', 'bicycle_sn', 'user_name', 'content', 'type', 'add_time'));
 
-        foreach ($input as $k => $v) {
-            if (empty($v)) {
-                $this->error[$k] = '请输入完整！';
+        $condition = array(
+            'cooperator_id' => $this->cooperator_id
+        );
+        if (!empty($filter['bicycle_sn'])) {
+            $condition['bicycle_sn'] = array('like', "%{$filter['bicycle_sn']}%");
+        }
+        if (!empty($filter['user_name'])) {
+            $condition['user_name'] = array('like', "%{$filter['user_name']}%");
+        }
+        if (!empty($filter['content'])) {
+            $condition['content'] = array('like', "%{$filter['content']}%");
+        }
+        if (!empty($filter['type'])) {
+            $condition['type'] = array('like', "%{$filter['type']}%");
+        }
+        if (!empty($filter['add_time'])) {
+            $add_time = explode(' 至 ', $filter['add_time']);
+            $condition['add_time'] = array(
+                array('gt', strtotime($add_time[0])),
+                array('lt', bcadd(86399, strtotime($add_time[1])))
+            );
+        }
+        $order = 'add_time DESC';
+        $limit = '';
+
+        $result = $this->sys_model_fault->getIllegalParkingList($condition, $order, $limit);
+        $list = array();
+        if (is_array($result) && !empty($result)) {
+            $get_parking_type = get_parking_type();
+            foreach ($result as $v) {
+                $list[] = array(
+                    'bicycle_sn' => $v['bicycle_sn'],
+                    'user_name' => $v['user_name'],
+                    'content' => $v['content'],
+                    'type' => $get_parking_type[$v['type']],
+                    'add_time' => date("Y-m-d H:m:s",$v['add_time']),
+                );
             }
         }
 
-        if ($this->error) {
-            $this->error['warning'] = '警告: 存在错误，请检查！';
-        }
-        return !$this->error;
+        $data = array(
+            'title' => '违规停放列表',
+            'header' => array(
+                'bicycle_sn' => '单车编号',
+                'user_name' => '上报用户',
+                'content' => '上报描述',
+                'type' => '违规类型',
+                'add_time' => '上报时间',
+            ),
+            'list' => $list
+        );
+        $this->load->controller('common/base/exportExcel', $data);
     }
 
     /**

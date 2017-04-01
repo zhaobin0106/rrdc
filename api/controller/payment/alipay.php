@@ -22,8 +22,13 @@ class ControllerPaymentAlipay extends Controller {
         }
         $verify = $noticeObj->verifyNotify();
         if (!$verify) {
-            exit($failure);
-        }
+            exit($failure);       
+	}
+	$trade_status = $this->request->post['trade_status'];
+	if ($trade_status != 'TRADE_SUCCESS') {
+	    exit($failure);
+	}	
+
         $payment_info = array(
             'payment_code' => 'alipay',
             'payment_name' => $this->language->get('text_alipay_payment')

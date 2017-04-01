@@ -89,8 +89,8 @@ class Response {
 		$this->showJsonResult($msg, 1, $data);
 	}
 	
-	public function showErrorResult($msg = '操作失败', $code = 0) {
-		$this->showJsonResult($msg, 0, array(), $code);
+	public function showErrorResult($msg = '操作失败', $code = 0, $data = array()) {
+		$this->showJsonResult($msg, 0, $data, $code);
 	}
 	
 	public function showJsonResult($msg = '', $type = 0, $data = array(), $code = 0) {

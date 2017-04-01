@@ -58,7 +58,7 @@
   </div>
   <div class="box-header panel panel-default" style="padding: 35px 25px 15px 25px;margin-bottom: 35px;">
     <div class="box-header text-center">
-      <h1 class="panel-title" style="font-size: 24px;font-weight: 400;"><!--<i class="fa fa-lock">--></i>后台管理系统</h1>
+      <h1 class="panel-title" style="font-size: 24px;font-weight: 400;"><!--<i class="fa fa-lock">--></i>总后台管理系统</h1>
     </div>
     <div class="panel-body">
       <?php if (isset($success)) { ?>
@@ -86,10 +86,10 @@
 
         </div>
         <div class="form-group">
-          <button type="submit" class="btn btn-block btn-success" style="background: #66D463;border-color: #66D463;height: 48px;"><!--<i class="fa fa-key"></i>-->登录</button>
+          <button type="submit" class="btn btn-block btn-success" style="background: #eb474c;border-color: #eb474c;height: 48px;"><!--<i class="fa fa-key"></i>-->登录</button>
         </div>
       </form>
-      <div id="footer" class="text-right" style="margin-top:18px;"><a href="<?php echo $forgotten_url; ?>" style="color: #66D463;">忘记密码？</a></div>
+      <!--<div id="footer" class="text-right" style="margin-top:18px;"><a href="<?php echo $forgotten_url; ?>" style="color: #eb474c;">忘记密码？</a></div>-->
     </div>
   </div>
   <footer id="footer" class="text-center" style="color: #999999;"><!--<a href="http://www.estronger.cn">小强单车</a>--> 小强单车&copy; 2016-2017 版权所有。<br /></footer>

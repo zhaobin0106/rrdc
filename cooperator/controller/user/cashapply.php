@@ -19,7 +19,7 @@ class ControllerUserCashApply extends Controller {
     }
 
     public function index() {
-        $filter = $this->request->get(array('pdc_sn', 'pdc_user_name', 'pdc_amount', 'pdc_bank_name', 'pdc_add_time', 'pdc_payment_state'));
+        $filter = $this->request->get(array('pdc_sn', 'pdc_user_name', 'pdr_sn', 'pdc_amount', 'pdc_payment_code', 'pdc_add_time', 'pdc_payment_state'));
 
         $condition = array();
         if (!empty($filter['pdc_sn'])) {
@@ -28,21 +28,38 @@ class ControllerUserCashApply extends Controller {
         if (!empty($filter['pdc_user_name'])) {
             $condition['pdc_user_name'] = array('like', "%{$filter['pdc_user_name']}%");
         }
+        if (!empty($filter['pdr_sn'])) {
+            $condition['pdr_sn'] = array('like', "%{$filter['pdr_sn']}%");
+        }
         if (!empty($filter['pdc_amount'])) {
             $condition['pdc_amount'] = array('like', "%{$filter['pdc_amount']}%");
         }
-        if (!empty($filter['pdc_bank_name'])) {
-            $condition['pdc_bank_name'] = array('like', "%{$filter['pdc_bank_name']}%");
-        }
-        if (!empty($filter['pdc_payment_state'])) {
-            $condition['pdc_payment_state'] = $filter['pdc_payment_state'];
+        if (!empty($filter['pdc_payment_code'])) {
+            $condition['pdc_payment_code'] = array('like', "%{$filter['pdc_payment_code']}%");
         }
         if (!empty($filter['pdc_add_time'])) {
-            $pdc_add_time = explode(' 至 ', $filter['pdc_add_time']);
-            $condition['pdc_add_time'] = array(
-                array('gt', strtotime($pdc_add_time[0])),
-                array('lt', bcadd(86399, strtotime($pdc_add_time[1])))
-            );
+            if (strpos($filter['pdc_add_time'], '至')) {
+                $pdc_add_time = explode(' 至 ', $filter['pdc_add_time']);
+                $condition['pdc_add_time'] = array(
+                    array('gt', stragreetime($pdc_add_time[0])),
+                    array('lt', bcadd(86399, strtotime($pdc_add_time[1])))
+                );
+            }
+        }
+        if (is_numeric($filter['pdc_payment_state'])) {
+            $condition['pdc_payment_state'] = $filter['pdc_payment_state'];
+        }
+
+        $filter_types = array(
+            'pdc_sn' => '申请编号',
+            'pdc_user_name' => '申请人',
+            'pdr_sn' => '充值订单号',
+            'pdc_amount' => '金额',
+        );
+        $filter_type = $this->request->get('filter_type');
+        if (empty($filter_type)) {
+            reset($filter_types);
+            $filter_type = key($filter_types);
         }
 
         if (isset($this->request->get['page'])) {
@@ -51,7 +68,7 @@ class ControllerUserCashApply extends Controller {
             $page = 1;
         }
 
-        $order = '';
+        $order = 'pdc_add_time DESC';
         $rows = $this->config->get('config_limit_admin');
         $offset = ($page - 1) * $rows;
         $limit = sprintf('%d, %d', $offset, $rows);
@@ -60,16 +77,20 @@ class ControllerUserCashApply extends Controller {
         $total = $this->sys_model_deposit->getDepositCashTotal($condition);
 
         foreach ($result as &$item) {
-            $item['pdc_payment_state'] = $item['pdc_payment_state'] == 1 ? '已支付' : '未支付';
+            $item['pdc_payment_state_text'] = $item['pdc_payment_state'] == 1 ? '<span style="color: #00a65a">已退款</span>' : '<span style="color: #dd4b39">未退款</span>';
             $item['info_action'] = $this->url->link('user/cashapply/edit', 'pdc_id='.$item['pdc_id']);
+            $item['pdc_add_time'] = date('Y-m-d H:i:s', $item['pdc_add_time']);
         }
 
         $data_columns = $this->getDataColumns();
         $this->assign('data_columns', $data_columns);
         $this->assign('data_rows', $result);
         $this->assign('filter', $filter);
-        $this->assign('payment_state', array('已支付', '未支付'));
-        $this->assign('payment_states', array(array('text' => '未支付', 'value' => '0'), array('text' => '已支付', 'value' => '1')));
+        $this->assign('filter_type', $filter_type);
+        $this->assign('filter_types', $filter_types);
+        $this->assign('action', $this->cur_url);
+        $this->assign('payment_state', array('已退款', '未退款'));
+        $this->assign('payment_states', array(array('text' => '未退款', 'value' => '0'), array('text' => '已退款', 'value' => '1')));
 
         $payment_types = array(
             array('code' => 'alipay', 'text' => '支付宝'),
@@ -89,6 +110,8 @@ class ControllerUserCashApply extends Controller {
         $this->assign('pagination', $pagination);
         $this->assign('results', $results);
 
+        $this->assign('export_action', $this->url->link('user/cashapply/export'));
+
         $this->response->setOutput($this->load->view('user/cash_apply_list', $this->output));
     }
 
@@ -100,6 +123,10 @@ class ControllerUserCashApply extends Controller {
             $pdc_id = $this->request->post['pdc_id'];
             $this->load->library('sys_model/deposit', true);
             $cash_info = $this->sys_model_deposit->getDepositCashInfo(array('pdc_id' => $pdc_id));
+            if ($cash_info['pdc_payment_state'] == 1) {
+                $this->error['warning'] = '已退款，无需再操作';
+                return !$this->error;
+            }
 
             if ($this->request->post['type'] == 'agree') {
                 $this->cashSubmit($cash_info);
@@ -113,6 +140,79 @@ class ControllerUserCashApply extends Controller {
         $this->getForm();
     }
 
+    /**
+     * 导出
+     */
+    public function export() {
+        $filter = $this->request->post(array('pdc_sn', 'pdc_user_name', 'pdr_sn', 'pdc_amount', 'pdc_payment_code', 'pdc_add_time', 'pdc_payment_state'));
+
+        $condition = array();
+        if (!empty($filter['pdc_sn'])) {
+            $condition['pdc_sn'] = array('like', "%{$filter['pdc_sn']}%");
+        }
+        if (!empty($filter['pdc_user_name'])) {
+            $condition['pdc_user_name'] = array('like', "%{$filter['pdc_user_name']}%");
+        }
+        if (!empty($filter['pdr_sn'])) {
+            $condition['pdr_sn'] = array('like', "%{$filter['pdr_sn']}%");
+        }
+        if (!empty($filter['pdc_amount'])) {
+            $condition['pdc_amount'] = array('like', "%{$filter['pdc_amount']}%");
+        }
+        if (!empty($filter['pdc_payment_code'])) {
+            $condition['pdc_payment_code'] = array('like', "%{$filter['pdc_payment_code']}%");
+        }
+        if (!empty($filter['pdc_add_time'])) {
+            if (strpos($filter['pdc_add_time'], '至')) {
+                $pdc_add_time = explode(' 至 ', $filter['pdc_add_time']);
+                $condition['pdc_add_time'] = array(
+                    array('gt', stragreetime($pdc_add_time[0])),
+                    array('lt', bcadd(86399, strtotime($pdc_add_time[1])))
+                );
+            }
+        }
+        if (is_numeric($filter['pdc_payment_state'])) {
+            $condition['pdc_payment_state'] = $filter['pdc_payment_state'];
+        }
+        $order = 'pdc_add_time DESC';
+        $limit = '';
+
+        $result = $this->sys_model_deposit->getDepositCashList($condition, $limit, $order);
+        $list = array();
+        if (is_array($result) && !empty($result)) {
+            $pdc_payment_state = array(
+                '1' => '已退款',
+                '0' => '未退款',
+            );
+            foreach ($result as $v) {
+                $list[] = array(
+                    'pdc_sn' => $v['pdc_sn'],
+                    'pdc_user_name' => $v['pdc_user_name'],
+                    'pdr_sn' => $v['pdr_sn'],
+                    'pdc_amount' => $v['pdc_amount'],
+                    'pdc_payment_name' => $v['pdc_payment_name'],
+                    'pdc_add_time' => date("Y-m-d h:m:s",$v['pdc_add_time']),
+                    'pdc_payment_state' => $pdc_payment_state[$v['pdc_payment_state']],
+                );
+            }
+        }
+
+        $data = array(
+            'title' => '充值记录列表',
+            'header' => array(
+                'pdc_sn' => '申请编号',
+                'pdc_user_name' => '申请人',
+                'pdr_sn' => '充值订单号',
+                'pdc_amount' => '金额',
+                'pdc_payment_name' => '支付方式',
+                'pdc_add_time' => '申请时间',
+                'pdc_payment_state' => '	提现支付状态',
+            ),
+            'list' => $list
+        );
+        $this->load->controller('common/base/exportExcel', $data);
+    }
+
     private function cashCancel($pdc_info) {
         $result = $this->sys_model_deposit->cashCancel($pdc_info);
     }
@@ -122,11 +222,16 @@ class ControllerUserCashApply extends Controller {
             //支付宝有密码退款
             $this->sys_model_deposit->aliPayRefund($pdc_info);
         } else {
+            $ssl_cert_path = WX_SSL_CONF_PATH . $this->config->get('config_wxpay_ssl_cert_path') . '/apiclient_cert.pem';
+            $ssl_key_path = WX_SSL_CONF_PATH . $this->config->get('config_wxpay_ssl_cert_path') . '/apiclient_key.pem';
+            define('WX_SSLCERT_PATH', $ssl_cert_path);
+            define('WX_SSLKEY_PATH', $ssl_key_path);
             $result = $this->sys_model_deposit->wxPayRefund($pdc_info);
-            if ($result['state']) {
-
+            $filter = array();
+            if ($result['state'] == true) {
+                $this->load->controller('common/base/redirect', $this->url->link('user/cashapply', $filter, true));
             } else {
-
+                die($result['msg']);
             }
         }
     }
@@ -147,9 +252,9 @@ class ControllerUserCashApply extends Controller {
             $cash_info['pdc_payment_time'] = date('Y-m-d H:i:s', $cash_info['pdc_payment_time']);
         }
         if ($cash_info['pdc_payment_state']) {
-            $cash_info['pdc_payment_state'] = '<span class="red">已付款</span>';
+            $cash_info['pdc_payment_state_text'] = '已付款';
         } else {
-            $cash_info['pdc_payment_state'] = '未付款';
+            $cash_info['pdc_payment_state_text'] = '未付款';
         }
 
 

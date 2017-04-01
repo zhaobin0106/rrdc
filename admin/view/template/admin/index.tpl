@@ -41,13 +41,19 @@
         <div id="map-n-statistics" class="no-padding">
             <div id="map"></div>
             <div id="map-toolbar">
-                <div class="dropdown place-select">
+                <!--<div class="dropdown place-select">
                     <button class="btn btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" style="font-size: 14px; vertical-align: baseline;">
                         西通电子
                         <span class="caret"></span>
                     </button>
                     <div class="dropdown-menu" id="treeview"></div>
-                </div>
+                </div>-->
+                <select class="input-sm" style="border: none;font-size: 14px;vertical-align: baseline;background-color:white">
+                    <option value="">所有合伙人</option>
+                </select>
+                <select class="input-sm" style="border: none;font-size: 14px;vertical-align: baseline;background-color:white">
+                    <option value="">所有区域</option>
+                </select>
                 |
                 <button type="button" class="btn btn-default btn-xs btn-no-border btn-refresh-marker" style="font-size: 14px; vertical-align: baseline;">
                     <i class="fa fa-refresh"></i> <span class="hidden-phone hidden-xs hidden-sm">刷新</span>
@@ -97,9 +103,12 @@
                         <li data-bike_type="offline"><a href="#">失联</a></li>
                     </ul>
                 </div>
-                <button type="button" class="btn btn-default btn-xs btn-no-border hidden-phone" style="font-size: 14px; vertical-align: baseline;">
-                    <i class="fa fa-file-excel-o"></i> <span class="hidden-xs hidden-sm hidden-md">导出Excel</span>
-                </button>
+                <form method="post" action="<?php echo $export_action; ?>" style="font-size: 14px; vertical-align: baseline;display: inline-block;">
+                    <input type="hidden" name="region_name" value="" />
+                    <button class="btn btn-default btn-xs btn-no-border hidden-phone" style="font-size: 14px; vertical-align: baseline;">
+                        <i class="fa fa-file-excel-o"></i> <span class="hidden-xs hidden-sm hidden-md">导出Excel</span>
+                    </button>
+                </form>
             </div>
             <div id="statistics">
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -133,7 +142,7 @@
                         <a href="#">
                         <div class="checkbox">
                             <label>
-                                <input type="checkbox" checked> 违停
+                                <input type="checkbox"> 违停
                             </label>
                         </div>
                         </a>
@@ -142,7 +151,7 @@
                         <a href="#">
                         <div class="checkbox">
                             <label>
-                                <input type="checkbox" checked> 故障
+                                <input type="checkbox"> 故障
                             </label>
                         </div>
                         </a>
@@ -160,21 +169,17 @@
             </div>
             </form>
             <!-- search form -->
-            <form action="#" method="get" class="sidebar-form">
+            <div class="sidebar-form">
                 <div class="input-group">
-                    <input type="text" name="q" class="form-control" placeholder="搜索单车...">
+                    <input type="text" name="query" class="form-control" placeholder="搜索单车...">
                     <span class="input-group-btn">
-                    <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+                    <button name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
                     </button>
                   </span>
                 </div>
-            </form>
+            </div>
             <!-- /.search form -->
-            <ul class="bike-list">
-                <li>650312</li>
-                <li>650311</li>
-                <li>710412</li>
-                <li>789121</li>
+            <ul class="bike-list" style="height: 100%;overflow: auto; box-sizing:border-box;border-bottom:100px solid transparent;">
             </ul>
         </div>
     </div>

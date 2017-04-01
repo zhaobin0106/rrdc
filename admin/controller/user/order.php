@@ -51,7 +51,7 @@ class ControllerUserOrder extends Controller {
             'lock_sn' => '锁sn',
             'bicycle_sn' => '单车sn',
             'user_name' => '手机号',
-            'region_name' => '景区',
+            'region_name' => '区域',
         );
         $filter_type = $this->request->get('filter_type');
         if (empty($filter_type)) {
@@ -126,7 +126,7 @@ class ControllerUserOrder extends Controller {
         $this->setDataColumn('锁sn');
         $this->setDataColumn('单车sn');
         $this->setDataColumn('手机号');
-        $this->setDataColumn('景区');
+        $this->setDataColumn('区域');
         $this->setDataColumn('状态');
         $this->setDataColumn('下单时间');
         return $this->data_columns;
@@ -286,13 +286,13 @@ class ControllerUserOrder extends Controller {
         }
 
         $data = array(
-            'title' => '违规停放列表',
+            'title' => '消费记录列表',
             'header' => array(
                 'order_sn' => '订单sn',
                 'lock_sn' => '锁sn',
                 'bicycle_sn' => '单车sn',
                 'user_name' => '手机号',
-                'region_name' => '景区',
+                'region_name' => '区域',
                 'order_state' => '	状态',
                 'add_time' => '下单时间',
             ),

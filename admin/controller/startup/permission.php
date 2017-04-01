@@ -31,6 +31,9 @@ class ControllerStartupPermission extends Controller {
                 'admin/index/apiGetIllegalParking',
                 'admin/index/apiGetFeekbacks',
                 'admin/index/apiGetUsedHistory',
+                'admin/index/lockInfo',
+                'admin/index/search',
+                'admin/index/cooperator',
             );
 
 			if (!in_array($action, $ignore) && !$this->logic_admin->hasPermission($action)) {

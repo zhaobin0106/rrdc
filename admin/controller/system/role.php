@@ -276,7 +276,6 @@ class ControllerSystemRole extends Controller {
         $this->assign('role_permission', json_encode($permissions));
         $this->assign('data', $info);
         $this->assign('action', $this->cur_url . '&role_id=' . $role_id);
-        $this->assign('return_action', $this->url->link('system/role'));
         $this->assign('error', $this->error);
         $this->assign('static', HTTP_IMAGE);
 

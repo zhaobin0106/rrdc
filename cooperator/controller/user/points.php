@@ -1,5 +1,6 @@
 <?php
 class ControllerUserPoints extends Controller {
+    private $cooperator_id = null;
     private $cur_url = null;
     private $error = null;
     
@@ -8,6 +9,7 @@ class ControllerUserPoints extends Controller {
 
         // 当前网址
         $this->cur_url = $this->url->link($this->request->get['route']);
+        $this->cooperator_id = $this->logic_admin->getParam('cooperator_id');
 
         // 加载points Model
         $this->load->library('sys_model/points', true);
@@ -19,7 +21,20 @@ class ControllerUserPoints extends Controller {
     public function index() {
         $filter = $this->request->get(array('mobile', 'points', 'point_desc', 'admin_name', 'add_time'));
 
-        $condition = array();
+        // 消费过的用户id
+        $this->load->library('sys_model/orders', true);
+        $condition = array(
+            'cooperator_id' => $this->cooperator_id
+        );
+        $order = '';
+        $limit = '';
+        $field = 'DISTINCT user_id';
+        $orders = $this->sys_model_orders->getOrdersList($condition, $order, $limit, $field);
+        $user_ids = array_column($orders, 'user_id');
+
+        $condition = array(
+            'pl.user_id' => array('in', $user_ids)
+        );
         if (!empty($filter['mobile'])) {
             $condition['mobile'] = array('like', "%{$filter['mobile']}%");
         }
@@ -34,10 +49,22 @@ class ControllerUserPoints extends Controller {
         }
         if (!empty($filter['add_time'])) {
             $add_time = explode(' 至 ', $filter['add_time']);
-            $condition['add_time'] = array(
+            $condition['pl.add_time'] = array(
                 array('gt', strtotime($add_time[0])),
                 array('lt', bcadd(86399, strtotime($add_time[1])))
             );
+        }
+
+        $filter_types = array(
+            'mobile' => '手机号',
+            'points' => '积分值',
+            'point_desc' => '积分描述',
+            'admin_name' => '管理员名称',
+        );
+        $filter_type = $this->request->get('filter_type');
+        if (empty($filter_type)) {
+            reset($filter_types);
+            $filter_type = key($filter_types);
         }
 
         if (isset($this->request->get['page'])) {
@@ -75,6 +102,8 @@ class ControllerUserPoints extends Controller {
         $this->assign('data_rows', $result);
         $this->assign('model', $model);
         $this->assign('filter', $filter);
+        $this->assign('filter_type', $filter_type);
+        $this->assign('filter_types', $filter_types);
         $this->assign('action', $this->cur_url);
         $this->assign('add_action', $this->url->link('points/points/add'));
 
@@ -94,6 +123,8 @@ class ControllerUserPoints extends Controller {
         $this->assign('pagination', $pagination);
         $this->assign('results', $results);
 
+        $this->assign('export_action', $this->url->link('user/points/export'));
+
         $this->response->setOutput($this->load->view('user/points_list', $this->output));
     }
 
@@ -111,98 +142,73 @@ class ControllerUserPoints extends Controller {
     }
 
     /**
-     * 添加用户信用记录
+     * 导出
      */
-    public function add() {
-        if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
-            $input = $this->request->post(array('points_sn', 'type', 'lock_sn'));
-            $now = time();
-            $data = array(
-                'points_sn' => $input['points_sn'],
-                'type' => (int)$input['type'],
-                'lock_sn' => $input['lock_sn'],
-                'add_time' => $now
-            );
-            $this->sys_model_points->addpoints($data);
+    public function export() {
+        $filter = $this->request->post(array('mobile', 'points', 'point_desc', 'admin_name', 'add_time'));
 
-            $this->session->data['success'] = '添加用户信用记录成功！';
-            
-            $filter = $this->request->get(array('points_sn', 'type', 'lock_sn', 'is_using'));
-
-            $this->load->controller('common/base/redirect', $this->url->link('points/points', $filter, true));
-        }
-
-        $this->assign('title', '用户信用记录添加');
-        $this->getForm();
-    }
-
-    /**
-     * 编辑用户信用记录
-     */
-    public function edit() {
-        if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
-            $input = $this->request->post(array('points_sn', 'type', 'lock_sn'));
-            $point_id = $this->request->get['point_id'];
-            $data = array(
-                'points_sn' => $input['points_sn'],
-                'type' => (int)$input['type'],
-                'lock_sn' => $input['lock_sn']
-            );
-            $condition = array(
-                'point_id' => $point_id
-            );
-            $this->sys_model_points->updatepoints($condition, $data);
-
-            $this->session->data['success'] = '编辑用户信用记录成功！';
-
-            $filter = $this->request->get(array('points_sn', 'type', 'lock_sn', 'is_using'));
-
-            $this->load->controller('common/base/redirect', $this->url->link('points/points', $filter, true));
-        }
-
-        $this->assign('title', '编辑用户信用记录');
-        $this->getForm();
-    }
-
-    /**
-     * 删除用户信用记录
-     */
-    public function delete() {
-        if (isset($this->request->get['point_id']) && $this->validateDelete()) {
-            $condition = array(
-                'point_id' => $this->request->get['point_id']
-            );
-            $this->sys_model_points->deletepoints($condition);
-
-            $this->session->data['success'] = '删除用户信用记录成功！';
-        }
-        $filter = $this->request->get(array('points_sn', 'type', 'lock_sn', 'is_using'));
-        $this->load->controller('common/base/redirect', $this->url->link('points/points', $filter, true));
-    }
-
-    /**
-     * 用户信用记录详情
-     */
-    public function info() {
-        // 编辑时获取已有的数据
-        $point_id = $this->request->get('point_id');
+        // 消费过的用户id
+        $this->load->library('sys_model/orders', true);
         $condition = array(
-            'point_id' => $point_id
+            'cooperator_id' => $this->cooperator_id
         );
-        $info = $this->sys_model_points->getpointsInfo($condition);
-        if (!empty($info)) {
-            $model = array(
-                'type' => get_points_type(),
-                'is_using' => get_common_boolean()
+        $order = '';
+        $limit = '';
+        $field = 'DISTINCT user_id';
+        $orders = $this->sys_model_orders->getOrdersList($condition, $order, $limit, $field);
+        $user_ids = array_column($orders, 'user_id');
+
+        $condition = array(
+            'pl.user_id' => array('in', $user_ids)
+        );
+        if (!empty($filter['mobile'])) {
+            $condition['mobile'] = array('like', "%{$filter['mobile']}%");
+        }
+        if (is_numeric($filter['points'])) {
+            $condition['points'] = (int)$filter['points'];
+        }
+        if (!empty($filter['point_desc'])) {
+            $condition['point_desc'] = array('like', "%{$filter['point_desc']}%");
+        }
+        if (!empty($filter['admin_name'])) {
+            $condition['admin_name'] = array('like', "%{$filter['admin_name']}%");
+        }
+        if (!empty($filter['add_time'])) {
+            $add_time = explode(' 至 ', $filter['add_time']);
+            $condition['pl.add_time'] = array(
+                array('gt', strtotime($add_time[0])),
+                array('lt', bcadd(86399, strtotime($add_time[1])))
             );
-            foreach ($model as $k => $v) {
-                $info[$k] = isset($v[$info[$k]]) ? $v[$info[$k]] : '';
+        }
+        $order = 'pl.add_time DESC';
+        $limit = '';
+
+        $result = $this->sys_model_points->getPointsList($condition, $order, $limit);
+        $list = array();
+        if (is_array($result) && !empty($result)) {
+            foreach ($result as $v) {
+                $list[] = array(
+                    'mobile' => $v['mobile'],
+                    'credit_point' => $v['credit_point'],
+                    'point_desc' => $v['point_desc'],
+                    'admin_name' => $v['admin_name'],
+                    'add_time' => date("Y-m-d h:m:s",$v['add_time']),
+                );
             }
         }
 
-        $this->assign('data', $info);
-
-        $this->response->setOutput($this->load->view('points/points_info', $this->output));
+        $data = array(
+            'title' => '用户信用列表',
+            'header' => array(
+                'mobile' => '手机号',
+                'credit_point' => '积分值',
+                'point_desc' => '积分描述',
+                'admin_name' => '管理员名称',
+                'add_time' => '添加时间',
+            ),
+            'list' => $list
+        );
+        $this->load->controller('common/base/exportExcel', $data);
     }
 
     private function getForm() {

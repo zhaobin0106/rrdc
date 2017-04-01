@@ -155,7 +155,7 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li class="header"><a href="javascript:;"><i class="fa fa-users text-aqua"></i><span>合伙人管理</span><span class="pull-right-container"><i class="fa fa-close pull-right"></i></span></a></li>
-                            <li class="header"><a href="javascript:;"><i class="fa fa-globe text-aqua"></i><span>景区管理</span><span class="pull-right-container"><i class="fa fa-close pull-right"></i></span></a></li>
+                            <li class="header"><a href="javascript:;"><i class="fa fa-globe text-aqua"></i><span>区域管理</span><span class="pull-right-container"><i class="fa fa-close pull-right"></i></span></a></li>
                         </ul>
                     </li>
                     <!-- 消息中心 -->
@@ -220,7 +220,7 @@
     <?php } else { ?>
     <header class="main-header">
         <!-- Logo -->
-        <a href="index.php?route=admin/index" class="logo">
+        <a href="index.php?route=admin/index" class="logo" style="border-right: 1px solid #ccc;background-color: #ffffff;">
             <!-- mini logo for sidebar mini 50x50 pixels -->
             <span class="logo-mini"><img src="<?php echo $static;?>images/50x50.png"/></span>
             <!-- logo for regular state and mobile devices -->
@@ -286,7 +286,7 @@
                     </li>
                     <!-- 系统设置 -->
                     <li class="dropdown">
-                        <a href="javascript:;" style="padding: 12px;">
+                        <a href="<?php echo $setting_action; ?>" style="padding: 12px;">
                             <i class="fa fa-cog no-margin" style="font-size: 24px;"></i>
                         </a>
                     </li>
@@ -300,10 +300,23 @@
                             <!-- User image -->
                             <li class="user-header">
                                 <img src="<?php echo $static; ?>/AdminLTE-2.3.7/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                                <p>
+                                    <?php echo $admin_name; ?>
+                                    <!--区域 - 都江堰市-->
+                                    <small>最后登录时间：<?php echo $login_time; ?></small>
+                                </p>
                             </li>
-                            <!-- Menu Body -->
+                            <!-- Menu Body
                             <li class="user-body">
                                 <button type="button" class="btn btn-block btn-warning" onclick="location.href='<?php echo $logout_url; ?>'">退出</button>
+                            </li>-->
+                            <li class="user-footer">
+                                <div class="pull-left">
+                                    <button class="btn btn-default btn-flat" onclick="location.href='<?php echo $information; ?>'">个人中心</button>
+                                </div>
+                                <div class="pull-right">
+                                    <button type="button" class="btn btn-block btn-warning" onclick="location.href='<?php echo $logout_url; ?>'">退出登陆</button>
+                                </div>
                             </li>
                         </ul>
                     </li>

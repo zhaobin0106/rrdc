@@ -59,16 +59,16 @@ class ControllerCooperatorCooperator extends Controller {
         if (is_array($result) && !empty($result)) {
             foreach ($result as &$item) {
                 $selectedRegions = array();
-                $item['state'] = isset($state[$item['state']]) ? $state[$item['state']] : '';
                 $condition = array(
                     'cooperator_id' => $item['cooperator_id']
                 );
-                $cooperatorRegions = $this->sys_model_cooperator->getCooperatorToRegionList($condition);
+                $cooperatorRegions = $this->sys_model_region->getCooperatorToRegionList($condition);
                 foreach ($cooperatorRegions as $val) {
                     $selectedRegions[] = $val['region_id'];
                 }
                 $regions[$item['cooperator_id']] = $this->_getTreeData($allRegions, $selectedRegions);
                 $item['regions_num'] = count($selectedRegions);
+                $item['state'] = isset($state[$item['state']]) ? $state[$item['state']] : '';
 
                 $item['edit_action'] = $this->url->link('cooperator/cooperator/edit', 'cooperator_id='.$item['cooperator_id']);
                 $item['delete_action'] = $this->url->link('cooperator/cooperator/delete', 'cooperator_id='.$item['cooperator_id']);
@@ -116,7 +116,7 @@ class ControllerCooperatorCooperator extends Controller {
      */
     protected function getDataColumns() {
         $this->setDataColumn('合伙人');
-        $this->setDataColumn('景区管辖');
+        $this->setDataColumn('区域管辖');
         $this->setDataColumn('状态');
         return $this->data_columns;
     }
@@ -126,16 +126,16 @@ class ControllerCooperatorCooperator extends Controller {
      */
     public function add() {
         if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
-            $input = $this->request->post(array('cooperator_name', 'password', 'region', 'state'));
+            $input = $this->request->post(array('cooperator_name', 'admin_name', 'password', 'region', 'state'));
             $now = time();
             $data = array(
                 'cooperator_name' => $input['cooperator_name'],
-                'password' => $input['password'],
                 'state' => (int)$input['state'],
                 'add_time' => $now
             );
             $cooperator_id = $this->sys_model_cooperator->addCooperator($data);
             if ($cooperator_id) {
+                // 合伙人管辖区域
                 if (!empty($input['region']) && is_array($input['region'])) {
                     foreach ($input['region'] as $region_id) {
                         $data = array(
@@ -145,6 +145,28 @@ class ControllerCooperatorCooperator extends Controller {
                         $this->sys_model_cooperator->addCooperatorToRegion($data);
                     }
                 }
+
+                // 操作员
+                $data = array(
+                    'role_id' => $input['role_id'],
+                    'type' => 2,
+                    'cooperator_id' => $cooperator_id,
+                    'admin_name' => $input['admin_name'],
+                    'password' => $input['password'],
+                    'state' => 1,
+                    'add_time' => $now
+                );
+                $admin_id = $this->logic_admin->add($data);
+
+                // 更新合伙人管理
+                $condition = array(
+                    'cooperator_id' => $cooperator_id
+                );
+                $data = array(
+                    'admin_id' => $admin_id,
+                    'admin_name' => $input['admin_name']
+                );
+                $this->sys_model_cooperator->updateCooperator($condition, $data);
             }
 
             $this->session->data['success'] = '添加合伙人成功！';
@@ -179,26 +201,23 @@ class ControllerCooperatorCooperator extends Controller {
             $data = array(
                 'state' => $input['state']
             );
-            if (!empty($input['password'])) {
-                $data['password'] = $input['password'];
-            }
             $condition = array(
                 'cooperator_id' => $cooperator_id
             );
             $this->sys_model_cooperator->updateCooperator($condition, $data);
 
-            // 清空合伙人所有的景区，重新绑定景区
+            // 清空合伙人所有的区域，重新绑定区域
             $condition = array(
                 'cooperator_id' => $cooperator_id
             );
-            $this->sys_model_cooperator->deleteCooperatorToRegion($condition);
+            $this->sys_model_region->deleteCooperatorToRegion($condition);
             if (!empty($input['region']) && is_array($input['region'])) {
                 foreach ($input['region'] as $region_id) {
                     $data = array(
                         'cooperator_id' => $cooperator_id,
                         'region_id' => $region_id
                     );
-                    $this->sys_model_cooperator->addCooperatorToRegion($data);
+                    $this->sys_model_region->addCooperatorToRegion($data);
                 }
             }
 
@@ -278,26 +297,28 @@ class ControllerCooperatorCooperator extends Controller {
     }
 
     /**
-     * 更改合伙人管辖的景区
+     * 更改合伙人管辖的区域
      */
     public function update_cooperator_region() {
         $input = $this->request->post(array('cooperator_id', 'regions'));
-        $regions = explode(',', $input['regions']);
 
-        // 删除原有的景区
+        // 删除原有的区域
         $condition = array(
             'cooperator_id' => $input['cooperator_id']
         );
-        $this->sys_model_cooperator->deleteCooperatorToRegion($condition);
+        $this->sys_model_region->deleteCooperatorToRegion($condition);
 
-        // 重新绑定景区
-        if (is_array($regions) && !empty($regions)) {
-            foreach ($regions as $region_id) {
-                $data = array(
-                    'cooperator_id' => $input['cooperator_id'],
-                    'region_id' => $region_id
-                );
-                $this->sys_model_cooperator->addCooperatorToRegion($data);
+        // 重新绑定区域
+        if (!empty($input['regions'])) {
+            $regions = explode(',', $input['regions']);
+            if (is_array($regions) && !empty($regions)) {
+                foreach ($regions as $region_id) {
+                    $data = array(
+                        'cooperator_id' => $input['cooperator_id'],
+                        'region_id' => $region_id
+                    );
+                    $this->sys_model_region->addCooperatorToRegion($data);
+                }
             }
         }
         $this->response->showSuccessResult('', '修改成功');
@@ -368,7 +389,7 @@ class ControllerCooperatorCooperator extends Controller {
                 'bicycle_sn' => '单车编号',
                 'lock_sn' => '车锁编号',
                 'type' => '单车类型',
-                'region_name' => '景区',
+                'region_name' => '区域',
                 'cooperator_name' => '合伙人',
                 'is_using' => '是否使用中',
             ),
@@ -379,7 +400,7 @@ class ControllerCooperatorCooperator extends Controller {
 
     private function getForm() {
         // 编辑时获取已有的数据
-        $info = $this->request->post(array('cooperator_name', 'password', 'confirm', 'region', 'state'));
+        $info = $this->request->post(array('cooperator_name','admin_name', 'password', 'role_id', 'confirm', 'region', 'state'));
         $cooperator_id = $this->request->get('cooperator_id');
         if (isset($this->request->get['cooperator_id']) && ($this->request->server['REQUEST_METHOD'] != 'POST')) {
             $condition = array(
@@ -388,15 +409,14 @@ class ControllerCooperatorCooperator extends Controller {
             $info = $this->sys_model_cooperator->getCooperatorInfo($condition);
         }
 
-
         if (empty($info['region'])) {
             $info['region'] = array();
-            //  编辑时读取已选的景区
+            //  编辑时读取已选的区域
             if (isset($this->request->get['cooperator_id'])) {
                 $condition = array(
                     'cooperator_id' => $this->request->get['cooperator_id']
                 );
-                $cooperatorRegion = $this->sys_model_cooperator->getCooperatorToRegionList($condition);
+                $cooperatorRegion = $this->sys_model_region->getCooperatorToRegionList($condition);
                 if (is_array($cooperatorRegion) && !empty($cooperatorRegion)) {
                     foreach ($cooperatorRegion as $val) {
                         $info['region'][] = $val['region_id'];
@@ -405,12 +425,20 @@ class ControllerCooperatorCooperator extends Controller {
             }
         }
 
-        // 加载景区 model
+        // 加载区域 model
+        $this->load->library('sys_model/rbac', true);
+        $condition = array(
+            'cooperator_id' => 0
+        );
+        $roles = $this->sys_model_rbac->getRoleList($condition);
+
+        // 加载区域 model
         $this->load->library('sys_model/region', true);
         $regions = $this->sys_model_region->getRegionList();
 
         $this->assign('cooperator_id', $cooperator_id);
         $this->assign('data', $info);
+        $this->assign('roles', $roles);
         $this->assign('regions', $regions);
         $this->assign('return_action', $this->url->link('cooperator/cooperator'));
         $this->assign('action', $this->cur_url . '&cooperator_id=' . $cooperator_id);
@@ -432,20 +460,6 @@ class ControllerCooperatorCooperator extends Controller {
 //                $this->error[$k] = '请输入完整！';
 //            }
 //        }
-        $route = $this->request->get('route');
-        $password = $this->request->post('password');
-        $confirm = $this->request->post('confirm');
-        if ($route == 'cooperator/cooperator/add') {
-            if (empty($password)) {
-                var_dump($this->request->post);
-                $this->error['password'] = '请输入密码！';
-            }
-        }
-        if (!empty($password)) {
-            if ($password !== $confirm) {
-                $this->error['confirm'] = '两次输入密码不正确！';
-            }
-        }
 
         if ($this->error) {
             $this->error['warning'] = '警告: 存在错误，请检查！';

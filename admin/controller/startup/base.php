@@ -14,7 +14,7 @@ class ControllerStartupBase extends Controller {
         }
 
         // 当前网址
-        $cur_url = isset($this->request->get['route']) ? $this->request->get['route'] : $this->config->get('action_default');
+        $cur_url = !empty($this->request->get['route']) ? $this->request->get['route'] : "admin/index";
         if(substr_count($cur_url,'/') > 1) $cur_url = substr($cur_url,0,strrpos($cur_url,'/'));
 
         $this->load->library('sys_model/menu', true);

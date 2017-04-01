@@ -10,6 +10,7 @@ class Orders {
         $this->sys_model_orders = new \Sys_Model\Orders($registry);
         $this->sys_model_bicycle = new \Sys_Model\Bicycle($registry);
         $this->sys_model_region = new \Sys_Model\Region($registry);
+        $this->language = $registry->get('language');
     }
 
     /**
@@ -78,7 +79,7 @@ class Orders {
         $device_id = $data['device_id'];
         $cmd = $data['cmd'];
         if (strtolower($cmd) == 'open' && strtolower($data['result']) == 'ok') {
-            $order_info = $this->sys_model_orders->getOrdersInfo(array('lock_sn' => $device_id, 'order_state' => 0, 'add_time' => $data['serialnum']));
+            $order_info = $this->sys_model_orders->getOrdersInfo(array('order_state' => 0, 'lock_sn' => $device_id, 'add_time' => $data['serialnum']));
             if (!empty($order_info)) {
                 $arr = array(
                     'start_time' => time(),
@@ -127,7 +128,7 @@ class Orders {
         $cmd = $data['cmd'];
 
         if (strtolower($cmd) == 'close') {
-            $order_info = $this->sys_model_orders->getOrdersInfo(array('lock_sn' => $device_id, 'order_state' => 1));
+            $order_info = $this->sys_model_orders->getOrdersInfo(array('order_state' => 1, 'lock_sn' => $device_id));
             if (!empty($order_info)) {
                 $arr = array(
                     'end_time' => time(),
@@ -138,6 +139,9 @@ class Orders {
                     $this->sys_model_orders->begin();
                     $start_time = $order_info['start_time'];
                     $end_time = $arr['end_time'];
+                    if ($end_time == 0 || $start_time > $end_time) {
+                        $end_time = $start_time = 0;
+                    }
                     $riding_time = $end_time - $start_time; //骑行时间
                     $unit = ceil($riding_time / TIME_CHARGE_UNIT);//计费单元
                     $amount = $unit * PRICE_UNIT; //骑行费用
@@ -254,6 +258,22 @@ class Orders {
         return $this->sys_model_orders->addOrderLine($data);
     }
 
+    /**
+     * 需要获取锁的合伙人ID，做到互不影响
+     * @param $lock_sn
+     */
+    public function getFreeAmount($lock_sn) {
+        if (!is_object($this->registry->get('sys_model_lock'))) {
+            $this->registry->get('load')->library('sys_model/lock');
+        }
+        if (!is_object($this->registry->get('sys_model_free_ride'))) {
+            $this->registry->get('load')->library('sys_model/free_ride');
+        }
+        $lock_info = $this->registry->get('sys_model_lock')->getLockInfo(array('lock_sn' => $lock_sn));
+        $cooperator_id = $lock_info['cooperator_id'];
+        $free_time_info = $this->registry->get('sys_model_free_ride')->getFreeTimeInfo(array('cooperator_id' => $cooperator_id));
+    }
+
     public function make_sn($user_id) {
         return mt_rand(10, 99) . sprintf('%010d', time() - 946656000) . sprintf('%03d', (float) microtime() * 1000) . sprintf('%03d', (int) $user_id % 1000);
     }
@@ -278,6 +298,9 @@ class Orders {
         //计算的结束时间
         $end_time = ($order['order_state'] == 2 || $order['order_state'] == -1) ? $order['end_time'] : time();
         $duration = $end_time - ($order['order_state'] <= 0 ? $order['add_time'] : $order['start_time']);
+        if ($duration < 0) {
+            $duration = 0;
+        }
         return ceil($duration / 60.0);
     }
 
@@ -287,7 +310,15 @@ class Orders {
 
     public function getOrderDetail($order_id) {
         $order_info = $this->sys_model_orders->getOrdersInfo(array('order_id'=>$order_id));
-        $order_info['duration'] = ceil(($order_info['end_time'] - $order_info['start_time'])/60.0);
+        if (empty($order_info)) {
+            return $order_info;
+        }
+
+        if (($order_info['order_state'] == 2 && $order_info['end_time'] == 0) || ($order_info['order_state'] == 2 && $order_info['start_time'] > $order_info['end_time'])) {
+            $order_info['end_time'] = $order_info['start_time'];
+        }
+
+        $order_info['duration'] = ($order_info['end_time'] > $order_info['start_time']) ? ceil(($order_info['end_time'] - $order_info['start_time'])/60.0) : 0;
         $order_info['distance'] = round($order_info['distance'] / 1000.0, 2);
         $order_info['calorie'] = round(60 * $order_info['distance'] * 1.036, 2);
         $order_info['emission'] = $order_info['distance'] ? round($order_info['distance'] * 0.275 * 1000) : 0;
@@ -307,18 +338,151 @@ class Orders {
             } elseif ($coupon_info['coupon_type'] == 4) {
                 $coupon_info['unit'] = $this->language->get('text_discount_unit');
             }
-
-            if (!empty($coupon_info)) {
-                $coupon_info = array($coupon_info);
-            }
+            $coupon_info = array($coupon_info);
         }
 
         $order_info['coupon_info'] = $coupon_info;
-        $locations = $this->sys_model_orders->getOrderLine(array('order_id'=>$order_id));
+        $locations = $this->sys_model_orders->getOrderLine(array('order_id'=>$order_id), 'lng, lat');
         return array(
             'order_info' => $order_info,
             'locations' => $locations
         );
+    }
+
+    /**
+     * 关闭蓝牙锁订单,直接通过order_id
+     * @param $data
+     * @return mixed
+     */
+    public function closeBLTOrder($data) {
+        return $this->closeOrder($data);
+    }
+
+    /**
+     * 关闭机械锁订单
+     * @param $data
+     * @return mixed
+     */
+    public function closeMCHOrder($data) {
+        return $this->closeOrder($data, true);
+    }
+
+    /**
+     * @param array $data order_id(必须有), lat, lng, finish_time
+     * @param bool $request_image
+     * @return array
+     */
+    public function closeOrder($data, $request_image = false) {
+        $order_info = $this->sys_model_orders->getOrdersInfo(array('order_id' => $data['order_id']));
+        $arr = array(
+            'end_time' => isset($data['finish_time']) ? $data['finish_time'] : time(),
+            'order_state' => 2
+        );
+        try {
+            $this->sys_model_orders->begin();
+            $start_time = $order_info['start_time'];
+            $end_time = $arr['end_time'];
+            $riding_time = $end_time - $start_time;
+
+            if ($riding_time < 0) $riding_time = 0;
+            $unit = ceil($riding_time / TIME_CHARGE_UNIT);
+            $amount = $unit * PRICE_UNIT; //骑行计费
+            if ($order_info['order_state'] == 2) {
+                //禁止多次提交
+                return callback(false, '订单已结束，无需多次提交');
+            }
+
+            $arr_data = array(
+                'user_id' => $order_info['user_id'],
+                'user_name' => $order_info['user_name'],
+                'amount' => $amount,
+                'order_sn' => $order_info['order_sn'],
+            );
+
+            if (isset($data['lat']) && isset($data['lng'])) {
+                $arr_data['end_lat'] = $data['lat'];
+                $arr_data['end_lng'] = $data['lng'];
+
+                $line_data = array (
+                    'user_id' => $order_info['user_id'],
+                    'order_id' => $order_info['order_id'],
+                    'lng' => $data['lng'],
+                    'lat' => $data['lat'],
+                    'add_time' => time(),
+                );
+
+                $this->sys_model_orders->addOrderLine($line_data);
+            }
+
+            $arr['order_amount'] = $amount;
+            $arr['pay_amount'] = $amount;
+
+            $sys_model_coupon = new \Sys_Model\Coupon($this->registry);
+            $sys_model_user = new \Sys_Model\User($this->registry);
+            $sys_model_deposit = new \Sys_Model\Deposit($this->registry);
+
+            $user_info = $sys_model_user->getUserInfo(array('user_id' => $order_info['user_id']));
+            if (empty($user_info)) {
+                throw new \Exception('error_user_info');
+            }
+            //扣费金额大于骑行的费用
+            if ($user_info['available_deposit'] < $amount) {
+                $change_type = 'order_freeze';
+            } else {
+                $change_type = 'order_pay';
+            }
+
+            $coupon_info = $sys_model_coupon->getRightCoupon(array('user_id' => $order_info['user_id']));
+            if (!empty($coupon_info)) {
+                if ($coupon_info['coupon_type'] != 3) {
+
+                } else {
+                    $arr_data['pay_amount'] = $arr_data['pay_amount'] - $coupon_info['number'];
+                }
+                $update = $sys_model_coupon->dealCoupon($coupon_info);
+                if ($update) {
+                    $arr['coupon_id'] = $coupon_info['coupon_id'];
+                }
+            } else {
+                $insert_id = $sys_model_deposit->changeDeposit($change_type, $arr_data);
+                if (!$insert_id) {
+                    throw new \Exception('error_insert_order_amount');
+                }
+            }
+
+            $order_lines = $this->sys_model_orders->getOrderLine(array('order_id' => $order_info['order_id']));
+            $tool_distance = new \Tool\Distance();
+            $distance = $tool_distance->sumDistance($order_lines);
+            $distance = round($distance * 1000, -1);
+
+            $arr['distance'] = $distance;
+            if ($request_image) {
+                $arr['has_image_upload'] = 1;
+                $arr['image_url'] = $data['image_url'];
+            }
+
+            //更新订单状态
+            $update = $this->sys_model_orders->updateOrders(array('order_id' => $order_info['order_id']), $arr);
+            if (!$update) {
+                throw new \Exception('error_update_order_state_failure');
+            }
+
+            $this->sys_model_orders->commit();
+            $data = array(
+                'cmd' => 'close',
+                'order_sn' => $order_info['order_sn'],
+                'user_id' => $order_info['user_id'],
+                'device_id' => $order_info['lock_sn'],
+            );
+        } catch (\Exception $e) {
+            $this->sys_model_orders->rollback();
+            return callback(false, $e->getMessage());
+        }
+        //增加信用分
+        $this->registry->get('load')->library('logic/credit', true);
+        $this->registry->get('logic_credit')->addCreditPointOnFinishCycling($order_info['user_id']);
+
+        return callback(true, '', $data);
     }
 
     public function getLastSql() {

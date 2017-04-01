@@ -2,7 +2,7 @@
 <!-- Content Header (Page header) -->
 <section class="content-header clearfix">
     <h1 class="pull-left">
-        <span>景区管理</span>
+        <span>区域管理</span>
         <a href="javascript:;" onclick="collect('<?php echo $menu_id ?>',this)"><i class="<?php echo $menu_collect_status == 1? 'fa fa-star no-margin text-yellow' : 'fa fa-star-o text-gray'; ?>"></i></a>
     </h1>
     <div class="pull-right">
@@ -37,7 +37,7 @@
                         <form class="form-horizontal" method="post" action="<?php echo $action; ?>">
                             <div class="row">
                                 <div class="form-group">
-                                    <label class="col-sm-2 control-label">景区名称</label>
+                                    <label class="col-sm-2 control-label">区域名称</label>
                                     <div class="col-sm-8">
                                         <div class="input-group">
                                             <input type="text" name="region_name" value="<?php echo $data['region_name']; ?>" class="form-control" />
@@ -75,7 +75,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-2 control-label">景区范围</label>
+                                    <label class="col-sm-2 control-label">区域范围</label>
                                     <div class="col-sm-8">
                                         <div class="col-sm-12 row form-group">
                                             <button type="button" class="btn btn-large btn-primary margin-r-5 button-start-editor">开始编辑</button>

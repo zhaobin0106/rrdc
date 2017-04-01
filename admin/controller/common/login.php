@@ -23,10 +23,6 @@ class ControllerCommonLogin extends Controller {
     public function index() {
         $this->load->language('common/login');
 
-        if ($this->isLogged() && isset($this->request->cookie['token']) && ($this->request->cookie['token'] == $this->session->data['token'])) {
-            $this->response->redirect($this->url->link('admin/index', '', true));
-        }
-
         if (check_submit() && $this->validate()) {
             $token = token(32);
             $expire = TIMESTAMP + 86400;
@@ -77,7 +73,7 @@ class ControllerCommonLogin extends Controller {
      * @return mixed
      */
     function login($admin_name, $password) {
-        $rec = $this->logic_admin->login($admin_name, $password);
+        $rec = $this->logic_admin->login($admin_name, $password, 1);
         return $rec['state'];
     }
 

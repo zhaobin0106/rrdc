@@ -49,58 +49,50 @@
   <script src="<?php echo $static;?>js/bootstrap-datetimepicker.min.js"></script>
   <script src="<?php echo $static;?>js/toastr.js"></script>
 </head>
-<body>
-<div id="container">
-  <header id="header" class="navbar navbar-static-top" style="border-bottom: 1px solid #E5E5E5;">
-    <div class="navbar-header">
-      <a href="javascript:;" class="navbar-brand">Ebike合伙人</a>
-    </div>
-  </header>
-  <div id="content">
-    <div class="container-fluid"><br />
-      <br />
-      <div class="row">
-        <div class="col-sm-offset-4 col-sm-4">
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <h1 class="panel-title"><i class="fa fa-lock"></i>&nbsp;请输入登录信息。</h1>
-            </div>
-            <div class="panel-body">
-              <?php if (isset($success)) { ?>
-              <div class="alert alert-success"><i class="fa fa-check-circle"></i> <?php echo $success; ?>
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-              </div>
-              <?php } ?>
-              <?php if (isset($error['warning'])) { ?>
-              <div class="alert alert-danger" style="padding: 10px;"><i class="fa fa-exclamation-circle"></i> <?php echo $error['warning']; ?>
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-              </div>
-              <?php } ?>
-              <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data">
-                <div class="form-group">
-                  <label for="input-username">用户名</label>
-                  <div class="input-group"><span class="input-group-addon"><i class="fa fa-user"></i></span>
-                    <input type="text" name="username" value="" placeholder="用户名" id="input-username" class="form-control" />
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label for="input-password">密码</label>
-                  <div class="input-group"><span class="input-group-addon"><i class="fa fa-lock"></i></span>
-                    <input type="password" name="password" value="" placeholder="密码" id="input-password" class="form-control" />
-                  </div>
-                  <span class="help-block"><a href="<?php echo $forgotten_url; ?>">忘记密码？</a></span>
-                </div>
-                <div class="text-right">
-                  <button type="submit" class="btn btn-primary"><i class="fa fa-key"></i>&nbsp;登录</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
+<body class="hold-transition login-page" style="background: url(<?php echo $static;?>images/login_bg.png) fixed top center;">
+<div style="max-width: 426px;margin: 7% auto;">
+  <div class="login-logo box-header ">
+    <div class="image">
+      <img src="<?php echo $static;?>images/login_logo.png" class="img" alt="User Image">
     </div>
   </div>
-  <footer id="footer" class="text-center"><a href="http://www.estronger.cn">Ebike</a> &copy; 2016-2017 版权所有。<br /></footer>
+  <div class="box-header panel panel-default" style="padding: 35px 25px 15px 25px;margin-bottom: 35px;">
+    <div class="box-header text-center">
+      <h1 class="panel-title" style="font-size: 24px;font-weight: 400;"><!--<i class="fa fa-lock">--></i>合伙人管理系统</h1>
+    </div>
+    <div class="panel-body">
+      <?php if (isset($success)) { ?>
+      <div class="alert alert-success"><i class="fa fa-check-circle"></i> <?php echo $success; ?>
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+      </div>
+      <?php } ?>
+      <?php if (isset($error['warning'])) { ?>
+      <div class="alert alert-danger" style="padding: 10px;"><i class="fa fa-exclamation-circle"></i> <?php echo $error['warning']; ?>
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+      </div>
+      <?php } ?>
+      <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+          <!--<label for="input-username">用户名</label>-->
+          <div class="input-group"><span class="input-group-addon" style="border: #FFFFFF;background: #F5F5F5;height: 48px;"><i class="fa fa-user"></i></span>
+            <input type="text" name="username" value="" placeholder="用户名" id="input-username" class="form-control" style="border: #FFFFFF;background: #F5F5F5;height: 48px;" />
+          </div>
+        </div>
+        <div class="form-group">
+          <!--<label for="input-password">密码</label>-->
+          <div class="input-group"><span class="input-group-addon" style="border: #FFFFFF;background: #F5F5F5;height: 48px;"><i class="fa fa-lock"></i></span>
+            <input type="password" name="password" value="" placeholder="密码" id="input-password" class="form-control" style="border: #FFFFFF;background: #F5F5F5;height: 48px;" />
+          </div>
+
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-block btn-success" style="background: #eb474c;border-color: #eb474c;height: 48px;"><!--<i class="fa fa-key"></i>-->登录</button>
+        </div>
+      </form>
+      <!--<div id="footer" class="text-right" style="margin-top:18px;"><a href="<?php echo $forgotten_url; ?>" style="color: #eb474c;">忘记密码？</a></div>-->
+    </div>
+  </div>
+  <footer id="footer" class="text-center" style="color: #999999;"><!--<a href="http://www.estronger.cn">小强单车</a>--> 小强单车&copy; 2016-2017 版权所有。<br /></footer>
 </div>
 </body>
 </html>

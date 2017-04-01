@@ -123,11 +123,11 @@ class Bicycle {
             "AND l.lng>=$min_lng AND l.lng<=$max_lng "
             :  // 注意地图在经度方向是可以拼接的（-180°跟+180°拼接在一起），所以出现左边的经度大于右边的经度是很正常的
             "AND ((l.lng>=$min_lng AND l.lng<=180) OR (l.lng>=-180 AND l.lng<=$max_lng))";
-        $sql = "SELECT distinct(b.bicycle_id), b.bicycle_sn, b.type, b.fee, r.region_id, r.region_name,"
+        $sql = "SELECT distinct(b.bicycle_id), b.bicycle_sn, b.type, b.fee,b.cooperator_id, r.region_id, r.region_name,"
             ." r.region_city_code, r.region_city_ranking, l.lock_sn, l.lat, l.lng, l.lock_status, l.battery,l.system_time,"
             ." from_unixtime(l.system_time,'%Y-%m-%d %H:%i:%s') as last_update, b.fault, b.illegal_parking, b.low_battery, "
-            ."(l.system_time>=unix_timestamp()-" . 35460 . ") as online, "
-            ."(l.system_time<unix_timestamp()-" . 35460 . ") as offline, "
+            ."(l.system_time>=unix_timestamp()-" . OFFLINE_THRESHOLD . ") as online, "
+            ."(l.system_time<unix_timestamp()-" . OFFLINE_THRESHOLD . ") as offline, "
             ."round(l.gz/100) as gprs, l.gz%100 as gps, FORMAT(l.gx/100,2) as battery_voltage, FORMAT(l.gy/100,2) as charging_voltage, "
             ."l.serialnum, (l.serialnum < 64 AND (l.serialnum & 32)=32) as charging,  (l.serialnum < 64 AND (l.serialnum & 16)=16) as moving, "
             ."(l.serialnum < 64 AND (l.serialnum & 8)=8) as closed, (l.serialnum < 64 AND (l.serialnum & 4)=4) as low_battary_alarm, "

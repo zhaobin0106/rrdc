@@ -6,7 +6,7 @@ class ControllerCommonLogout extends Controller {
 	}
 
 	public function index() {
-		$this->logic_cooperator->logout();
+		$this->logic_admin->logout();
 
 		unset($this->session->data['token']);
 

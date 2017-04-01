@@ -48,28 +48,25 @@ $(function () {
                     success: function(json) {
                         // 文件上传成功
                         if (json['errorCode'] == 0) {
-                            alert(json['msg']);
                             var data = json['data'];
-                            if (typeof data == 'object') {
-                                $.each(data, function(k, v) {
-                                    var obj = t.find("." + k);
-                                    obj.each(function(i, e) {
-                                        var t = $(e);
-                                        var tagName = t.prop("tagName");
-                                        switch (tagName) {
-                                            case 'INPUT':
-                                                t.val(v);
-                                                break;
-                                            case 'IMG':
-                                                t.attr("src", v);
-                                                break;
-                                            default:
-                                                t.html(v);
-                                                break;
-                                        }
-                                    });
+                            $.each(data, function(k, v) {
+                                var obj = t.find("." + k);
+                                obj.each(function(i, e) {
+                                    var t = $(e);
+                                    var tagName = t.prop("tagName");
+                                    switch (tagName) {
+                                        case 'INPUT':
+                                            t.val(v);
+                                            break;
+                                        case 'IMG':
+                                            t.attr("src", v);
+                                            break;
+                                        default:
+                                            t.html(v);
+                                            break;
+                                    }
                                 });
-                            }
+                            });
                         } else {
                             // 文件上传失败，弹出提示框
                             alert(json['msg']);

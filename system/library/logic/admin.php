@@ -59,13 +59,15 @@ class Admin {
 
     /**
      * 用户登录
-     * @param $mobile
-     * @param $device_id
-     * @return array
+     * @param $admin_name
+     * @param $password
+     * @param $type
+     * @return mixed
      */
-    public function login($admin_name, $password) {
+    public function login($admin_name, $password, $type) {
         $condition = array(
-            'admin_name' => $admin_name
+            'admin_name' => $admin_name,
+            'type' => $type
         );
         $result = $this->admin->getAdminInfo($condition);
         if (!$result) {
@@ -89,7 +91,11 @@ class Admin {
             return callback(false, 'error_update_user_info');
         }
 
-        echo $this->session->data['admin_id'] = $result['admin_id'];
+        $this->admin_id = $result['admin_id'];
+        $this->admin_name = $result['admin_name'];
+        $this->data = $result;
+
+        $this->session->data['admin_id'] = $result['admin_id'];
         return callback(true, 'success_login', $result);
     }
 

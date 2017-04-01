@@ -1,2 +1,0 @@
-crontab -e
-*/1 * * * * /usr/bin/wget -q http://bike.e-stronger.com/bike/crontab/index.php?route=task/minutes

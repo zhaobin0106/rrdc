@@ -7,14 +7,14 @@
  */
 namespace Tool;
 class Polygon {
-    public function LatLng($lat, $lng) {
-        $result = new \stdClass();
-        $result->lat = $lat;
-        $result->lng = $lng;
+    public function LatLng($lng, $lat) {
+        $result = array();
+        $result['lat'] = $lat;
+        $result['lng'] = $lng;
         return $result;
     }
 
-    public function pointInRegion($x, $y, $point_list) {
+    public function pointIsInRegion($x, $y, $point_list) {
         $crossings = 0;
         $point = $this->LatLng($x, $y);
         $count = count($point_list);
@@ -33,24 +33,28 @@ class Polygon {
     }
 
     /**
-     * @param \stdClass $point
+     * @param array $point
      * @param array $a 坐标数组0 lng , 1 lat
      * @param array $b 坐标数组0 lng , 1 lat
      * @return bool
      */
-    public function rayCrossesSegment(\stdClass $point, $a, $b) {
-        $px = $point->lng;
-        $py = $point->lat;
-        $ax = $a[0];
-        $ay = $a[1];
-        $bx = $b[0];
-        $by = $b[1];
+    public function rayCrossesSegment($point, $a, $b) {
+        $px = $point['lng'];
+        $py = $point['lat'];
+
+        $ax = $a['lng'];
+        $ay = $a['lat'];
+
+        $bx = $b['lng'];
+        $by = $b['lat'];
+
         if ($ay > $by) {
-            $ax = $b[0];
-            $ay = $b[1];
-            $bx = $a[0];
-            $by = $a[1];
+            $ax = $b['lng'];
+            $ay = $b['lat'];
+            $bx = $a['lng'];
+            $by = $a['lat'];
         }
+
         if ($px < 0) { $px += 360; }
         if ($ax < 0) { $ax += 360; }
         if ($bx < 0) { $bx += 360; }

@@ -164,18 +164,20 @@ class ControllerOperationFault extends Controller {
 
         $result = $this->sys_model_fault->getFaultList($condition, $order, $limit);
         $total = $this->sys_model_fault->getTotalFaults($condition);
-        $total =ceil($total/$rows);
+        $this->load->library('sys_model/bicycle');
+		$total =ceil($total/$rows);
         $list = array();
         if (is_array($result) && !empty($result)) {
             foreach ($result as $v) {
                 $list[] = array(
                     'bicycle_sn' => $v['bicycle_sn'],
                     'add_time' => date('Y-m-d H:i:s', $v['add_time']),
-                    'uri' => $this->url->link('operation/fault/info', 'fault_id='. $v['fault_id'])
+                    'uri' => $this->url->link('operation/fault/info', 'fault_id='. $v['fault_id']),
+                    'bicycle_id'=> $this->sys_model_bicycle->getBicycleInfo(array('bicycle_sn'=> $v['bicycle_sn']))['bicycle_id'],
                 );
             }
         }
-        
+
         $statisticsMessages = $this->load->controller('common/base/statisticsMessages');
 
         $data = array(

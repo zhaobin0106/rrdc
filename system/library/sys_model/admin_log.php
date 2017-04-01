@@ -45,16 +45,16 @@ class Admin_Log {
      * @return mixed
      */
     public function getAdminLogList($where = array(), $order = '', $limit = '', $field = 'admin_log.*', $join = array()) {
-            $table = 'admin_log as admin_log';
-            if (is_array($join) && !empty($join)) {
-                $addTables = array_keys($join);
-                $joinType = '';
-                if (!empty($addTables) && is_array($addTables)) {
-                    foreach ($addTables as $v) {
-                        $table .= sprintf(',%s as %s', $v, $v);
-                        $joinType .= ',left';
-                    }
+        $table = 'admin_log as admin_log';
+        if (is_array($join) && !empty($join)) {
+            $addTables = array_keys($join);
+            $joinType = '';
+            if (!empty($addTables) && is_array($addTables)) {
+                foreach ($addTables as $v) {
+                    $table .= sprintf(',%s as %s', $v, $v);
+                    $joinType .= ',left';
                 }
+            }
             $on = implode(',', $join);
 
             $this->db->join($joinType)->on($on);

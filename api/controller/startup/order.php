@@ -29,6 +29,9 @@ class ControllerStartupOrder extends Controller {
             if ($lock_info['lock_status'] == 1 || $lock_info['lock_status'] == 2) {
                 //$this->response->showErrorResult('开锁状态中扫码无效');
             }
+            if ($lock_info['lock_status'] == 0 && $lock_info['gx'] < 500) {
+                //$this->response->showErrorResult('锁电压过低');
+            }
 
             $user_id = $this->startup_user->userId();
             $user_info = $this->startup_user->getUserInfo();

@@ -16,7 +16,7 @@ class Admin {
     }
 
     /**
-     * 更新用户信息
+     * 更新管理员信息
      * @param $where
      * @param $data
      * @return mixed
@@ -26,11 +26,11 @@ class Admin {
     }
 
     /**
-     * 删除用户
+     * 删除管理员
      * @param $where
      * @return mixed
      */
-    public function deleteUser($where) {
+    public function deleteAdmin($where) {
         return $this->db->table('admin')->where($where)->delete();
     }
 
@@ -84,13 +84,28 @@ class Admin {
      * @param $where
      * @return mixed
      */
-    public function getTotalAdmins($where) {
-        return $this->db->table('admin')->where($where)->limit(1)->count(1);
+    public function getTotalAdmins($where, $join = array()) {
+        $table = 'admin as admin';
+        if (is_array($join) && !empty($join)) {
+            $addTables = array_keys($join);
+            $joinType = '';
+            if (!empty($addTables) && is_array($addTables)) {
+                foreach ($addTables as $v) {
+                    $table .= sprintf(',%s as %s', $v, $v);
+                    $joinType .= ',left';
+                }
+            }
+            $on = implode(',', $join);
+
+            $this->db->join($joinType)->on($on);
+        }
+
+        return $this->db->table($table)->where($where)->limit(1)->count(1);
     }
 
     // --------------------------------------------------- 其他 ---------------------------------------------------
     /**
-     * 检验 用户名称格式
+     * 检验 管理员名称格式
      * @param $username
      * @return bool
      */
@@ -116,4 +131,6 @@ class Admin {
     public function checkPassword($password, $data) {
         return sha1($data['salt'] . sha1($data['salt'] . sha1($password))) == $data['password'] ? true : false;
     }
+
+
 }

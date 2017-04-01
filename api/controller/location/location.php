@@ -47,4 +47,59 @@ class ControllerLocationLocation extends Controller {
 
         $this->response->showSuccessResult($data);
     }
+
+    public function getLocalPrice() {
+        $city_code = isset($this->request->post['city_code']) ? $this->request->post['city_code'] : '';
+
+        if (strlen($city_code) == 4) {
+            $city_code = substr($city_code, -3);
+        }
+
+        $this->load->library('sys_model/region');
+        $this->load->library('tool/polygon');
+
+        $cur_lat = isset($this->request->post['cur_lat']) ? $this->request->post['cur_lat'] : '0';
+        $cur_lng = isset($this->request->post['cur_lng']) ? $this->request->post['cur_lng'] : '0';
+
+        $this->load->library('tool/polygon', true);
+        $where = $city_code ? array('region_city_code' => $city_code) : array();
+        $region_list = $this->sys_model_region->getRegionList($where);
+
+        $storage_list = array();
+
+        foreach ($region_list as $region) {
+            $northeast['lng'] = $region['region_bounds_northeast_lng'];
+            $northeast['lat'] = $region['region_bounds_northeast_lat'];
+
+            $southwest['lng'] = $region['region_bounds_southwest_lng'];
+            $southwest['lat'] = $region['region_bounds_southwest_lat'];
+
+            $northeast_southwest = array($northeast, $southwest);
+
+            $isInRegion = $this->tool_polygon->pointIsInRegion($cur_lng, $cur_lat, $northeast_southwest);
+
+            if (!$isInRegion) { continue; }
+
+            if (strlen($region['region_bounds']) == 2) continue;
+
+            $storage_list[] = array(
+                'region_charge_time' => $region['region_charge_time'],
+                'region_charge_fee' => $region['region_charge_fee']
+            );
+        }
+
+        $arr_data = array();
+
+        if (empty($storage_list)) {
+            $arr_data['price'] = $this->config->get('config_price_unit');
+            $unit = $this->config->get('config_time_charge_unit');
+            $f_unit = strval($unit / 3600);
+            $arr_data['unit'] = $f_unit;
+        } else {
+            $arr_data['price'] = $storage_list[0]['region_charge_fee'];
+            $arr_data['unit'] = strval($storage_list[0]['region_charge_time'] / 60);
+        }
+
+        $this->response->showSuccessResult($arr_data);
+    }
 }

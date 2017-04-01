@@ -177,4 +177,16 @@ class Fault {
         return $this->db->table('illegal_parking')->where($where)->limit(1)->count(1);
     }
 
+    // ****************************************** 正常停放表 ******************************************
+
+    /**
+     * 获取正常停放列表
+     * @param array $where
+     * @param string $order
+     * @param string $limit
+     * @return mixed
+     */
+    public function getNormalParkingList($where = array(), $order = '', $limit = '') {
+        return $this->db->table('normal_parking')->where($where)->order($order)->limit($limit)->select();
+    }
 }

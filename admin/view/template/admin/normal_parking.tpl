@@ -1,14 +1,14 @@
 <?php foreach($parkings as $parking) { ?>
 <li>
-    <div class="bike-info-list-img"><img src="http://120.76.98.150/bike/static/fault/201703081608527511.jpg"></div>
+    <div class="bike-info-list-img"><img src="<?php echo $parking['parking_image'] ? $parking['parking_image'] : $static.'images/nopic.jpg'; ?>" data-mfp-src="<?php echo $parking['parking_image'] ? $parking['parking_image'] : $static.'images/nopic.jpg'; ?>"></div>
     <div class="bike-info-list-detail">
-        <div><i class="fa fa-user fa-fw"></i> 13431443244 <i class="fa fa-info-circle"></i></div>
-        <div><i class="fa fa-clock-o fa-fw"></i> 2017年3月12日 15:23:54</div>
-        <div><i class="fa fa-exclamation-triangle fa-fw"></i> 二维码被损坏</div>
-        <div class="text-danger"><i class="fa fa-cogs fa-fw"></i> 未处理 <i class="fa fa-pencil-square"></i></div>
+        <div><i class="fa fa-user fa-fw"></i> <?php echo $parking['user_name']; ?></i></div>
+        <div><i class="fa fa-clock-o fa-fw"></i> <?php echo $parking['add_time']; ?></div>
+        <!--<div><i class="fa fa-map-marker fa-fw"></i> <?php echo $parking['lng'].",".$parking['lat']; ?></div>-->
+        <div><i class="fa fa-commenting-o fa-fw"></i> <?php echo $parking['content']; ?></div>
     </div>
 </li>
-<li>
+<!--<li>
     <div class="bike-info-list-img"><img src="http://120.76.98.150/bike/static/fault/201703081612118531.jpg"></div>
     <div class="bike-info-list-detail">
         <div><i class="fa fa-user fa-fw"></i> 18565706886 <i class="fa fa-info-circle"></i></div>
@@ -17,5 +17,8 @@
         <div class="text-success"><i class="fa fa-cogs fa-fw"></i> 已处理 <i class="fa fa-info-circle"></i></div>
         <div><i class="fa fa-clock-o fa-fw"></i> 2017年3月10日 16:25:33</div>
     </div>
-</li>
+</li>-->
+<?php } ?>
+<?php if(!empty($parkings) && count($parkings) >= $config_limit_admin){ ?>
+<li class="has-more" data-next="<?php echo $page; ?>"><button class="btn btn-xs btn-default btn-no-border">加载更多</button></li>
 <?php } ?>

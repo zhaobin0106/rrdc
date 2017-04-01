@@ -19,7 +19,7 @@ class ControllerArticleIndex extends Controller {
                 $data[] = array(
                     'id' => $val['article_id'],
                     'code' => $val['article_code'],
-                    'link' => sprintf('%sarticle/zh/%s.html', HTTP_IMAGE, $val['article_code'])
+                    'link' => sprintf('%sarticle/zh/%s.html?t=%d', HTTP_IMAGE, $val['article_code'], time())
                 );
             }
         }

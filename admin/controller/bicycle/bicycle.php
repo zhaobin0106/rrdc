@@ -31,7 +31,7 @@ class ControllerBicycleBicycle extends Controller {
             $condition['type'] = (int)$filter['type'];
         }
         if (!empty($filter['lock_sn'])) {
-            $condition['lock_sn'] = $filter['lock_sn'];
+            $condition['lock_sn'] = array('like', "%{$filter['lock_sn']}%");
         }
         if (!empty($filter['region_name'])) {
             $condition['region.region_name'] = array('like', "%{$filter['region_name']}%");
@@ -83,7 +83,7 @@ class ControllerBicycleBicycle extends Controller {
         $filter_types = array(
             'bicycle_sn' => '单车编号',
             'lock_sn' => '车锁编号',
-            'region_name' => '景区',
+            'region_name' => '区域',
             'cooperator_name' => '合伙人',
         );
         $filter_type = $this->request->get('filter_type');
@@ -148,7 +148,7 @@ class ControllerBicycleBicycle extends Controller {
         $this->setDataColumn('单车编号');
         $this->setDataColumn('车锁编号');
         $this->setDataColumn('单车类型');
-        $this->setDataColumn('景区');
+        $this->setDataColumn('城市');
         $this->setDataColumn('合伙人');
         $this->setDataColumn('是否使用中');
         return $this->data_columns;
@@ -162,9 +162,9 @@ class ControllerBicycleBicycle extends Controller {
         $bicycle_types = get_bicycle_type();
 
         if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateBatchaddForm()) {
-            $input = $this->request->post(array('bicycle_num', 'type', 'lock_sn', 'region_id'));
+            $input = $this->request->post(array('bicycle_sn_start', 'bicycle_sn_end', 'type', 'lock_sn', 'region_id'));
 
-            // 景区信息
+            // 区域信息
             $condition = array(
                 'region_id' => $input['region_id']
             );
@@ -185,8 +185,15 @@ class ControllerBicycleBicycle extends Controller {
                 'add_time' => $now
             );
 
-            for ($i = 0; $i < $input['bicycle_num']; $i++) {
-                $bicycleData['bicycle_sn'] = $data['bicycle_sn'] = $this->buildBicycleSN();
+            $bicycle_num = $input['bicycle_sn_end'] - $input['bicycle_sn_start'];
+
+            for ($i = 0; $i <= $bicycle_num; $i++) {
+                $bicycle_sn = sprintf('%06d', $input['bicycle_sn_start'] + $i);
+                $rec = $this->checkBicycleSN($bicycle_sn);
+                if (!$rec) {
+                    continue;
+                }
+                $bicycleData['bicycle_sn'] = $data['bicycle_sn'] = $bicycle_sn;
                 $bicycle_id = $this->sys_model_bicycle->addBicycle($data);
                 $bicycleData['bicycle_id'] = $bicycle_ids[] = $bicycle_id;
                 $bicycles[] = $bicycleData;
@@ -194,9 +201,11 @@ class ControllerBicycleBicycle extends Controller {
                 // 生成二维码图片
                 $qrcodeInfo = array(
                     'qrcodeText' => sprintf('http://121.42.254.23/app.php?b=%03d%02d%06d', $region['region_city_code'], $region['region_city_ranking'], $data['bicycle_sn']),
+                    'fullcode' => sprintf('%03d%02d %06d', $region['region_city_code'], $region['region_city_ranking'], $data['bicycle_sn']),
                     'code' => $data['bicycle_sn']
                 );
                 $this->load->controller('common/qrcode/buildQrCode', $qrcodeInfo);
+                $this->load->controller('common/qrcode/buildWordImage', $qrcodeInfo);
                 $this->load->controller('common/qrcode/buildFrontQrCode', $qrcodeInfo);
                 $this->load->controller('common/qrcode/buildBackQrCode', $qrcodeInfo);
             }
@@ -243,7 +252,7 @@ class ControllerBicycleBicycle extends Controller {
         if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
             $input = $this->request->post(array('bicycle_sn', 'type', 'lock_sn', 'region_id'));
 
-            // 景区信息
+            // 区域信息
             $condition = array(
                 'region_id' => $input['region_id']
             );
@@ -275,9 +284,11 @@ class ControllerBicycleBicycle extends Controller {
             // 生成二维码图片
             $data = array(
                 'qrcodeText' => sprintf('http://121.42.254.23/app.php?b=%03d%02d%06d', $region['region_city_code'], $region['region_city_ranking'], $input['bicycle_sn']),
+                'fullcode' => sprintf('%03d%02d %06d', $region['region_city_code'], $region['region_city_ranking'], $input['bicycle_sn']),
                 'code' => $input['bicycle_sn']
             );
             $this->load->controller('common/qrcode/buildQrCode', $data);
+            $this->load->controller('common/qrcode/buildWordImage', $data);
             $this->load->controller('common/qrcode/buildFrontQrCode', $data);
             $this->load->controller('common/qrcode/buildBackQrCode', $data);
 
@@ -301,7 +312,7 @@ class ControllerBicycleBicycle extends Controller {
             $input = $this->request->post(array('bicycle_sn', 'type', 'lock_sn', 'region_id'));
             $bicycle_id = $this->request->get['bicycle_id'];
 
-            // 景区信息
+            // 区域信息
             $condition = array(
                 'region_id' => $input['region_id']
             );
@@ -333,9 +344,11 @@ class ControllerBicycleBicycle extends Controller {
             // 生成二维码图片
             $data = array(
                 'qrcodeText' => sprintf('http://121.42.254.23/app.php?b=%03d%02d%06d', $region['region_city_code'], $region['region_city_ranking'], $input['bicycle_sn']),
+                'fullcode' => sprintf('%03d%02d %06d', $region['region_city_code'], $region['region_city_ranking'], $input['bicycle_sn']),
                 'code' => $input['bicycle_sn']
             );
             $this->load->controller('common/qrcode/buildQrCode', $data);
+            $this->load->controller('common/qrcode/buildWordImage', $data);
             $this->load->controller('common/qrcode/buildFrontQrCode', $data);
             $this->load->controller('common/qrcode/buildBackQrCode', $data);
 
@@ -455,7 +468,7 @@ class ControllerBicycleBicycle extends Controller {
             $condition['lock_sn'] = $filter['lock_sn'];
         }
         if (!empty($filter['region_name'])) {
-            $condition['region.region_name'] = array('like', "%{$filter['region_name']}%");
+            $condition['region_name'] = array('like', "%{$filter['region_name']}%");
         }
         if (!empty($filter['cooperator_name'])) {
             $condition['cooperator.cooperator_name'] = array('like', "%{$filter['cooperator_name']}%");
@@ -493,7 +506,7 @@ class ControllerBicycleBicycle extends Controller {
                 'bicycle_sn' => '单车编号',
                 'lock_sn' => '车锁编号',
                 'type' => '单车类型',
-                'region_name' => '景区',
+                'region_name' => '区域',
                 'cooperator_name' => '合伙人',
                 'is_using' => '是否使用中',
             ),
@@ -541,6 +554,7 @@ class ControllerBicycleBicycle extends Controller {
             if (!empty($bicycles) && is_array($bicycles)) {
                 foreach ($bicycles as $bicycle) {
                     $filesname[] = DIR_STATIC . 'images/qrcode/' . $bicycle['bicycle_sn'] . '.png';
+                    $filesname[] = DIR_STATIC . 'images/qrcode/word_' . $bicycle['bicycle_sn'] . '.png';
                     $filesname[] = DIR_STATIC . 'images/qrcode/front_' . $bicycle['bicycle_sn'] . '.png';
                     $filesname[] = DIR_STATIC . 'images/qrcode/back_' . $bicycle['bicycle_sn'] . '.png';
                 }
@@ -639,7 +653,7 @@ class ControllerBicycleBicycle extends Controller {
             $filter_types = array(
                 'bicycle_sn' => '单车编号',
                 'lock_sn' => '车锁编号',
-                'region_name' => '景区',
+                'region_name' => '区域',
                 'cooperator_name' => '合伙人',
             );
             $filter_type = $this->request->get('filter_type');
@@ -663,7 +677,7 @@ class ControllerBicycleBicycle extends Controller {
                 '单车编号',
                 '车锁编号',
                 '单车类型',
-                '景区',
+                '区域',
                 '合伙人',
                 '是否使用中',
                 '添加时间',
@@ -705,7 +719,7 @@ class ControllerBicycleBicycle extends Controller {
             $info = $this->sys_model_bicycle->getBicycleInfo($condition);
         }
 
-        // 加载景区 model
+        // 加载区域 model
         $this->load->library('sys_model/region', true);
         $condition = array();
         $order = 'region_sort ASC';
@@ -757,13 +771,21 @@ class ControllerBicycleBicycle extends Controller {
     private function buildBicycleSN() {
         $bicycle_sn = token(6, 'number');
 
+        $rec = $this->checkBicycleSN($bicycle_sn);
+        if (!$rec) {
+            return self::buildBicycleSN();
+        }
+        return $bicycle_sn;
+    }
+
+    private function checkBicycleSN($bicycle_sn) {
         $condition = array(
             'bicycle_sn' => $bicycle_sn
         );
         $rec = $this->sys_model_bicycle->getTotalBicycles($condition);
         if ($rec) {
-            return self::buildBicycleSN();
+            return false;
         }
-        return $bicycle_sn;
+        return true;
     }
 }

@@ -1,7 +1,6 @@
 <?php
 class ControllerPaymentAliPay extends Controller {
     public function index() {
-
         $success = 'success';
         $fail = 'fail';
         $notify_time = $this->request->post['notify_time'];

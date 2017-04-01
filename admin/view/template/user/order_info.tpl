@@ -62,7 +62,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group col-sm-6">
-                                    <label for="" class="col-sm-4 control-label">景区</label>
+                                    <label for="" class="col-sm-4 control-label">区域</label>
                                     <div class="col-sm-8">
                                         <h5><?php echo $data['region_name']; ?></h5>
                                     </div>

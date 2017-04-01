@@ -99,7 +99,7 @@ class Deposit {
                 $data_log['pdl_payment_name'] = '余额支付';
                 $data_log['pdl_sn'] = $data['order_sn'];
 
-                $data_pd['freeze_recharge'] = array('exp', 'freeze_recharge+' . $data['amount']);
+                $data_pd['freeze_deposit'] = array('exp', 'freeze_deposit+' . $data['amount']);
                 $data_pd['available_deposit'] = '0';
                 $data_pd['available_state'] = '0';
                 break;
@@ -111,10 +111,10 @@ class Deposit {
                 $data_log['pdl_sn'] = $data['pdr_sn'];
                 $data_log['pdl_admin_name'] = $data['admin_name'];
 
-                $user_info = $this->db->table('user')->field('user_id,available_deposit,freeze_recharge,available_state')->where(array('user_id' => $data['user_id']))->find();
-                if (!empty($user_info) && $user_info['freeze_recharge'] > 0) {
-                    $data_pd['freeze_recharge'] = array('exp', 'freeze_recharge-' . $data['amount']);
-                    $data['amount'] = $data['amount'] - $user_info['freeze_recharge'];
+                $user_info = $this->db->table('user')->field('user_id,available_deposit,freeze_deposit,available_state')->where(array('user_id' => $data['user_id']))->find();
+                if (!empty($user_info) && $user_info['freeze_deposit'] > 0) {
+                    $data_pd['freeze_deposit'] = array('exp', 'freeze_deposit-' . $data['amount']);
+                    $data['amount'] = $data['amount'] - $user_info['freeze_deposit'];
                 }
 
                 if ($data['amount'] > 0) {
@@ -421,7 +421,6 @@ class Deposit {
                     $batch_no = date('YmdHis') . $cash_info['pdc_id'];
                     $this->db->table('deposit_cash')->where(array('pdc_id' => $cash_info['pdc_id']))->update(array('pdc_batch_no' => $batch_no));
                 } else {
-
                     //还需判断流水号是否今天，如非，前面八位要替换成当天的日期
                 }
 

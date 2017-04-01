@@ -191,7 +191,6 @@ class ControllerArticleCategory extends Controller {
 
         $this->assign('data', $info);
         $this->assign('action', $this->cur_url . '&category_id=' . $category_id);
-        $this->assign('return_action', $this->url->link('article/category'));
         $this->assign('error', $this->error);
 
         $this->response->setOutput($this->load->view('article/category_form', $this->output));

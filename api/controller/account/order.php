@@ -124,7 +124,7 @@ class ControllerAccountOrder extends Controller {
         $riding_time = $time - ($data['order_state'] <= 0 ? $data['add_time'] : $data['start_time']);
 
         $hours = floor($riding_time / (60 * 60));
-        $min = ceil(($riding_time - ($hours * 60 * 60)) / 60);
+        $min = floor(($riding_time - ($hours * 60 * 60)) / 60);
         $data['time'] = array(
             'hours' => $hours,
             'min' => $min

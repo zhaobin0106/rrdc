@@ -1,5 +1,6 @@
 <?php
 class ControllerUserRecharge extends Controller {
+    private $cooperator_id = null;
     private $cur_url = null;
     private $error = null;
     
@@ -8,6 +9,7 @@ class ControllerUserRecharge extends Controller {
 
         // 当前网址
         $this->cur_url = $this->url->link($this->request->get['route']);
+        $this->cooperator_id = $this->logic_admin->getParam('cooperator_id');
 
         // 加载bicycle Model
         $this->load->library('sys_model/deposit', true);
@@ -17,9 +19,22 @@ class ControllerUserRecharge extends Controller {
      * 充值记录列表
      */
     public function index() {
-        $filter = $this->request->get(array('pdr_sn', 'mobile', 'pdr_amount', 'pdr_type', 'pdr_payment_state', 'pdr_admin', 'pdr_add_time'));
+        $filter = $this->request->get(array('filter_type', 'pdr_sn', 'mobile', 'pdr_amount', 'pdr_type', 'pdr_payment_state', 'pdr_admin', 'pdr_add_time'));
 
-        $condition = array();
+        // 消费过的用户id
+        $this->load->library('sys_model/orders', true);
+        $condition = array(
+            'cooperator_id' => $this->cooperator_id
+        );
+        $order = '';
+        $limit = '';
+        $field = 'DISTINCT user_id';
+        $orders = $this->sys_model_orders->getOrdersList($condition, $order, $limit, $field);
+        $user_ids = array_column($orders, 'user_id');
+
+        $condition = array(
+            'user_id' => array('in', $user_ids)
+        );
         if (!empty($filter['pdr_sn'])) {
             $condition['pdr_sn'] = array('like', "%{$filter['pdr_sn']}%");
         }
@@ -45,6 +60,19 @@ class ControllerUserRecharge extends Controller {
                 array('lt', bcadd(86399, strtotime($pdr_add_time[1])))
             );
         }
+
+        $filter_types = array(
+            'pdr_sn' => '订单号',
+            'mobile' => '手机号',
+            'pdr_amount' => '充值金额',
+            'pdr_admin' => '管理员名称',
+        );
+        $filter_type = $this->request->get('filter_type');
+        if (empty($filter_type)) {
+            reset($filter_types);
+            $filter_type = key($filter_types);
+        }
+
         if (isset($this->request->get['page'])) {
             $page = (int)$this->request->get['page'];
         } else {
@@ -78,6 +106,8 @@ class ControllerUserRecharge extends Controller {
         $this->assign('data_columns', $data_columns);
         $this->assign('data_rows', $result);
         $this->assign('filter', $filter);
+        $this->assign('filter_type', $filter_type);
+        $this->assign('filter_types', $filter_types);
         $this->assign('pdr_types', $recharge_type);
         $this->assign('payment_states', $payment_state);
         $this->assign('action', $this->cur_url);
@@ -99,6 +129,8 @@ class ControllerUserRecharge extends Controller {
         $this->assign('pagination', $pagination);
         $this->assign('results', $results);
 
+        $this->assign('export_action', $this->url->link('user/recharge/export'));
+
         $this->response->setOutput($this->load->view('user/recharge_list', $this->output));
     }
 
@@ -118,83 +150,25 @@ class ControllerUserRecharge extends Controller {
     }
 
     /**
-     * 添加充值记录
-     */
-    public function add() {
-        if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
-            $input = $this->request->post(array('bicycle_sn', 'type', 'lock_sn'));
-            $now = time();
-            $data = array(
-                'bicycle_sn' => $input['bicycle_sn'],
-                'type' => (int)$input['type'],
-                'lock_sn' => $input['lock_sn'],
-                'add_time' => $now
-            );
-            $this->sys_model_bicycle->addBicycle($data);
-
-            $this->session->data['success'] = '添加充值记录成功！';
-            
-            $filter = $this->request->get(array('bicycle_sn', 'type', 'lock_sn', 'is_using'));
-
-            $this->load->controller('common/base/redirect', $this->url->link('user/recharge', $filter, true));
-        }
-
-        $this->assign('title', '充值记录添加');
-        $this->getForm();
-    }
-
-    /**
-     * 编辑充值记录
-     */
-    public function edit() {
-        if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
-            $input = $this->request->post(array('bicycle_sn', 'type', 'lock_sn'));
-            $bicycle_id = $this->request->get['bicycle_id'];
-            $data = array(
-                'bicycle_sn' => $input['bicycle_sn'],
-                'type' => (int)$input['type'],
-                'lock_sn' => $input['lock_sn']
-            );
-            $condition = array(
-                'bicycle_id' => $bicycle_id
-            );
-            $this->sys_model_bicycle->updateBicycle($condition, $data);
-
-            $this->session->data['success'] = '编辑充值记录成功！';
-
-            $filter = $this->request->get(array('bicycle_sn', 'type', 'lock_sn', 'is_using'));
-
-            $this->load->controller('common/base/redirect', $this->url->link('user/recharge', $filter, true));
-        }
-
-        $this->assign('title', '编辑充值记录');
-        $this->getForm();
-    }
-
-    /**
-     * 删除充值记录
-     */
-    public function delete() {
-        if (isset($this->request->get['bicycle_id']) && $this->validateDelete()) {
-            $condition = array(
-                'bicycle_id' => $this->request->get['bicycle_id']
-            );
-            $this->sys_model_bicycle->deleteBicycle($condition);
-
-            $this->session->data['success'] = '删除充值记录成功！';
-        }
-        $filter = $this->request->get(array('bicycle_sn', 'type', 'lock_sn', 'is_using'));
-        $this->load->controller('common/base/redirect', $this->url->link('user/recharge', $filter, true));
-    }
-
-    /**
      * 充值记录详情
      */
     public function info() {
+        // 消费过的用户id
+        $this->load->library('sys_model/orders', true);
+        $condition = array(
+            'cooperator_id' => $this->cooperator_id
+        );
+        $order = '';
+        $limit = '';
+        $field = 'DISTINCT user_id';
+        $orders = $this->sys_model_orders->getOrdersList($condition, $order, $limit, $field);
+        $user_ids = array_column($orders, 'user_id');
+
         // 编辑时获取已有的数据
         $pdr_id = $this->request->get('pdr_id');
         $condition = array(
-            'pdr_id' => $pdr_id
+            'pdr_id' => $pdr_id,
+            'user_id' => array('in', $user_ids)
         );
         $info = $this->sys_model_deposit->getRechargeInfo($condition, '*');
         if (!empty($info)) {
@@ -210,17 +184,112 @@ class ControllerUserRecharge extends Controller {
         }
 
         $this->assign('data', $info);
+        $this->assign('return_action', $this->url->link('user/recharge'));
 
         $this->response->setOutput($this->load->view('user/recharge_info', $this->output));
     }
 
+    /**
+     * 导出
+     */
+    public function export() {
+        $filter = $this->request->post(array('filter_type', 'pdr_sn', 'mobile', 'pdr_amount', 'pdr_type', 'pdr_payment_state', 'pdr_admin', 'pdr_add_time'));
+
+        // 消费过的用户id
+        $this->load->library('sys_model/orders', true);
+        $condition = array(
+            'cooperator_id' => $this->cooperator_id
+        );
+        $order = '';
+        $limit = '';
+        $field = 'DISTINCT user_id';
+        $orders = $this->sys_model_orders->getOrdersList($condition, $order, $limit, $field);
+        $user_ids = array_column($orders, 'user_id');
+
+        $condition = array(
+            'user_id' => array('in', $user_ids)
+        );
+        if (!empty($filter['pdr_sn'])) {
+            $condition['pdr_sn'] = array('like', "%{$filter['pdr_sn']}%");
+        }
+        if (!empty($filter['mobile'])) {
+            $condition['mobile'] = array('like', "%{$filter['mobile']}%");
+        }
+        if (is_numeric($filter['pdr_amount'])) {
+            $condition['pdr_amount'] = (float)$filter['pdr_amount'];
+        }
+        if (is_numeric($filter['pdr_type'])) {
+            $condition['pdr_type'] = (int)$filter['pdr_type'];
+        }
+        if (is_numeric($filter['pdr_payment_state'])) {
+            $condition['pdr_payment_state'] = (int)$filter['pdr_payment_state'];
+        }
+        if (!empty($filter['pdr_admin'])) {
+            $condition['pdr_admin'] = array('like', "%{$filter['pdr_admin']}%");
+        }
+        if (!empty($filter['pdr_add_time'])) {
+            $pdr_add_time = explode(' 至 ', $filter['pdr_add_time']);
+            $condition['pdr_add_time'] = array(
+                array('gt', strtotime($pdr_add_time[0])),
+                array('lt', bcadd(86399, strtotime($pdr_add_time[1])))
+            );
+        }
+        $order = 'pdr_add_time DESC';
+        $limit = '';
+
+        $result = $this->sys_model_deposit->getRechargeList($condition, '*', $order, $limit);
+        $list = array();
+        if (is_array($result) && !empty($result)) {
+            $recharge_type = get_recharge_type();
+            $payment_state = get_payment_state();
+            foreach ($result as $v) {
+                $list[] = array(
+                    'pdr_sn' => $v['pdr_sn'],
+                    'pdr_user_name' => $v['pdr_user_name'],
+                    'pdr_amount' => $v['pdr_amount'],
+                    'pdr_type' => $recharge_type[$v['pdr_type']],
+                    'pdr_payment_state' => $payment_state[$v['pdr_payment_state']],
+                    'pdr_admin' => $v['pdr_admin'],
+                    'pdr_add_time' => date("Y-m-d H:m:s",$v['add_time']),
+                );
+            }
+        }
+
+        $data = array(
+            'title' => '充值记录列表',
+            'header' => array(
+                'pdr_sn' => '订单号',
+                'pdr_user_name' => '手机号',
+                'pdr_amount' => '充值金额',
+                'pdr_type' => '充值类型',
+                'pdr_payment_state' => '支付状态',
+                'pdr_admin' => '管理员名称',
+                'pdr_add_time' => '下单时间',
+            ),
+            'list' => $list
+        );
+        $this->load->controller('common/base/exportExcel', $data);
+    }
+
     private function getForm() {
+        // 消费过的用户id
+        $this->load->library('sys_model/orders', true);
+        $condition = array(
+            'cooperator_id' => $this->cooperator_id
+        );
+        $order = '';
+        $limit = '';
+        $field = 'DISTINCT user_id';
+        $orders = $this->sys_model_orders->getOrdersList($condition, $order, $limit, $field);
+        $user_ids = array_column($orders, 'user_id');
+
         // 编辑时获取已有的数据
         $info = $this->request->post(array('bicycle_sn', 'type', 'lock_sn'));
         $bicycle_id = $this->request->get('bicycle_id');
         if (isset($this->request->get['bicycle_id']) && ($this->request->server['REQUEST_METHOD'] != 'POST')) {
             $condition = array(
-                'bicycle_id' => $this->request->get['bicycle_id']
+                'bicycle_id' => $this->request->get['bicycle_id'],
+                'user_id' => array('in', $user_ids)
             );
             $info = $this->sys_model_bicycle->getBicycleInfo($condition);
         }

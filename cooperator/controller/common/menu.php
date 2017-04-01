@@ -4,76 +4,18 @@ class ControllerCommonMenu extends Controller {
 
     public function index() {
 
-        $data = array(
-            array(
-                'action' => 'bicycle/bicycle',
-                'icon' => 'fa-bicycle',
-                'text_code' => '单车管理',
-            ),
-            array(
-                'action' => 'lock/lock',
-                'icon' => 'fa-unlock-alt',
-                'text_code' => '车锁管理',
-            ),
-            array(
-                'action' => '',
-                'icon' => 'fa-share-alt',
-                'text_code' => '运维管理',
-                'children' => array(
-                    array(
-                        'action' => 'operation/fault',
-                        'icon' => 'fa-circle-o',
-                        'text_code' => '故障管理',
-                    ),
-                    array(
-                        'action' => 'operation/violation',
-                        'icon' => 'fa-circle-o',
-                        'text_code' => '违规停放',
-                    ),
-                    array(
-                        'action' => 'operation/feedback',
-                        'icon' => 'fa-circle-o',
-                        'text_code' => '客户反馈',
-                    ),
-                )
-            ),
-            array(
-                'action' => '',
-                'icon' => 'fa-cog',
-                'text_code' => '系统设置',
-                'children' => array(
-                    array(
-                        'action' => '',
-                        'icon' => 'fa-circle-o',
-                        'text_code' => '管理员管理',
-                        'children' => array(
-                            array(
-                                'action' => 'system/admin',
-                                'icon' => 'fa-circle-o',
-                                'text_code' => '管理员',
-                            ),
-                            array(
-                                'action' => 'system/role',
-                                'icon' => 'fa-circle-o',
-                                'text_code' => '角色权限',
-                            ),
-                        )
-                    ),
-                    array(
-                        'action' => 'system/log',
-                        'icon' => 'fa-circle-o',
-                        'text_code' => '操作日志',
-                    )
-                )
-            ),
-            array(
-                'action' => 'me/information',
-                'icon' => 'fa-shield',
-                'text_code' => '个人中心',
-            )
-        );
+        $this->load->library('sys_model/menu', true);
 
-        return $this->buildMenuTree($data, true);
+        $menuIds = $this->logic_admin->getParam('menu');
+
+        $condition = array(
+            'menu_id' => array('in', $menuIds)
+        );
+        $order = 'menu_level ASC, menu_sort ASC';
+        $menu = $this->sys_model_menu->getMenuList($condition, $order);
+        $menu = makeTree($menu, array('menu_id' => 0), 'menu_id', 'menu_parent_id');
+
+        return $this->buildMenuTree($menu, true);
     }
 
     /**
@@ -85,15 +27,15 @@ class ControllerCommonMenu extends Controller {
     private function buildMenuTree($tree, $is_root = false) {
         $ul = '';
         if( !empty($tree) ) {
-            $ul .= $is_root ? '<ul class="sidebar-menu">' : '<ul class="treeview-menu">';
+            $ul .= $is_root ? '<ul class="sidebar-menu search-menu">' : '<ul class="treeview-menu search-menu">';
             foreach ($tree as $menu) {
                 $ul .= '<li>';
                 $ul .= !empty($menu['children']) ? '<a href="javascript:;">' : '';
-                $ul .= !empty($menu['action']) ? '<a href="' . $this->url->link($menu['action'], '', true) . '">' : '';
-                $ul .= !empty($menu['icon']) ? '<i class="fa ' . $menu['icon'] . ' fa-fw"></i> <span>' : '';
-                $ul .= $this->language->get($menu['text_code']);
-                $ul .= !empty($menu['icon']) ? '</span>' : '';
-                $ul .= !empty($menu['action']) ? '</a>' : '';
+                $ul .= !empty($menu['menu_action']) ? '<a href="' . $this->url->link($menu['menu_action'], '', true) . '">' : '';
+                $ul .= !empty($menu['menu_icon']) ? '<i class="fa ' . $menu['menu_icon'] . ' fa-fw"></i> <span>' : '';
+                $ul .= $this->language->get($menu['menu_name']);
+                $ul .= !empty($menu['menu_icon']) ? '</span>' : '';
+                $ul .= !empty($menu['menu_action']) ? '</a>' : '';
                 $ul .= !empty($menu['children']) ? '<span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>' : '';
                 $ul .= !empty($menu['children']) ? $this->buildMenuTree( $menu['children'] ) : '';
                 $ul .= '</li>';

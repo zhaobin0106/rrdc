@@ -75,9 +75,9 @@
                                 <tr>
                                     <td><?php echo $data['cooperator_name']?></td>
                                     <td>
-                                        <div class="dropdown" data-role_id="1">
-                                            <button class="b tn btn-default btn-flat dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                共 <span class="number"><?php echo $data['regions_num']; ?></span> 个景区 <span class="caret"></span>
+                                        <div class="dropdown">
+                                            <button class="btn btn-default btn-flat btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                共 <span class="number"><?php echo $data['regions_num']; ?></span> 个区域 <span class="caret"></span>
                                             </button>
                                             <ul class="dropdown-menu ztree" id="region-tree-<?php echo $data['cooperator_id']?>" data-cooperator_id="<?php echo $data['cooperator_id']?>"></ul>
                                         </div>
@@ -85,8 +85,8 @@
                                     <td><?php echo $data['state']?></td>
                                     <td>
                                         <div class="btn-group">
-                                            <button data-url="<?php echo $data['info_action']; ?>" type="button" class="btn btn-info link"><i class="fa fa-fw fa-eye"></i>查看</button>
-                                            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                                            <button data-url="<?php echo $data['info_action']; ?>" type="button" class="btn btn-info btn-sm link"><i class="fa fa-fw fa-eye"></i>查看</button>
+                                            <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown">
                                                 <span class="caret"></span>
                                                 <span class="sr-only">Toggle Dropdown</span>
                                             </button>
@@ -126,9 +126,6 @@
 
         // 异步更新数据
         function update(event, treeId, treeNode) {
-            console.log(event);
-            console.log(treeId);
-            console.log(treeNode);
             var tree = $('#' + treeId),
                     cooperator_id = tree.data('cooperator_id'),
                     checkedNodes = $.fn.zTree.getZTreeObj(treeId).getCheckedNodes(true),
@@ -143,9 +140,8 @@
 
             var url = '<?php echo $update_cooperator_region_action; ?>';
             var params = {cooperator_id: cooperator_id, regions: checkedIds.join()};
-            console.log(params);
             $.post(url, params, function(data) {
-                // 景区变更提示
+                // 区域变更提示
             });
         }
 

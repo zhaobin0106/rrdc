@@ -60,22 +60,21 @@
                                     <td><?php echo $data['admin_name']?></td>
                                     <td><?php echo $data['role_name']?></td>
                                     <td>
-                                        <div class="dropdown" data-role_id="1">
-                                            <button class="btn btn-default btn-flat dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                共 2 个景区 <span class="caret"></span>
+                                        <div class="dropdown">
+                                            <button class="btn btn-default btn-flat btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                共 <span class="number"><?php echo $data['regions_num']; ?></span> 个区域 <span class="caret"></span>
                                             </button>
-                                            <ul class="dropdown-menu ztree" id="region-tree-1" data-url="<?php echo $update_permission_action; ?>"></ul>
+                                            <ul class="dropdown-menu ztree" id="region-tree-<?php echo $data['admin_id']?>" data-admin_id="<?php echo $data['admin_id']?>"></ul>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="btn-group">
-                                            <button data-url="<?php echo $data['info_action']; ?>" type="button" class="btn btn-info link"><i class="fa fa-fw fa-eye"></i>查看</button>
-                                            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                                            <button data-url="<?php echo $data['edit_action']; ?>" type="button" class="btn btn-info link btn-sm"><i class="fa fa-fw fa-eye"></i>编辑</button>
+                                            <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown">
                                                 <span class="caret"></span>
                                                 <span class="sr-only">Toggle Dropdown</span>
                                             </button>
                                             <ul class="dropdown-menu" role="menu">
-                                                <li><a href="<?php echo $data['edit_action']; ?>">编辑</a></li>
                                                 <li><a href="<?php echo $data['delete_action']; ?>">删除</a></li>
                                             </ul>
                                         </div>
@@ -109,11 +108,8 @@
 
         // 异步更新数据
         function update(event, treeId, treeNode) {
-            console.log(event);
-            console.log(treeId);
-            console.log(treeNode);
             var tree = $('#' + treeId),
-                    cooperator_id = tree.data('cooperator_id'),
+                    admin_id = tree.data('admin_id'),
                     checkedNodes = $.fn.zTree.getZTreeObj(treeId).getCheckedNodes(true),
                     theButton = tree.parents('.dropdown').children('button'),
                     checkedIds = [];
@@ -124,11 +120,11 @@
                 checkedIds.push(checkedNodes[i].id);
             }
 
-            var url = '<?php echo $update_cooperator_region_action; ?>';
-            var params = {cooperator_id: cooperator_id, regions: checkedIds.join()};
+            var url = '<?php echo $update_admin_region_action; ?>';
+            var params = {admin_id: admin_id, regions: checkedIds.join()};
             console.log(params);
             $.post(url, params, function(data) {
-                // 景区变更提示
+                // 区域变更提示
             });
         }
 

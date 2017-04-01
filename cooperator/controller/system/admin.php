@@ -1,58 +1,60 @@
 <?php
 class ControllerSystemAdmin extends Controller {
+    private $cooperator_id = null;
     private $cur_url = null;
     private $error = null;
-    
+
     public function __construct($registry) {
         parent::__construct($registry);
 
         // 当前网址
         $this->cur_url = $this->url->link($this->request->get['route']);
+        $this->cooperator_id = $this->logic_admin->getParam('cooperator_id');
 
         // 加载admin Model
         $this->load->library('sys_model/admin', true);
-        $this->load->library('sys_model/rbac', true);
-
-        $this->load->library('logic/admin', true);
+        $this->load->library('sys_model/region', true);
     }
 
     /**
      * 管理员列表
      */
     public function index() {
-        $filter = $this->request->get(array('admin_name', 'login_time', 'role_id', 'state'));
+        $filter = $this->request->get(array('admin_name'));
 
-        $condition = array();
+        // 所有区域
+        $regions = $allRegions = array();
+        $condition = array(
+            'cooperator_id' => $this->cooperator_id
+        );
+        $limit = $order = '';
+        $field = 'region.*';
+        $join = array(
+            'region' => 'region.region_id=cooperator_to_region.region_id'
+        );
+        $regionList = $this->sys_model_region->getCooperatorToRegionList($condition, $order, $limit, $field, $join);
+        if (is_array($regionList) && !empty($regionList)) {
+            foreach ($regionList as $region) {
+                $allRegions[] = array(
+                    'id' => $region['region_id'],
+                    'name' => $region['region_name'],
+                    'parent_id' => 0,
+                );
+            }
+        }
+        unset($regionList);
+
+        // 管理员列表
+        $condition = array(
+            'admin.cooperator_id' => $this->cooperator_id
+        );
         if (!empty($filter['admin_name'])) {
             $condition['admin_name'] = array('like', "%{$filter['admin_name']}%");
         }
-        if (!empty($filter['login_time'])) {
-            $login_time = explode(' 至 ', $filter['login_time']);
-            $condition['login_time'] = array(
-                array('gt', strtotime($login_time[0])),
-                array('lt', bcadd(86399, strtotime($login_time[1])))
-            );
-        }
-        if (is_numeric($filter['role_id'])) {
-            $condition['role_id'] = (int)$filter['role_id'];
-        }
-        if (is_numeric($filter['state'])) {
-            $condition['state'] = (int)$filter['state'];
-        }
-
         if (isset($this->request->get['page'])) {
             $page = (int)$this->request->get['page'];
         } else {
             $page = 1;
-        }
-
-        // 所有角色
-        $roles = array();
-        $roleList = $this->sys_model_rbac->getRoleList();
-        if (!empty($roleList)) {
-            foreach ($roleList as $v) {
-                $roles[$v['role_id']] = $v['role_name'];
-            }
         }
 
         $order = 'add_time DESC';
@@ -60,15 +62,27 @@ class ControllerSystemAdmin extends Controller {
         $offset = ($page - 1) * $rows;
         $limit = sprintf('%d, %d', $offset, $rows);
 
-        $result = $this->sys_model_admin->getAdminList($condition, $order, $limit);
+        $field = 'admin.*,rbac_role.role_name';
+
+        $join = array(
+            'rbac_role' => 'rbac_role.role_id=admin.role_id'
+        );
+
+        $result = $this->sys_model_admin->getAdminList($condition, $order, $limit, $field, $join);
         $total = $this->sys_model_admin->getTotalAdmins($condition);
 
-        $state = get_setting_boolean();
         if (is_array($result) && !empty($result)) {
             foreach ($result as &$item) {
-                $item['state'] = isset($state[$item['state']]) ? $state[$item['state']] : '';
-                $item['login_time'] = !empty($item['login_time']) ? date('Y-m-d H:i:s', $item['login_time']) : '';
-                $item['role_name'] = isset($roles[$item['role_id']]) ? $roles[$item['role_id']] : '';
+                $selectedRegions = array();
+                $condition = array(
+                    'admin_id' => $item['admin_id']
+                );
+                $adminRegions = $this->sys_model_region->getAdminToRegionList($condition);
+                foreach ($adminRegions as $val) {
+                    $selectedRegions[] = $val['region_id'];
+                }
+                $regions[$item['admin_id']] = $this->_getTreeData($allRegions, $selectedRegions);
+                $item['regions_num'] = count($selectedRegions);
 
                 $item['edit_action'] = $this->url->link('system/admin/edit', 'admin_id='.$item['admin_id']);
                 $item['delete_action'] = $this->url->link('system/admin/delete', 'admin_id='.$item['admin_id']);
@@ -77,13 +91,15 @@ class ControllerSystemAdmin extends Controller {
         }
 
         $data_columns = $this->getDataColumns();
+        $regions = json_encode($regions);
         $this->assign('data_columns', $data_columns);
         $this->assign('data_rows', $result);
-        $this->assign('roles', $roles);
-        $this->assign('state', $state);
+        $this->assign('static', HTTP_CATALOG);
         $this->assign('filter', $filter);
+        $this->assign('regions', $regions);
         $this->assign('action', $this->cur_url);
         $this->assign('add_action', $this->url->link('system/admin/add'));
+        $this->assign('update_admin_region_action', $this->url->link('system/admin/update_admin_region'));
 
         if (isset($this->session->data['success'])) {
             $this->assign('success', $this->session->data['success']);
@@ -109,10 +125,9 @@ class ControllerSystemAdmin extends Controller {
      * @return mixed
      */
     protected function getDataColumns() {
-        $this->setDataColumn('用户名称');
+        $this->setDataColumn('登录名');
         $this->setDataColumn('角色');
-        $this->setDataColumn('最后登录时间');
-        $this->setDataColumn('状态');
+        $this->setDataColumn('区域管辖');
         return $this->data_columns;
     }
 
@@ -125,18 +140,32 @@ class ControllerSystemAdmin extends Controller {
             $now = time();
             $data = array(
                 'role_id' => $input['role_id'],
+                'type' => 2,
+                'cooperator_id' => $this->cooperator_id,
                 'admin_name' => $input['admin_name'],
                 'password' => $input['password'],
                 'state' => $input['state'] ? 1 : 0,
                 'add_time' => $now
             );
-            $this->logic_admin->add($data);
+            $admin_id = $this->logic_admin->add($data);
+
+            //加载管理员操作日志 model
+            $this->load->library('sys_model/admin_log', true);
+            $data = array(
+                'admin_id' => $this->logic_admin->getId(),
+                'admin_name' => $this->logic_admin->getadmin_name(),
+                'log_description' => '添加管理员：'.$admin_id,
+                'log_ip' => $this->request->ip_address(),
+                'log_time' => date('Y-m-d H:i:s')
+            );
+            $this->sys_model_admin_log->addAdminLog($data);
+
 
             $this->session->data['success'] = '添加管理员成功！';
 
             $filter = $this->request->get(array('admin_name', 'login_time', 'role_id', 'state'));
 
-            $this->load->controller('common/base/redirect', $this->url->link('system/admin', $filter, true));
+            $this->load->controller('common/base/redirect', $this->url->link('system/admin') . '&' . http_build_query($filter));
         }
 
         $this->assign('title', '管理员添加');
@@ -158,15 +187,27 @@ class ControllerSystemAdmin extends Controller {
                 $data['password'] = $input['password'];
             }
             $condition = array(
-                'admin_id' => $admin_id
+                'admin_id' => $admin_id,
+                'cooperator_id' => $this->cooperator_id
             );
-            $this->sys_model_admin->updateAdmin($condition, $data);
+            $this->logic_admin->update($condition, $data);
+
+            //加载管理员操作日志 model
+            $this->load->library('sys_model/admin_log', true);
+            $data = array(
+                'admin_id' => $this->logic_admin->getId(),
+                'admin_name' => $this->logic_admin->getadmin_name(),
+                'log_description' => '编辑管理员：'.$admin_id,
+                'log_ip' => $this->request->ip_address(),
+                'log_time' => date('Y-m-d H:i:s')
+            );
+            $this->sys_model_admin_log->addAdminLog($data);
 
             $this->session->data['success'] = '编辑管理员成功！';
 
             $filter = $this->request->get(array('admin_name', 'login_time', 'role_id', 'state'));
 
-            $this->load->controller('common/base/redirect', $this->url->link('system/admin', $filter, true));
+            $this->load->controller('common/base/redirect', $this->url->link('system/admin') . '&' . http_build_query($filter));
         }
 
         $this->assign('title', '编辑管理员');
@@ -177,48 +218,45 @@ class ControllerSystemAdmin extends Controller {
      * 删除管理员
      */
     public function delete() {
+        //加载管理员 model
+        $this->load->library('sys_model/admin', true);
+
         if (isset($this->request->get['admin_id']) && $this->validateDelete()) {
             $condition = array(
-                'admin_id' => $this->request->get['admin_id']
+                'admin_id' => $this->request->get['admin_id'],
+                'cooperator_id' => $this->cooperator_id
             );
             $this->sys_model_admin->deleteAdmin($condition);
+
+            //加载管理员操作日志 model
+            $this->load->library('sys_model/admin_log', true);
+            $data = array(
+                'admin_id' => $this->logic_admin->getId(),
+                'admin_name' => $this->logic_admin->getadmin_name(),
+                'log_description' => '删除管理员：'.$this->request->get['admin_id'],
+                'log_ip' => $this->request->ip_address(),
+                'log_time' => date('Y-m-d H:i:s')
+            );
+            $this->sys_model_admin_log->addAdminLog($data);
 
             $this->session->data['success'] = '删除管理员成功！';
         }
         $filter = $this->request->get(array('admin_name', 'login_time', 'role_id', 'state'));
-        $this->load->controller('common/base/redirect', $this->url->link('system/admin', $filter, true));
-    }
-
-    /**
-     * 管理员详情
-     */
-    public function info() {
-        // 编辑时获取已有的数据
-        $admin_id = $this->request->get('admin_id');
-        $condition = array(
-            'admin_id' => $admin_id
-        );
-        $info = $this->sys_model_admin->getAdminInfo($condition);
-        if (!empty($info)) {
-            $state = get_setting_boolean();
-            $info['state'] = isset($state[$info['state']]) ? $state[$info['state']] : '';
-            $info['login_time'] = !empty($info['login_time']) ? date('Y-m-d H:i:s', $info['login_time']) : '';
-            $info['add_time'] = !empty($info['add_time']) ? date('Y-m-d H:i:s', $info['add_time']) : '';
-        }
-
-        $this->assign('data', $info);
-
-        $this->response->setOutput($this->load->view('system/admin_info', $this->output));
+        $this->load->controller('common/base/redirect', $this->url->link('system/admin') . '&' . http_build_query($filter));
     }
 
     private function getForm() {
+        $this->load->library('sys_model/rbac', true);
         // 编辑时获取已有的数据
         $info = $this->request->post(array('admin_name', 'password', 'confirm', 'role_id', 'state'));
         $admin_id = $this->request->get('admin_id');
 
         // 所有角色
         $roles = array();
-        $roleList = $this->sys_model_rbac->getRoleList();
+        $condition = array(
+            'cooperator_id' => $this->cooperator_id
+        );
+        $roleList = $this->sys_model_rbac->getRoleList($condition);
         if (!empty($roleList)) {
             foreach ($roleList as $v) {
                 $roles[$v['role_id']] = $v['role_name'];
@@ -236,10 +274,39 @@ class ControllerSystemAdmin extends Controller {
         $this->assign('roles', $roles);
         $this->assign('data', $info);
         $this->assign('action', $this->cur_url . '&admin_id=' . $admin_id);
+        $this->assign('return_action', $this->url->link('system/admin'));
         $this->assign('error', $this->error);
         $this->assign('static', HTTP_IMAGE);
 
         $this->response->setOutput($this->load->view('system/admin_form', $this->output));
+    }
+
+    /**
+     * 更改管辖的区域
+     */
+    public function update_admin_region() {
+        $input = $this->request->post(array('admin_id', 'regions'));
+
+        // 删除原有的区域
+        $condition = array(
+            'admin_id' => $input['admin_id']
+        );
+        $this->sys_model_region->deleteAdminToRegion($condition);
+
+        // 重新绑定区域
+        if (!empty($input['regions'])) {
+            $regions = explode(',', $input['regions']);
+            if (is_array($regions) && !empty($regions)) {
+                foreach ($regions as $region_id) {
+                    $data = array(
+                        'admin_id' => $input['admin_id'],
+                        'region_id' => $region_id
+                    );
+                    $this->sys_model_region->addAdminToRegion($data);
+                }
+            }
+        }
+        $this->response->showSuccessResult('', '修改成功');
     }
 
     /**
@@ -280,5 +347,26 @@ class ControllerSystemAdmin extends Controller {
      */
     private function validateDelete() {
         return !$this->error;
+    }
+
+    // ---------------------------------------- 其他 ----------------------------------------
+    /**
+     * 把指定角色的权限数据添加到权限树数据中
+     * @param $all_permissions
+     * @param $permissions
+     * @return array
+     */
+    private function _getTreeData($all_permissions, $permissions) {
+        $role_permission = array();
+        foreach ($all_permissions as $permission) {
+            $role_permission[] = array(
+                'id' => $permission['id'] + 0,
+                'pId' => $permission['parent_id'] + 0,
+                'name' => $permission['name'],
+                'open' => false,
+                'checked' => in_array($permission['id'], $permissions)
+            );
+        }
+        return $role_permission;
     }
 }
