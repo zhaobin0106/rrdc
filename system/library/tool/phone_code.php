@@ -47,6 +47,7 @@ class Phone_code {
         $client  = new SoapClient($mobile['ClientURL']);
         $result  = $client->send(array("USERNAME" => $USERNAME, "PASSWORD" => $PASSWORD, "BRANDNAME" => $BRANDNAME, "MESSAGE" => $MESSAGE, "TYPE" => $TYPE, "PHONE" => $PHONE, "IDREQ" => $IDREQ));
         $response  = (array)$result;
+        file_put_contents('newsms.txt', var_export($response,true));
         $response  = (array)$response['return'];
 //      var_dump($response);
 
