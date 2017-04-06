@@ -2,19 +2,19 @@
 <!-- Content Header (Page header) -->
 <section class="content-header clearfix">
     <h1 class="pull-left">
-        <span>单车管理</span>
+        <span><?php echo $languages['dcgl'];?></span>
         <a href="javascript:;" onclick="collect('<?php echo $menu_id ?>',this)"><i class="<?php echo $menu_collect_status == 1? 'fa fa-star no-margin text-yellow' : 'fa fa-star-o text-gray'; ?>"></i></a>
     </h1>
     <div class="pull-right">
         <div class="pull-left" style="margin-right: 20px;">
             <i class="fa fa-bicycle"></i>
-            <span>总数：<?php echo $total_bicycle; ?>台</span>
+            <span><?php echo $languages['zongshu'];?>：<?php echo $total_bicycle; ?><?php echo $languages['tai'];?></span>
         </div>
         <div class="pull-left" style="margin-right: 20px;">
-            <span>使用中：<?php echo $using_bicycle; ?>台</span>
+            <span><?php echo $languages['shiyongzhong'];?>：<?php echo $using_bicycle; ?><?php echo $languages['tai'];?></span>
         </div>
         <div class="pull-left" style="margin-right: 20px;">
-            <span>故障：<?php echo $fault_bicycle; ?>台</span>
+            <span><?php echo $languages['guzhang'];?>：<?php echo $fault_bicycle; ?><?php echo $languages['tai'];?></span>
         </div>
     </div>
 </section>
@@ -37,14 +37,14 @@
                         <form class="form-horizontal" method="post" action="<?php echo $action; ?>">
                             <div class="row">
                                 <div class="form-group">
-                                    <label class="col-sm-2 control-label">单车编号</label>
+                                    <label class="col-sm-2 control-label"><?php echo $languages['dcbh'];?></label>
                                     <div class="col-sm-5">
                                         <input type="text" name="bicycle_sn" value="<?php echo $data['bicycle_sn']; ?>" class="form-control" />
                                         <?php if (isset($error['bicycle_sn'])) { ?><div class="text-danger"><?php echo $error['bicycle_sn']; ?></div><?php } ?>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-2 control-label">单车类型</label>
+                                    <label class="col-sm-2 control-label"><?php echo $languages['dclx'];?></label>
                                     <div class="col-sm-5">
                                         <select name="type" class="form-control">
                                             <?php foreach($types as $k => $v) { ?>
@@ -55,7 +55,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-2 control-label">所在区域</label>
+                                    <label class="col-sm-2 control-label"><?php echo $languages['szqy'];?></label>
                                     <div class="col-sm-5">
                                         <select name="region_id" class="form-control">
                                             <?php foreach($regions as $v) { ?>
@@ -66,7 +66,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-2 control-label">车锁编号</label>
+                                    <label class="col-sm-2 control-label"><?php echo $languages['csbh'];?></label>
                                     <div class="col-sm-5">
                                         <input type="text" name="lock_sn" value="<?php echo $data['lock_sn']; ?>" class="form-control">
                                         <?php if (isset($error['lock_sn'])) { ?><div class="text-danger"><?php echo $error['lock_sn']; ?></div><?php } ?>
@@ -77,8 +77,8 @@
                             <div class="form-group">
                                 <div class="col-sm-7">
                                     <div class="pull-right">
-                                        <button type="submit" class="btn btn-sm btn-success margin-r-5">提交</button>
-                                        <a href="<?php echo $return_action; ?>" class="btn btn-sm btn-default">返回</a>
+                                        <button type="submit" class="btn btn-sm btn-success margin-r-5"><?php echo $languages['tijiao'];?></button>
+                                        <a href="<?php echo $return_action; ?>" class="btn btn-sm btn-default"><?php echo $languages['fanhui'];?></a>
                                     </div>
                                 </div>
                             </div>

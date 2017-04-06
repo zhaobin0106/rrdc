@@ -9,13 +9,19 @@
 /**
  * 单车类型
  */
+
+$config = new Config();
+$config->load('default');
+$language = new Language($config->get('language_default'));
+$language->load($config->get('language_default'));
 if (!function_exists('get_bicycle_type'))
 {
     function get_bicycle_type() {
+        global $language;
         return array(
-            '1' => '单人车',
-            '2' => '双人车',
-            '3' => '家庭车',
+            '1' => $language->get('drc'),
+            // '2' => '双人车',
+            // '3' => '家庭车',
         );
     }
 }
@@ -26,6 +32,7 @@ if (!function_exists('get_bicycle_type'))
 if (!function_exists('get_lock_status'))
 {
     function get_lock_status() {
+        global $language;
         return array(
             '0' => '已关锁',
             '1' => '开锁',
@@ -40,6 +47,7 @@ if (!function_exists('get_lock_status'))
 if (!function_exists('get_recharge_type'))
 {
     function get_recharge_type() {
+        global $language;
         return array(
             '0' => '余额充值',
             '1' => '押金充值'
@@ -53,6 +61,7 @@ if (!function_exists('get_recharge_type'))
 if (!function_exists('get_payment_state'))
 {
     function get_payment_state() {
+        global $language;
         return array(
             '0' => '未支付',
             '1' => '已支付',
@@ -67,6 +76,7 @@ if (!function_exists('get_payment_state'))
 if (!function_exists('get_order_state'))
 {
     function get_order_state() {
+        global $language;
         return array(
             '-1' => '已取消',
             '0' => '未生效',
@@ -82,6 +92,7 @@ if (!function_exists('get_order_state'))
 if (!function_exists('get_parking_type'))
 {
     function get_parking_type() {
+        global $language;
         return array(
             '1' => '违停上报',
             '2' => '其他上报'
@@ -95,6 +106,7 @@ if (!function_exists('get_parking_type'))
 if (!function_exists('get_cooperator_state'))
 {
     function get_cooperator_state() {
+        global $language;
         return array(
             '0' => '禁用',
             '1' => '启用',
@@ -108,6 +120,7 @@ if (!function_exists('get_cooperator_state'))
 if (!function_exists('get_setting_boolean'))
 {
     function get_setting_boolean() {
+        global $language;
         return array(
             '0' => '禁用',
             '1' => '启用',
@@ -121,9 +134,10 @@ if (!function_exists('get_setting_boolean'))
 if (!function_exists('get_common_boolean'))
 {
     function get_common_boolean() {
+        global $language;
         return array(
-            '1' => '是',
-            '0' => '否',
+            '1' => $language->get('shi'),
+            '0' => $language->get('fou'),
         );
     }
 }
@@ -134,6 +148,7 @@ if (!function_exists('get_common_boolean'))
 if (!function_exists('get_common_result'))
 {
     function get_common_result() {
+        global $language;
         return array(
             '1' => '通过',
             '0' => '不通过',
@@ -147,6 +162,7 @@ if (!function_exists('get_common_result'))
 if (!function_exists('get_fault_processed'))
 {
     function get_fault_processed() {
+        global $language;
         return array(
             '1' => '已处理',
             '0' => '未处理',

@@ -57,3 +57,4 @@ define('MAX_RECHARGE', '100');//最大的充值金额
 define('GAP_TIME', '120');//回传时间120秒
 define('API_URL', 'http://47.90.39.93:8888?version=1');
 define('OPEN_VALIDATE', false);
+define('OFFLINE_THRESHOLD', 3610); //后台认为单车失联（离线）的判断标准（单位秒）

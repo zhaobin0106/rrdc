@@ -4,8 +4,8 @@ $_['site_base']            = '';
 $_['site_ssl']             = false;
 
 // Language
-$_['language_default']     = 'zh-CN';
-$_['language_autoload']    = array('zh-CN');
+$_['language_default']     = 'yuenan';
+$_['language_autoload']    = array('yuenan');
 
 // Database
 $_['db_autostart']         = false;
