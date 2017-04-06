@@ -44,7 +44,7 @@ class Phone_code {
         $TYPE  = 1;
         $PHONE  = $to;//'84'.ltrim($config["mobile"], '0');
         $IDREQ  = time();
-        $client  = new SoapClient($mobile['ClientURL']);
+        $client  = new \SoapClient($mobile['ClientURL']);
         $result  = $client->send(array("USERNAME" => $USERNAME, "PASSWORD" => $PASSWORD, "BRANDNAME" => $BRANDNAME, "MESSAGE" => $MESSAGE, "TYPE" => $TYPE, "PHONE" => $PHONE, "IDREQ" => $IDREQ));
         $response  = (array)$result;
         file_put_contents('newsms.txt', var_export($response,true));
