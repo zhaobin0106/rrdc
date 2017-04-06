@@ -33,7 +33,7 @@ class Sms {
             return false;
         }
         //第二个参数是数组
-        $result = $this->tool_phone_code->newsendSMS($mobile, array($code, SMS_TIMEOUT / 60));
+        $result = $this->tool_phone_code->sendSMS($mobile, array($code, SMS_TIMEOUT / 60));
 
         if (!$result) {
             return false;
