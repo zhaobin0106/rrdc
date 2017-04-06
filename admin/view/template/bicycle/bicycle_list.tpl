@@ -104,8 +104,8 @@
                                     <td><?php echo $data['bicycle_sn']?></td>
                                     <td><?php echo $data['lock_sn']?></td>
                                     <td><?php echo $data['type']?></td>
-                                    <td><?php echo $data['region_name']?></td>
-                                    <td><?php echo $data['is_using']?></td>
+<!--                                     <td><?php echo $data['region_name']?></td>
+ -->                                    <td><?php echo $data['is_using']?></td>
                                     <td>
                                         <div class="btn-group">
                                             <button data-url="<?php echo $data['info_action']; ?>" type="button" class="btn btn-info link"><i class="fa fa-fw fa-eye"></i><?php echo $languages['chakan'];?></button>

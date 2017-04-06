@@ -58,7 +58,7 @@
                                         <?php if (isset($error['type'])) { ?><div class="text-danger"><?php echo $error['type']; ?></div><?php } ?>
                                     </div>
                                 </div>
-                                <div class="form-group">
+<!--                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">所在区域</label>
                                     <div class="col-sm-5">
                                         <select name="region_id" class="form-control">
@@ -68,7 +68,8 @@
                                         </select>
                                         <?php if (isset($error['region_id'])) { ?><div class="text-danger"><?php echo $error['region_id']; ?></div><?php } ?>
                                     </div>
-                                </div>
+                                </div> -->
+                                <input type="hidden" value='2' name="region_id" />
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-7">
@@ -98,16 +99,16 @@
                 <tr>
                     <th>单车编号</th>
                     <th>单车类型</th>
-                    <th>区域</th>
-                </tr>
+<!--                     <th>区域</th>
+ -->                </tr>
                 </thead>
                 <tbody>
                 <?php foreach($bicycles as $bicycle) { ?>
                 <tr>
                     <td><input type="hidden" name="selected[]" value="<?php echo $bicycle['bicycle_id']; ?>" /><?php echo $bicycle['bicycle_sn']; ?></td>
                     <td><?php echo $bicycle['type_name']; ?></td>
-                    <td><?php echo $bicycle['region_name']; ?></td>
-                </tr>
+<!--                     <td><?php echo $bicycle['region_name']; ?></td>
+ -->                </tr>
                 <?php } ?>
                 </tbody>
             </table>

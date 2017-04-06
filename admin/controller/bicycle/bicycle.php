@@ -85,7 +85,7 @@ class ControllerBicycleBicycle extends Controller {
         $filter_types = array(
             'bicycle_sn' => $this->language->get('dcbh'),
             'lock_sn' => $this->language->get('csbh'),
-            'region_name' => $this->language->get('quyu'),
+            //'region_name' => $this->language->get('quyu'),
             // 'cooperator_name' => $this->language->get('hhr'),
         );
         $filter_type = $this->request->get('filter_type');
@@ -150,7 +150,7 @@ class ControllerBicycleBicycle extends Controller {
         $this->setDataColumn($this->language->get('dcbh'));
         $this->setDataColumn($this->language->get('csbh'));
         $this->setDataColumn($this->language->get('dclx'));
-        $this->setDataColumn($this->language->get('chengshi'));
+        // $this->setDataColumn($this->language->get('chengshi'));
         $this->setDataColumn($this->language->get('sfsyz'));
         // $this->setDataColumn('城市');
         // $this->setDataColumn('合伙人');
@@ -497,7 +497,7 @@ class ControllerBicycleBicycle extends Controller {
                     'bicycle_sn' => $bicycle['bicycle_sn'],
                     'lock_sn' => $bicycle['lock_sn'],
                     'type' => $bicycle_types[$bicycle['type']],
-                    'region_name' => $bicycle['region_name'],
+                    // 'region_name' => $bicycle['region_name'],
                     'is_using' => $use_states[$bicycle['is_using']]
                 );
             }
@@ -509,7 +509,7 @@ class ControllerBicycleBicycle extends Controller {
                 'bicycle_sn' => $this->language->get('dcbh'),
                 'lock_sn' => $this->language->get('csbh'),
                 'type' => $this->language->get('dclx'),
-                'region_name' => $this->language->get('quyu'),
+                // 'region_name' => $this->language->get('quyu'),
                 'is_using' => $this->language->get('sfsyz'),
             ),
             'list' => $list
@@ -749,7 +749,6 @@ class ControllerBicycleBicycle extends Controller {
                 $this->error[$k] = $this->language->get('qsrwz');
             }
         }
-
         if ($this->error) {
             $this->error['warning'] = $this->language->get('jgczcwqjc');
         }

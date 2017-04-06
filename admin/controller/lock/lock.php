@@ -83,7 +83,7 @@ class ControllerLockLock extends Controller {
         $filter_types = array(
             'lock_sn' => '车锁编号',
             'lock_name' => '车锁名称',
-            'cooperator_name' => '合伙人'
+            // 'cooperator_name' => '合伙人'
         );
         $filter_type = $this->request->get('filter_type');
         if (empty($filter_type)) {
@@ -149,7 +149,7 @@ class ControllerLockLock extends Controller {
     protected function getDataColumns() {
         $this->setDataColumn('锁编号');
         $this->setDataColumn('锁名称');
-        $this->setDataColumn('合伙人');
+        // $this->setDataColumn('合伙人');
         $this->setDataColumn('当前电量（百分比）');
         $this->setDataColumn('开锁次数');
         $this->setDataColumn('更新时间');
@@ -349,7 +349,7 @@ class ControllerLockLock extends Controller {
                 $list[] = array(
                     'lock_sn' => $item['lock_sn'],
                     'lock_name' => $item['lock_name'],
-                    'cooperator_name' => $item['cooperator_name'],
+                    // 'cooperator_name' => $item['cooperator_name'],
                     'gy' => $item['gy'],
                     'open_nums' => $item['open_nums'],
                     'system_time' => $item['system_time'] == 0 ? '没有更新过' : date('Y-m-d H:i:s', $item['system_time']),
@@ -363,7 +363,7 @@ class ControllerLockLock extends Controller {
             'header' => array(
                 'lock_sn' => '锁编号',
                 'lock_name' => '锁名称',
-                'cooperator_name' => '合伙人',
+                // 'cooperator_name' => '合伙人',
                 'gy' => '当前电量（百分比）',
                 'open_nums' => '开锁次数',
                 'system_time' => '更新时间',

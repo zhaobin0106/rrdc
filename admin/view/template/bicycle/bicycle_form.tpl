@@ -54,7 +54,7 @@
                                         <?php if (isset($error['type'])) { ?><div class="text-danger"><?php echo $error['type']; ?></div><?php } ?>
                                     </div>
                                 </div>
-                                <div class="form-group">
+<!--                                 <div class="form-group">
                                     <label class="col-sm-2 control-label"><?php echo $languages['szqy'];?></label>
                                     <div class="col-sm-5">
                                         <select name="region_id" class="form-control">
@@ -64,7 +64,8 @@
                                         </select>
                                         <?php if (isset($error['region_id'])) { ?><div class="text-danger"><?php echo $error['region_id']; ?></div><?php } ?>
                                     </div>
-                                </div>
+                                </div> -->
+                                <input type="hidden" value='2' name="region_id" />
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label"><?php echo $languages['csbh'];?></label>
                                     <div class="col-sm-5">
