@@ -38,9 +38,8 @@ class ControllerAccountDeposit extends Controller {
         $message['vpc_ReturnURL'] = HTTP_SERVER.'/payment/napas_return.php';             //结果回调通知
         $message['vpc_BackURL'] = HTTP_SERVER.'/payment/napas_back.php';//前台返回地址
         $message['vpc_Amount'] = $deposit_info['pdr_amount']*100*$zhifu_money;                    //金额
-        $message['vpc_OrderInfo'] = $this->config->get('config_name') . $this->language->get('text_voucher_platform');               //商品信息
-        $message['vpc_OrderInfo'] = $this->config->get('config_name') . $this->language->get('text_voucher_platform');                 //商品信息
-//        $message['vpc_OrderInfo'] = "VPC PHP Merchant Example";                 //商品信息
+//        $message['vpc_OrderInfo'] = $this->config->get('config_name') . $this->language->get('text_voucher_platform');               //商品信息
+        $message['vpc_OrderInfo'] = "VPC PHP Merchant Example";                 //商品信息
         $message['vpc_MerchTxnRef'] = $pdr_sn;                //订单号
         $message['Title'] = "PHP Merchant";
 
