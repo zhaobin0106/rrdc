@@ -31,13 +31,13 @@ class ControllerStartupLogin extends Controller {
         );
 
         if (!in_array($route, $ignore)) {
-            if (!isset($this->request->post['user_id']) || !isset($this->request->post['sign'])) {
+            if (!isset($this->request->get['user_id']) || !isset($this->request->get['sign'])) {
                 $this->response->showErrorResult('缺少登录参数', 98);
             }
 
             $this->load->library('logic/user', true);
-            $user_id = $this->request->post['user_id'];
-            $sign = $this->request->post['sign'];
+            $user_id = $this->request->get['user_id'];
+            $sign = $this->request->get['sign'];
             $result = $this->logic_user->checkUserSign(array('user_id' => $user_id), $sign);
             if ($result['state']) {
                 $this->registry->set('startup_user', $this->logic_user);
