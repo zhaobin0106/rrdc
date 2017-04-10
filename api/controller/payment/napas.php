@@ -7,7 +7,6 @@ class ControllerPaymentNapas extends Controller {
     public function notify() {
         $success = 'success';
         $failure = 'fail';
-//        $this->log->write(json_encode($this->request->post));
         $config = $this->getNapasConfig();
         $SECURE_SECRET = $config['SecureHash']['val'];
         $this->load->library('sys_model/deposit', true);
@@ -84,6 +83,7 @@ class ControllerPaymentNapas extends Controller {
         $result = $this->sys_model_deposit->updateDepositChargeOrder($transactionNo, $out_trade_no, $payment_info, $recharge_info);
         $result['state'] ?$this->qiantai($out_trade_no) : $this->qiantai(0);
     }
+}
     public function qiantai($out_trade_no='0'){
         //sleep(2);
 //        $out_trade_no = $_POST['out_trade_no'];   //商户订单号
