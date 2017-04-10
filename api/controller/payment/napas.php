@@ -5,6 +5,8 @@
  */
 class ControllerPaymentNapas extends Controller {
     public function notify() {
+        file_put_contents('napas.txt', var_export($_GET,true));
+        file_put_contents('napas2.txt', var_export($_POST,true));
         $success = 'success';
         $failure = 'fail';
         $config = $this->getNapasConfig();
@@ -42,7 +44,7 @@ class ControllerPaymentNapas extends Controller {
             file_put_contents("napaspayERROR.txt","ERROR CODE：".$hashValidated."\r\n",FILE_APPEND);
             file_put_contents("napaspayERROR.txt","------------INVALID QUERY---------\r\n",FILE_APPEND);
             file_put_contents("napaspayERROR.txt","\r\n",FILE_APPEND);
-            $this->qiantai(0);
+            echo fail;exit;
         }else{
             // Standard Receipt Data
 //            $version         = null2unknown($_GET["vpc_Version"]);              //版本号
@@ -63,17 +65,17 @@ class ControllerPaymentNapas extends Controller {
             $errorTxt = "";
             if ($txnResponseCode != "0" || $txnResponseCode == "No Value Returned" || $errorExists) {
                 $errorTxt = getResponseDescription($txnResponseCode);
-                echo false;exit;
+                echo fail;exit;
             }
 
             $total_fee_t = $amount/100;
             $out_trade_no = $merchTxnRef;
             $recharge_info = $this->sys_model_deposit->getRechargeInfo(array('pdr_sn' => $out_trade_no));
             if (empty($recharge_info)) {
-                exit('no result');
+                echo fail;exit;
             }
             if ($recharge_info['pdr_payment_state'] == 1) {
-                exit($success);
+                echo success;exit;
             }
             $payment_info = array(
                 'payment_code' => 'napas',
@@ -81,13 +83,14 @@ class ControllerPaymentNapas extends Controller {
             );
 
         $result = $this->sys_model_deposit->updateDepositChargeOrder($transactionNo, $out_trade_no, $payment_info, $recharge_info);
-        $result['state'] ?$this->qiantai($out_trade_no) : $this->qiantai(0);
+        exit($result['state'] ? $success : $failure);
     }
 }
-    public function qiantai($out_trade_no='0'){
+    public function qiantai(){
         //sleep(2);
 //        $out_trade_no = $_POST['out_trade_no'];   //商户订单号
         $this->load->library('sys_model/deposit', true);
+        $out_trade_no=$_GET['vpc_MerchTxnRef'];
         $recharge_info = $this->sys_model_deposit->getRechargeInfo(array('pdr_sn' => $out_trade_no));
         if(!$recharge_info || $recharge_info['pdr_payment_state'] != 1){
             //_message("支付失败", WEB_PATH."/member/cart/paysuccess");
@@ -95,8 +98,9 @@ class ControllerPaymentNapas extends Controller {
         }else{
             $type = 200;
         }
-
-        include $this->tpl(ROUTE_M,'openApp');
+        $this->assign('type', $type);
+        $this->assign('out_trade_no', $out_trade_no);
+        $this->response->setOutput($this->load->view('api/payment', $this->output));
     }
     private function getNapasConfig(){
         $config = $this->config->get('config_napas');
