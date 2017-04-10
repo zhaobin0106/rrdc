@@ -82,7 +82,7 @@ class ControllerPaymentNapas extends Controller {
             );
 
         $result = $this->sys_model_deposit->updateDepositChargeOrder($transactionNo, $out_trade_no, $payment_info, $recharge_info);
-        $result['state'] ?$this->qiantai($out_trade_no); : $this->qiantai(0););
+        $result['state'] ?$this->qiantai($out_trade_no) : $this->qiantai(0);
     }
     public function qiantai($out_trade_no='0'){
         //sleep(2);
