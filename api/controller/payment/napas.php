@@ -5,8 +5,6 @@
  */
 class ControllerPaymentNapas extends Controller {
     public function notify() {
-        file_put_contents('napas.txt', var_export($_GET,true));
-        file_put_contents('napas2.txt', var_export($_POST,true));
         $success = 'success';
         $failure = 'fail';
         $config = $this->getNapasConfig();
@@ -26,7 +24,7 @@ class ControllerPaymentNapas extends Controller {
                     $md5HashData .= $value;
                 }
             }
-
+            file_put_contents('napas.txt', $md5HashData.'||'.$vpc_Txn_Secure_Hash);
             if (strtoupper($vpc_Txn_Secure_Hash) == strtoupper(md5($md5HashData))) {
                 $hashValidated = "CORRECT";
             } else {
@@ -123,4 +121,12 @@ function getResponseDescription($responseCode) {
         default  : $result = "Loi khong xac dinh";                                          //未确定的错误
     }
     return $result;
+}
+
+function null2unknown($data) {
+    if ($data == "") {
+        return "No Value Returned";
+    } else {
+        return $data;
+    }
 }
