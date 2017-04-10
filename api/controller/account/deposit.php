@@ -78,8 +78,7 @@ class ControllerAccountDeposit extends Controller {
         $sHtml .= "<form name='paysubmit' method='get' action='{$this->PaymentClientURL}'>";
         $sHtml .= $this->HtmlInput;
         $sHtml = $sHtml."<script>document.forms['paysubmit'].submit();</script>";
-        echo $sHtml;
-        exit;
+        $this->response->showSuccessResult(array('statement' => $sHtml), $this->language->get('success_get_paid_key'));
     }
     // public function aliPayChargeDeposit() {
     //     $config = $this->getAliPayConfig();
