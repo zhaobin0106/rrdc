@@ -3,12 +3,12 @@ class ControllerAccountDeposit extends Controller {
     /**
      *  支付宝押金充值
      */
-    public function aliPayChargeDeposit() {
+    public function napasChargeDeposit() {
         $config = $this->getNapasConfig();
         $user_id = $this->startup_user->userId();
         $user_info = $this->startup_user->getUserInfo();
 
-        $pdr_sn = $this->request->post['pdr_sn'];
+        $pdr_sn = $this->request->get['pdr_sn'];
         if (!preg_match('/^\d{18}$/', $pdr_sn)) {
             $this->response->showErrorResult($this->language->get('error_pdr_sn_format'), 207);
         }
@@ -78,50 +78,51 @@ class ControllerAccountDeposit extends Controller {
         $sHtml .= "<form name='paysubmit' method='get' action='{$this->PaymentClientURL}'>";
         $sHtml .= $this->HtmlInput;
         $sHtml = $sHtml."<script>document.forms['paysubmit'].submit();</script>";
-        $this->response->showSuccessResult(array('statement' => $sHtml), $this->language->get('success_get_paid_key'));
+        echo $sHtml;
+        exit;
     }
-    // public function aliPayChargeDeposit() {
-    //     $config = $this->getAliPayConfig();
-    //     $user_id = $this->startup_user->userId();
-    //     $user_info = $this->startup_user->getUserInfo();
+    public function aliPayChargeDeposit() {
+        $config = $this->getAliPayConfig();
+        $user_id = $this->startup_user->userId();
+        $user_info = $this->startup_user->getUserInfo();
 
-    //     $pdr_sn = $this->request->post['pdr_sn'];
-    //     if (!preg_match('/^\d{18}$/', $pdr_sn)) {
-    //         $this->response->showErrorResult($this->language->get('error_pdr_sn_format'), 207);
-    //     }
-    //     $this->load->library('sys_model/deposit', true);
-    //     $deposit_info = $this->sys_model_deposit->getRechargeInfo(array('pdr_sn' => $pdr_sn, 'pdr_user_id' => $user_id));
-    //     if (empty($deposit_info)) {
-    //         $this->response->showErrorResult($this->language->get('error_pdr_sn_nonexistence'), 208);
-    //     }
+        $pdr_sn = $this->request->post['pdr_sn'];
+        if (!preg_match('/^\d{18}$/', $pdr_sn)) {
+            $this->response->showErrorResult($this->language->get('error_pdr_sn_format'), 207);
+        }
+        $this->load->library('sys_model/deposit', true);
+        $deposit_info = $this->sys_model_deposit->getRechargeInfo(array('pdr_sn' => $pdr_sn, 'pdr_user_id' => $user_id));
+        if (empty($deposit_info)) {
+            $this->response->showErrorResult($this->language->get('error_pdr_sn_nonexistence'), 208);
+        }
 
-    //     if (intval($deposit_info['pdr_payment_state'])) {
-    //         $this->response->showErrorResult($this->language->get('error_repeat_payment'), 209);
-    //     }
+        if (intval($deposit_info['pdr_payment_state'])) {
+            $this->response->showErrorResult($this->language->get('error_repeat_payment'), 209);
+        }
 
-    //     if ($deposit_info['pdr_type'] == 1) {
-    //         if ($user_info['deposit_state'] == 1) {
-    //             $this->response->showErrorResult($this->language->get('error_repeat_payment_deposit'), 210);
-    //         }
-    //     }
+        if ($deposit_info['pdr_type'] == 1) {
+            if ($user_info['deposit_state'] == 1) {
+                $this->response->showErrorResult($this->language->get('error_repeat_payment_deposit'), 210);
+            }
+        }
 
-    //     $parameter = array(
-    //         'service' => $config['service'],
-    //         'partner' => $config['partner'],
-    //         'seller_id' => $config['seller_id'],
-    //         'payment_type' => 1,
-    //         '_input_charset' => $config['input_charset'],
-    //         'out_trade_no' => $pdr_sn,
-    //         'subject' => $pdr_sn,
-    //         'total_fee' => $deposit_info['pdr_amount'],
-    //         'body' => $this->config->get('config_name') . $this->language->get('text_voucher_platform'),
-    //         'notify_url' => $this->config->get('config_alipay_notify_url')
-    //     );
+        $parameter = array(
+            'service' => $config['service'],
+            'partner' => $config['partner'],
+            'seller_id' => $config['seller_id'],
+            'payment_type' => 1,
+            '_input_charset' => $config['input_charset'],
+            'out_trade_no' => $pdr_sn,
+            'subject' => $pdr_sn,
+            'total_fee' => $deposit_info['pdr_amount'],
+            'body' => $this->config->get('config_name') . $this->language->get('text_voucher_platform'),
+            'notify_url' => $this->config->get('config_alipay_notify_url')
+        );
 
-    //     $aliPaySubmit = new payment\alipay\alipaySubmit($config);
-    //     $statement = $aliPaySubmit->buildRequestParaToString($parameter);
-    //     $this->response->showSuccessResult(array('statement' => $statement), $this->language->get('success_get_paid_key'));
-    // }
+        $aliPaySubmit = new payment\alipay\alipaySubmit($config);
+        $statement = $aliPaySubmit->buildRequestParaToString($parameter);
+        $this->response->showSuccessResult(array('statement' => $statement), $this->language->get('success_get_paid_key'));
+    }
 
     /**
      * 微信
