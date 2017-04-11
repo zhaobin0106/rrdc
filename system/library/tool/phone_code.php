@@ -33,16 +33,16 @@ class Phone_code {
             'Signature' => '[BangXueShi]',
           );
         $code = $data[0];
-        $msg = '您好，您的验证码:0000，请勿将验证码泄漏给任何人。';
-        $content = str_ireplace('000000',$code, $msg).$mobile['Signature'];
+        $msg = 'Mã xác minh là 0000, hãy sửa đầu vào trong vòng năm phút, nếu không tôi hoạt động, xin vui lòng bỏ qua thông báo này.';
+        $content = str_ireplace('0000',$code, $msg).$mobile['Signature'];
 
         $USERNAME  = $mobile['UserName'];
         $PASSWORD  = $mobile['PassWord'];
         $BRANDNAME = $mobile['BrandName'];
         $MESSAGE = $content;
         $encode = mb_detect_encoding($MESSAGE, array("ASCII","UTF-8","GB2312","GBK","BIG5"));
-        if($encode != 'ASCII'){
-            $MESSAGE = mb_convert_encoding($MESSAGE,'ASCII',$encode);
+        if($encode != 'UTF-8'){
+            $MESSAGE = mb_convert_encoding($MESSAGE,'UTF-8',$encode);
         }
         $TYPE  = 1;
         $PHONE  = '84'.ltrim($to, '0');//'84'.ltrim($config["mobile"], '0');
