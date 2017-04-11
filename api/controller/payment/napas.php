@@ -81,7 +81,7 @@ class ControllerPaymentNapas extends Controller {
                         $arr['il_charged'] = 0;
                         $arr['il_api_reply'] = '';
                         $this->sys_model_identity->addIdentity($arr);
-                        $update = $this->logic_user->verify_identity($user_info['user_id'], $data);
+                        $update = $this->logic_user->verify_identity($recharge_info['pdr_user_id'], $data);
                     }
                     $this->qiantai($out_trade_no);
                 }else{
@@ -111,7 +111,7 @@ class ControllerPaymentNapas extends Controller {
                         $arr['il_charged'] = 0;
                         $arr['il_api_reply'] = '';
                         $this->sys_model_identity->addIdentity($arr);
-                        $update = $this->logic_user->verify_identity($user_info['user_id'], $data);
+                        $update = $this->logic_user->verify_identity($recharge_info['pdr_user_id'], $data);
                     }
                     $this->qiantai($out_trade_no);                      
                 }
