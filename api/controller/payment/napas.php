@@ -51,26 +51,27 @@ class ControllerPaymentNapas extends Controller {
             $errorTxt = "";
             if ($txnResponseCode != "0" || $txnResponseCode == "No Value Returned" || $errorExists) {
                 $errorTxt = getResponseDescription($txnResponseCode);
-                $this->qiantai(0);exit;
-            }
+                $this->qiantai(0);
+            }else{
 
-            $total_fee_t = $amount/100;
-            $out_trade_no = $merchTxnRef;
-            $recharge_info = $this->sys_model_deposit->getRechargeInfo(array('pdr_sn' => $out_trade_no));
-            if (empty($recharge_info)) {
-                $this->qiantai(0);exit;
-            }
-            if ($recharge_info['pdr_payment_state'] == 1) {
-                $this->qiantai($out_trade_no);exit;
-            }
-            $payment_info = array(
-                'payment_code' => 'napas',
-                'payment_name' => 'NAPAS'
-            );
+                $total_fee_t = $amount/100;
+                $out_trade_no = $merchTxnRef;
+                $recharge_info = $this->sys_model_deposit->getRechargeInfo(array('pdr_sn' => $out_trade_no));
+                if (empty($recharge_info)) {
+                    $this->qiantai(0);
+                }else if ($recharge_info['pdr_payment_state'] == 1) {
+                    $this->qiantai($out_trade_no);
+                }else{
+                    $payment_info = array(
+                        'payment_code' => 'napas',
+                        'payment_name' => 'NAPAS'
+                    );
 
-        $result = $this->sys_model_deposit->updateDepositChargeOrder($transactionNo, $out_trade_no, $payment_info, $recharge_info);
-        $this->qiantai($out_trade_no);exit;
-    }
+                    $result = $this->sys_model_deposit->updateDepositChargeOrder($transactionNo, $out_trade_no, $payment_info, $recharge_info);
+                    $this->qiantai($out_trade_no);                      
+                }
+            }
+        }
 }
     public function qiantai($out_trade_no='0'){
         //sleep(2);

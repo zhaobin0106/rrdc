@@ -1,7 +1,7 @@
 <?php
 //HTTP
-define('HTTP_SERVER', 'http://121.42.254.23/admin');
-define('HTTP_CATALOG', 'http://121.42.254.23/static/');
+define('HTTP_SERVER', 'http://rrdc.demo.com/admin');
+define('HTTP_CATALOG', 'http://rrdc.demo.com/static/');
 define('HTTP_IMAGE', HTTP_CATALOG);
 
 //DIR
