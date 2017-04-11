@@ -57,6 +57,7 @@ class ControllerPaymentNapas extends Controller {
                 $total_fee_t = ($amount/100)/$zhifu_money;
                 $out_trade_no = $merchTxnRef;
                 $recharge_info = $this->sys_model_deposit->getRechargeInfo(array('pdr_sn' => $out_trade_no));
+                $this->load->library('logic/user');
                 if (empty($recharge_info)) {
                     $this->qiantai(0);
                 }else if ($recharge_info['pdr_payment_state'] == 1) {
