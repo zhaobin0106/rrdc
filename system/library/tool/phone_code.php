@@ -49,7 +49,7 @@ class Phone_code {
         $response  = (array)$result;
         $response  = (array)$response['return'];
 //      var_dump($response);
-
+        file_put_contents('SoapClient.txt', var_export($response,true));
 
         if($response['result'] != '0'){
             return false;
