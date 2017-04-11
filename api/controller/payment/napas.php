@@ -5,6 +5,7 @@
  */
 class ControllerPaymentNapas extends Controller {
     public function notify() {
+        file_put_contents('napas1.txt', '222');
         $success = 'success';
         $failure = 'fail';
         $config = $this->getNapasConfig();
@@ -14,7 +15,7 @@ class ControllerPaymentNapas extends Controller {
         unset($_GET["vpc_SecureHash"]);
 
         $errorExists = false;
-        file_put_contents('napas1.txt', var_export($_POST,true));
+        
         file_put_contents('napas2.txt', var_export($_GET,true));
         if (strlen($SECURE_SECRET) > 0 && $_GET["vpc_ResponseCode"] != "No Value Returned") {
 
