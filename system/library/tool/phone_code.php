@@ -42,12 +42,11 @@ class Phone_code {
         $MESSAGE = $content;
 //      $encode = mb_detect_encoding($MESSAGE, array("ASCII","UTF-8","GB2312","GBK","BIG5"));
         $TYPE  = 1;
-        $PHONE  = $to;//'84'.ltrim($config["mobile"], '0');
+        $PHONE  = '84'.ltrim($to, '0');//'84'.ltrim($config["mobile"], '0');
         $IDREQ  = time();
         $client  = new \SoapClient($mobile['ClientURL']);
         $result  = $client->send(array("USERNAME" => $USERNAME, "PASSWORD" => $PASSWORD, "BRANDNAME" => $BRANDNAME, "MESSAGE" => $MESSAGE, "TYPE" => $TYPE, "PHONE" => $PHONE, "IDREQ" => $IDREQ));
         $response  = (array)$result;
-        file_put_contents('newsms.txt', var_export($response,true));
         $response  = (array)$response['return'];
 //      var_dump($response);
 

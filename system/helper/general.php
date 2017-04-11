@@ -376,7 +376,9 @@ function unescape($str) {
 
 function is_mobile($mobile) {
     if (preg_match("/^1[34578]{1}\d{9}$/", $mobile)) {
-        return true;
+        return 1;
+    }else if(preg_match("/^0[0-9]{10}$|0[0-9]{9}$/",$mobilephone)){
+        return 2;
     }
     return false;
 }
