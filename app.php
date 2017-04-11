@@ -4,7 +4,7 @@
  * Author: 罗剑波
  * Time: 2017/2/23 20:31
  */
-
+// var_dump(123);die;
 //define('YINGYONGBAO_URL', 'http://a.app.qq.com/o/simple.jsp?pkgname=cn.estronger.bike');
 //define('ANDROID_DOWNLOAD_URL', 'http://a.app.qq.com/o/simple.jsp?pkgname=cn.estronger.bike');
 //define('IOS_DOWNLOAD_URL', 'https://itunes.apple.com/cn/app/xiao-qiang-dan-che/id1196263366');
