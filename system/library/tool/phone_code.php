@@ -33,7 +33,7 @@ class Phone_code {
             'Signature' => '[BangXueShi]',
           );
         $code = $data[0];
-        $msg = 'Mã xác minh là 0000, hãy sửa đầu vào trong vòng năm phút, nếu không tôi hoạt động, xin vui lòng bỏ qua thông báo này.';
+        $msg = 'Your verification code is 0000, please enter it in 5 minutes, please ignore this message if you do not operate it.';
         $content = str_ireplace('0000',$code, $msg).$mobile['Signature'];
 
         $USERNAME  = $mobile['UserName'];
