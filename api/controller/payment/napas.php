@@ -41,7 +41,7 @@ class ControllerPaymentNapas extends Controller {
             file_put_contents("napaspayERROR.txt","ERROR CODE：".$hashValidated."\r\n",FILE_APPEND);
             file_put_contents("napaspayERROR.txt","------------INVALID QUERY---------\r\n",FILE_APPEND);
             file_put_contents("napaspayERROR.txt","\r\n",FILE_APPEND);
-            $this->qiantai(0);exit;
+            $this->qiantai(0);
         }else{
             $merchTxnRef     = null2unknown($_GET["vpc_MerchTxnRef"]);          //订单号
             $amount          = null2unknown($_GET["vpc_Amount"]);               //订单金额
