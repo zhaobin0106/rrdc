@@ -40,7 +40,7 @@ class Phone_code {
         $PASSWORD  = $mobile['PassWord'];
         $BRANDNAME = $mobile['BrandName'];
         $MESSAGE = $content;
-        $encode = mb_detect_encoding($MESSAGE, array("ASCII","UTF-8","GB2312","GBK","BIG5"));iconv(string in_charset,string out_charset,string str)
+        $encode = mb_detect_encoding($MESSAGE, array("ASCII","UTF-8","GB2312","GBK","BIG5"));
         if($encode != 'UTF-8')){
             $MESSAGE = mb_convert_encoding($MESSAGE,'UTF-8',$encode);
         }
