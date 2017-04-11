@@ -9,7 +9,7 @@
     <script type="text/javascript">
     	      //window.location="oytrtapp://chooseType:3";
             if (/android/i.test(navigator.userAgent)){
-              window.location="com.yn.qxl.app<?php echo $czurl;?>://db.app/openwith?<?php echo 'type='.$type.'&dingdanhao='.$out_trade_no;?>";
+              window.location="com.yn.qxl.app://db.app/openwith?<?php echo 'type='.$type.'&dingdanhao='.$out_trade_no;?>";
             }
 
             if (/ipad|iphone|mac/i.test(navigator.userAgent)){
