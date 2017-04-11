@@ -53,8 +53,8 @@ class ControllerPaymentNapas extends Controller {
                 $errorTxt = getResponseDescription($txnResponseCode);
                 $this->qiantai(0);
             }else{
-
-                $total_fee_t = $amount/100;
+                $zhifu_money = $this->config->get('config_zhifu_money');
+                $total_fee_t = ($amount/100)/$zhifu_money;
                 $out_trade_no = $merchTxnRef;
                 $recharge_info = $this->sys_model_deposit->getRechargeInfo(array('pdr_sn' => $out_trade_no));
                 if (empty($recharge_info)) {
