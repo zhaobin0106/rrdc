@@ -60,6 +60,28 @@ class ControllerPaymentNapas extends Controller {
                 if (empty($recharge_info)) {
                     $this->qiantai(0);
                 }else if ($recharge_info['pdr_payment_state'] == 1) {
+                    if($recharge_info['verify_state'] == 0){
+                        $this->load->library('sys_model/user');
+                        $this->load->library('sys_model/identity');
+                        $user = $this->sys_model_user->getUserInfo(array('user_id'=>$recharge_info['pdr_user_id']));
+                        $arr = array();
+                        $data = array();
+                        $data['real_name'] = '路人甲';
+                        $data['identity'] = '041250041250041250';
+                        $arr['il_user_id'] = $user['user_id'];
+                        $arr['il_user_mobile'] = $user['mobile'];
+                        $arr['il_real_name'] = $data['real_name'];
+                        $arr['il_identification'] = $data['identity'];
+                        $arr['il_cert_time'] = time();
+                        $arr['il_has_photo'] = 1;
+                        $arr['il_verify_state'] = 1;
+                        $arr['il_verify_error_code'] = '';
+                        $arr['il_verify_error_desc'] = '';
+                        $arr['il_charged'] = 0;
+                        $arr['il_api_reply'] = '';
+                        $this->sys_model_identity->addIdentity($arr);
+                        $update = $this->startup_user->verify_identity($user_info['user_id'], $data);
+                    }
                     $this->qiantai($out_trade_no);
                 }else{
                     $payment_info = array(
@@ -68,6 +90,28 @@ class ControllerPaymentNapas extends Controller {
                     );
 
                     $result = $this->sys_model_deposit->updateDepositChargeOrder($transactionNo, $out_trade_no, $payment_info, $recharge_info);
+                    if($recharge_info['verify_state'] == 0){
+                        $this->load->library('sys_model/user');
+                        $this->load->library('sys_model/identity');
+                        $user = $this->sys_model_user->getUserInfo(array('user_id'=>$recharge_info['pdr_user_id']));
+                        $arr = array();
+                        $data = array();
+                        $data['real_name'] = '路人甲';
+                        $data['identity'] = '041250041250041250';
+                        $arr['il_user_id'] = $user['user_id'];
+                        $arr['il_user_mobile'] = $user['mobile'];
+                        $arr['il_real_name'] = $data['real_name'];
+                        $arr['il_identification'] = $data['identity'];
+                        $arr['il_cert_time'] = time();
+                        $arr['il_has_photo'] = 1;
+                        $arr['il_verify_state'] = 1;
+                        $arr['il_verify_error_code'] = '';
+                        $arr['il_verify_error_desc'] = '';
+                        $arr['il_charged'] = 0;
+                        $arr['il_api_reply'] = '';
+                        $this->sys_model_identity->addIdentity($arr);
+                        $update = $this->startup_user->verify_identity($user_info['user_id'], $data);
+                    }
                     $this->qiantai($out_trade_no);                      
                 }
             }
