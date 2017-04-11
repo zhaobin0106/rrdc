@@ -5,7 +5,6 @@
  */
 class ControllerPaymentNapas extends Controller {
     public function notify() {
-        file_put_contents('napas1.txt', '222');
         $success = 'success';
         $failure = 'fail';
         $config = $this->getNapasConfig();
@@ -13,7 +12,7 @@ class ControllerPaymentNapas extends Controller {
         $this->load->library('sys_model/deposit', true);
         $vpc_Txn_Secure_Hash = $_GET["vpc_SecureHash"];
         unset($_GET["vpc_SecureHash"]);
-
+        unset($_GET["route"]);
         $errorExists = false;
         
         if (strlen($SECURE_SECRET) > 0 && $_GET["vpc_ResponseCode"] != "No Value Returned") {
@@ -25,7 +24,6 @@ class ControllerPaymentNapas extends Controller {
                     $md5HashData .= $value;
                 }
             }
-            file_put_contents('napas.txt', $md5HashData.'||'.$vpc_Txn_Secure_Hash);
             if (strtoupper($vpc_Txn_Secure_Hash) == strtoupper(md5($md5HashData))) {
                 $hashValidated = "CORRECT";
             } else {
