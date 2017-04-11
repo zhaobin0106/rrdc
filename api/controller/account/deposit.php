@@ -8,7 +8,7 @@ class ControllerAccountDeposit extends Controller {
         $user_id = $this->startup_user->userId();
         $user_info = $this->startup_user->getUserInfo();
 
-        $pdr_sn = $this->request->get['pdr_sn'];
+        $pdr_sn = $this->request->post['pdr_sn'];
         if (!preg_match('/^\d{18}$/', $pdr_sn)) {
             $this->response->showErrorResult($this->language->get('error_pdr_sn_format'), 207);
         }
