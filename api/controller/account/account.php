@@ -138,14 +138,14 @@ class ControllerAccountAccount extends Controller {
      * 发送注册|登录验证码
      */
     public function sendRegisterCode() {
-        if (!isset($this->request->get['mobile'])) {
+        if (!isset($this->request->post['mobile'])) {
             $this->response->showErrorResult($this->language->get('error_missing_parameter'), 1);
         }
         //加载短信配置，使用常量
         $this->getSMSConfig();
 
         $alert = $this->language->get('text_message_upper_limit');
-        $mobile = trim($this->request->get['mobile']);
+        $mobile = trim($this->request->post['mobile']);
         if (!is_mobile($mobile)) {
             $this->response->showJsonResult($this->language->get('error_mobile'), 0, array('alert'=>$alert), 2);
         }
