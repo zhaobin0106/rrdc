@@ -10,9 +10,9 @@ class ControllerTransferOperator extends Controller
         if (strtolower($_SERVER['REQUEST_METHOD']) == 'post') {
             $post = file_get_contents("php://input");
             date_default_timezone_set('PRC');
-            file_put_contents('/transfer/controller/transfer/reply.log', date('Y-m-d H:i:s ') . $post . "\n", FILE_APPEND);
+            file_put_contents(DIR_BASE.'/transfer/controller/transfer/reply.log', date('Y-m-d H:i:s ') . $post . "\n", FILE_APPEND);
             if(strpos($post, 'open')!==FALSE) {
-                file_put_contents('/transfer/controller/transfer/open_reply.log', date('Y-m-d H:i:s ') . $post . "\n", FILE_APPEND);
+                file_put_contents(DIR_BASE.'/transfer/controller/transfer/open_reply.log', date('Y-m-d H:i:s ') . $post . "\n", FILE_APPEND);
             }
 //            $post = $this->request->post;
             if (empty($post)) {

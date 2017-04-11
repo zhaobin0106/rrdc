@@ -9,7 +9,7 @@ class ControllerTransferHome extends Controller {
     public function receiptData() {
         if (strtolower($_SERVER['REQUEST_METHOD']) == 'post') {
             $post = file_get_contents("php://input");
-            file_put_contents('/transfer/controller/transfer/receive.log', date('Y-m-d H:i:s ') . $post . "\n", FILE_APPEND);
+            file_put_contents(DIR_BASE.'/transfer/controller/transfer/receive.log', date('Y-m-d H:i:s ') . $post . "\n", FILE_APPEND);
             $post = json_decode($post, true);
 
             if (isset($post['time'])) {

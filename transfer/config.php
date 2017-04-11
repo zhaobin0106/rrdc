@@ -44,6 +44,6 @@ define('GAP_TIME', '120');//回传时间120秒
 define('API_URL', 'http://47.90.39.93:8888?version=1');
 define('OPEN_VALIDATE', false);
 
-define('PRICE_UNIT', 0.5); //价格单元
-define('TIME_CHARGE_UNIT', 30 * 60);//计费单位
+// define('PRICE_UNIT', 0.5); //价格单元
+// define('TIME_CHARGE_UNIT', 30 * 60);//计费单位
 define('BOOK_EFFECT_TIME', 15 * 60);
