@@ -2,19 +2,19 @@
 <!-- Content Header (Page header) -->
 <section class="content-header clearfix">
     <h1 class="pull-left">
-        <span>操作日志</span>
+        <span><?php echo $languages['czrz'];?></span>
         <a href="javascript:;" onclick="collect('<?php echo $menu_id ?>',this)"><i class="<?php echo $menu_collect_status == 1? 'fa fa-star no-margin text-yellow' : 'fa fa-star-o text-gray'; ?>"></i></a>
     </h1>
     <div class="pull-right">
         <div class="pull-left" style="margin-right: 20px;">
             <i class="fa fa-bicycle"></i>
-            <span>总数：<?php echo $total_bicycle; ?>台</span>
+            <span><?php echo $languages['zongshu'];?><?php echo $total_bicycle; ?><?php echo $languages['tai'];?></span>
         </div>
         <div class="pull-left" style="margin-right: 20px;">
-            <span>使用中：<?php echo $using_bicycle; ?>台</span>
+            <span><?php echo $languages['shiyongzhong'];?><?php echo $using_bicycle; ?><?php echo $languages['tai'];?></span>
         </div>
         <div class="pull-left" style="margin-right: 20px;">
-            <span>故障：<?php echo $fault_bicycle; ?>台</span>
+            <span><?php echo $languages['guzhang'];?><?php echo $fault_bicycle; ?><?php echo $languages['tai'];?></span>
         </div>
     </div>
 </section>
@@ -25,12 +25,12 @@
             <div class="nav-tabs-custom">
                 <!-- tab 标签 -->
                 <ul class="nav nav-tabs">
-                    <li class="active"><a href="javascript:;" data-toggle="tab">操作日志列表</a></li>
+                    <li class="active"><a href="javascript:;" data-toggle="tab"><?php echo $languages['czrzlb'];?></a></li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane active form-group" id="bicycle">
                             <!--<button class="btn btn-default btn-sm button-upload" data-action="<?php echo $import_action; ?>"><i class="fa fa-upload"></i>&nbsp;导入</button>-->
-                            <button class="btn btn-default btn-sm" form="table_form" formaction="<?php echo $export_action; ?>"><i class="fa fa-download"></i>&nbsp;导出</button>
+                            <button class="btn btn-default btn-sm" form="table_form" formaction="<?php echo $export_action; ?>"><i class="fa fa-download"></i>&nbsp;<?php echo $languages['daochu'];?></button>
                         </div>
                         <?php if (isset($error['warning'])) { ?>
                         <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i>&nbsp;<?php echo $error['warning']; ?>

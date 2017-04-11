@@ -197,7 +197,7 @@ $_['caozuo'] = 'Thao tác';
 $_['khfkgl'] = 'Quản lý phản hồi người dùng';
 
 $_['yhm'] = 'Tên người dùng';
-$_['khfkgl'] = 'Quản lý phản hồi';
+$_['khfk'] = 'Quản lý phản hồi';
 $_['fknr'] = 'Nội dung phản hồi';
 
 $_['fksj'] = 'Thời gian phản hồi';
@@ -335,6 +335,7 @@ $_['zjdlsj'] = 'Thời gian đăng nhập gần đây';
 $_['fanhui'] = 'Quay lại';
 
 
+$_['czgl'] = '充值管理';
 $_['czjllb'] = 'Lịch sử nạp tiền';
 
 $_['ddh'] = 'Số đơn hàng';

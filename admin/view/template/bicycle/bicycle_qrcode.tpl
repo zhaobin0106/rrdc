@@ -2,22 +2,24 @@
 <!-- Content Header (Page header) -->
 <section class="content-header clearfix">
     <h1 class="pull-left">
-        <span>单车管理</span>
+        <span><?php echo $languages['dcgl'];?></span>
         <a href="javascript:;" onclick="collect('<?php echo $menu_id ?>',this)"><i class="<?php echo $menu_collect_status == 1? 'fa fa-star no-margin text-yellow' : 'fa fa-star-o text-gray'; ?>"></i></a>
     </h1>
     <div class="pull-right">
         <div class="pull-left" style="margin-right: 20px;">
             <i class="fa fa-bicycle"></i>
-            <span>总数：<?php echo $total_bicycle; ?>台</span>
+            <span><?php echo $languages['zongshu'];?><?php echo $total_bicycle; ?><?php echo $languages['tai'];?></span>
         </div>
         <div class="pull-left" style="margin-right: 20px;">
-            <span>使用中：<?php echo $using_bicycle; ?>台</span>
+            <span><?php echo $languages['shiyongzhong'];?><?php echo $using_bicycle; ?><?php echo $languages['tai'];?></span>
         </div>
         <div class="pull-left" style="margin-right: 20px;">
-            <span>故障：<?php echo $fault_bicycle; ?>台</span>
+            <span><?php echo $languages['guzhang'];?><?php echo $fault_bicycle; ?><?php echo $languages['tai'];?></span>
         </div>
     </div>
 </section>
+
+
 <!-- Main content -->
 <section class="content">
     <div class="row">
@@ -25,7 +27,7 @@
             <div class="nav-tabs-custom">
                 <!-- tab 标签 -->
                 <ul class="nav nav-tabs">
-                    <li class="active"><a href="javascript:;" data-toggle="tab">导出单车二维码</a></li>
+                    <li class="active"><a href="javascript:;" data-toggle="tab"><?php echo $languages['dcdcewm'];?></a></li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane active" id="bicycle">
@@ -41,26 +43,26 @@
                                 </select>
                                 <input type="text" name="<?php echo $filter_type; ?>" value="<?php echo isset($filter[$filter_type]) ? $filter[$filter_type] : ''; ?>" id="filter_text" class="input-sm" style="border: 1px solid #a9a9a9;"/>
                                 <select name="type" class="input-sm">
-                                    <option value>单车类型</option>
+                                    <option value><?php echo $languages['dclx'];?></option>
                                     <?php foreach($model['type'] as $k => $v) { ?>
                                     <option value="<?php echo $k; ?>" <?php echo (string)$k == $filter['type'] ? 'selected' : ''; ?>><?php echo $v; ?></option>
                                     <?php } ?>
                                 </select>
                                 <select name="is_using" class="input-sm">
-                                    <option value>是否使用中</option>
+                                    <option value><?php echo $languages['sfsyz'];?></option>
                                     <?php foreach($model['is_using'] as $k => $v) { ?>
                                     <option value="<?php echo $k; ?>" <?php echo (string)$k == $filter['is_using'] ? 'selected' : ''; ?>><?php echo $v; ?></option>
                                     <?php } ?>
                                 </select>
-                                <input type="text" name="add_time" value="<?php echo $filter['add_time']; ?>" class="input-sm date-range" style="border: 1px solid #a9a9a9;" placeholder="添加时间"/>
+                                <input type="text" name="add_time" value="<?php echo $filter['add_time']; ?>" class="input-sm date-range" style="border: 1px solid #a9a9a9;" placeholder="<?php echo $languages['tjsj'];?>"/>
                                 <div class="pull-right">
-                                    <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-search"></i>&nbsp;搜索</button>
+                                    <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-search"></i>&nbsp;<?php echo $languages['sousuo'];?></button>
                                 </div>
                             </div>
                         </form>
                         <!-- 新增 -->
                         <div class="form-group">
-                            <button class="btn btn-default btn-sm" form="search_form" formmethod="post" formaction="<?php echo $export_qrcode_action; ?>"><i class="fa fa-qrcode"></i>&nbsp;导出二维码</button>
+                            <button class="btn btn-default btn-sm" form="search_form" formmethod="post" formaction="<?php echo $export_qrcode_action; ?>"><i class="fa fa-qrcode"></i>&nbsp;<?php echo $languages['dcewm'];?></button>
                         </div>
                         <?php if (isset($error['warning'])) { ?>
                         <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i>&nbsp;<?php echo $error['warning']; ?>

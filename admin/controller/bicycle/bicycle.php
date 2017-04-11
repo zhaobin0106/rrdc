@@ -300,7 +300,7 @@ class ControllerBicycleBicycle extends Controller {
             $this->session->data['success'] = $this->language->get('tjdccg');
             
             $filter = array('bicycle_sn', 'type', 'lock_sn', 'region_name', 'cooperator_name', 'is_using');
-
+			
             $this->load->controller('common/base/redirect', $this->url->link('bicycle/bicycle', $filter, true));
         }
 
@@ -356,14 +356,16 @@ class ControllerBicycleBicycle extends Controller {
             $this->load->controller('common/qrcode/buildFrontQrCode', $data);
             $this->load->controller('common/qrcode/buildBackQrCode', $data);
 
-            $this->session->data['success'] = '编辑单车成功！';
-
+            // $this->session->data['success'] = '编辑单车成功！';
+			$this->session->data['success'] = $this->language->get('bjdccg');
+			$this->session->data['success'] = $this->language->get('tjdccg');
             $filter = array('bicycle_sn', 'type', 'lock_sn', 'region_name', 'cooperator_name', 'is_using');
 
             $this->load->controller('common/base/redirect', $this->url->link('bicycle/bicycle', $filter, true));
         }
 
-        $this->assign('title', '编辑单车');
+        // $this->assign('title', '编辑单车');
+		$this->assign('title', $this->language->get('bjdc'));
         $this->getForm();
     }
 

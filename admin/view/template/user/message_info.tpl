@@ -2,19 +2,19 @@
 <!-- Content Header (Page header) -->
 <section class="content-header clearfix">
     <h1 class="pull-left">
-        <span>系统消息</span>
+        <span><?php echo $languages['xtxx'];?></span>
         <a href="javascript:;" onclick="collect('<?php echo $menu_id ?>',this)"><i class="<?php echo $menu_collect_status == 1? 'fa fa-star no-margin text-yellow' : 'fa fa-star-o text-gray'; ?>"></i></a>
     </h1>
     <div class="pull-right">
         <div class="pull-left" style="margin-right: 20px;">
             <i class="fa fa-bicycle"></i>
-            <span>总数：<?php echo $total_bicycle; ?>台</span>
+            <span><?php echo $languages['zongshu'];?><?php echo $total_bicycle; ?><?php echo $languages['tai'];?></span>
         </div>
         <div class="pull-left" style="margin-right: 20px;">
-            <span>使用中：<?php echo $using_bicycle; ?>台</span>
+            <span><?php echo $languages['shiyongzhong'];?><?php echo $using_bicycle; ?><?php echo $languages['tai'];?></span>
         </div>
         <div class="pull-left" style="margin-right: 20px;">
-            <span>故障：<?php echo $fault_bicycle; ?>台</span>
+            <span><?php echo $languages['guzhang'];?><?php echo $fault_bicycle; ?><?php echo $languages['tai'];?></span>
         </div>
     </div>
 </section>
@@ -37,37 +37,37 @@
                         <form class="form-horizontal" method="post">
                             <div class="row">
                                 <div class="form-group col-sm-12">
-                                    <label for="" class="col-sm-2 control-label">标题</label>
+                                    <label for="" class="col-sm-2 control-label"><?php echo $languages['biaoti'];?></label>
                                     <div class="col-sm-5" style="margin-top: 7px;">
                                         <span><?php echo $data['msg_title']; ?></span>
                                     </div>
                                 </div>
                                 <div class="form-group col-sm-12">
-                                    <label for="" class="col-sm-2 control-label">消息图片</label>
+                                    <label for="" class="col-sm-2 control-label"><?php echo $languages['xxtp'];?></label>
                                     <div class="col-sm-5" style="margin-top: 7px;">
                                         <div class="img-thumbnail"><img src="<?php echo $data['msg_image_url']; ?>" style="max-width: 200px; max-height: 200px;" /></div>
                                     </div>
                                 </div>
                                 <div class="form-group col-sm-12">
-                                    <label for="" class="col-sm-2 control-label">用户</label>
+                                    <label for="" class="col-sm-2 control-label"><?php echo $languages['yonghu'];?></label>
                                     <div class="col-sm-5" style="margin-top: 7px;">
                                         <span><?php echo $data['user_name']; ?></span>
                                     </div>
                                 </div>
                                 <div class="form-group col-sm-12">
-                                    <label for="" class="col-sm-2 control-label">摘要</label>
+                                    <label for="" class="col-sm-2 control-label"><?php echo $languages['zhaiyao'];?></label>
                                     <div class="col-sm-5" style="margin-top: 7px;">
                                         <span><?php echo $data['msg_abstract']; ?></span>
                                     </div>
                                 </div>
                                 <div class="form-group col-sm-12">
-                                    <label for="" class="col-sm-2 control-label">外部链接</label>
+                                    <label for="" class="col-sm-2 control-label"><?php echo $languages['wblj'];?></label>
                                     <div class="col-sm-5" style="margin-top: 7px;">
                                         <div style="word-break: break-all;"><a href="<?php echo $data['msg_link']; ?>" target="_blank"><?php echo $data['msg_link']; ?></a></div>
                                     </div>
                                 </div>
                                 <div class="form-group col-sm-12">
-                                    <label for="" class="col-sm-2 control-label">正文</label>
+                                    <label for="" class="col-sm-2 control-label"><?php echo $languages['zhengwen'];?></label>
                                     <div class="col-sm-5" style="margin-top: 7px;">
                                         <span><?php echo $data['msg_content']; ?></span>
                                     </div>
@@ -76,7 +76,7 @@
                             <div class="form-group">
                                 <div class="col-sm-7">
                                     <div class="pull-right">
-                                        <a href="<?php echo $return_action; ?>" class="btn btn-sm btn-default">返回</a>
+                                        <a href="<?php echo $return_action; ?>" class="btn btn-sm btn-default"><?php echo $languages['fanhui'];?></a>
                                     </div>
                                 </div>
                             </div>

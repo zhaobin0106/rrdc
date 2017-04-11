@@ -5,6 +5,9 @@ class ControllerSystemAdmin extends Controller {
     
     public function __construct($registry) {
         parent::__construct($registry);
+        $this->language->load('bicycle/bicycle');
+        $languages = $this->language->all();
+        $this->assign('languages',$languages);
 
         // 当前网址
         $this->cur_url = $this->url->link($this->request->get['route']);
@@ -144,14 +147,16 @@ class ControllerSystemAdmin extends Controller {
             $this->sys_model_admin_log->addAdminLog($data);
 
 
-            $this->session->data['success'] = '添加管理员成功！';
+            // $this->session->data['success'] = '添加管理员成功！';
+            $this->session->data['success'] = $this->language->get('tjglycg');
 
             $filter = $this->request->get(array('admin_name', 'login_time', 'role_id', 'state'));
 
             $this->load->controller('common/base/redirect', $this->url->link('system/admin', $filter, true));
         }
 
-        $this->assign('title', '管理员添加');
+        // $this->assign('title', '管理员添加');
+        $this->assign('title', $this->language->get('glytj'));
         $this->getForm();
     }
 
@@ -185,14 +190,15 @@ class ControllerSystemAdmin extends Controller {
             );
             $this->sys_model_admin_log->addAdminLog($data);
 
-            $this->session->data['success'] = '编辑管理员成功！';
-
+            // $this->session->data['success'] = '编辑管理员成功！';
+            $this->session->data['success'] = $this->language->get('bjglycg');
             $filter = $this->request->get(array('admin_name', 'login_time', 'role_id', 'state'));
 
             $this->load->controller('common/base/redirect', $this->url->link('system/admin', $filter, true));
         }
 
-        $this->assign('title', '编辑管理员');
+        // $this->assign('title', '编辑管理员');
+        $this->assign('title', $this->language->get('bjgly'));
         $this->getForm();
     }
 
@@ -217,7 +223,9 @@ class ControllerSystemAdmin extends Controller {
             );
             $this->sys_model_admin_log->addAdminLog($data);
 
-            $this->session->data['success'] = '删除管理员成功！';
+            // $this->session->data['success'] = '删除管理员成功！';
+            $this->session->data['success'] = $this->language->get('scglycg');
+			
         }
         $filter = $this->request->get(array('admin_name', 'login_time', 'role_id', 'state'));
         $this->load->controller('common/base/redirect', $this->url->link('system/admin', $filter, true));
@@ -293,17 +301,20 @@ class ControllerSystemAdmin extends Controller {
         $confirm = $this->request->post('confirm');
         if ($route == 'system/admin/add') {
             if (empty($password)) {
-                $this->error['password'] = '请输入密码！';
+                // $this->error['password'] = '请输入密码！';
+				$this->error['warning'] = $this->language->get('qsrmm');
             }
         }
         if (!empty($password)) {
             if ($password !== $confirm) {
-                $this->error['confirm'] = '两次输入密码不正确！';
+                // $this->error['confirm'] = '两次输入密码不正确！';
+				$this->error['warning'] = $this->language->get('lcsrmmbzq');
             }
         }
 
         if ($this->error) {
-            $this->error['warning'] = '警告: 存在错误，请检查！';
+            // $this->error['warning'] = '警告: 存在错误，请检查！';
+            $this->error['warning'] = $this->language->get('jgczcwqjc');
         }
         return !$this->error;
     }

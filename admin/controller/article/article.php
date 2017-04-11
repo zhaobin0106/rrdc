@@ -5,6 +5,9 @@ class ControllerArticleArticle extends Controller {
     
     public function __construct($registry) {
         parent::__construct($registry);
+        $this->language->load('bicycle/bicycle');
+        $languages = $this->language->all();
+        $this->assign('languages',$languages);
 
         // 当前网址
         $this->cur_url = isset($this->request->get['route']) ? $this->url->link($this->request->get['route']) : '';
@@ -162,13 +165,15 @@ class ControllerArticleArticle extends Controller {
             $this->sys_model_admin_log->addAdminLog($data);
 
             $this->session->data['success'] = '添加文章成功！';
+            $this->session->data['success'] = $this->language->get('tjwzcg');
 
             $filter = $this->request->get(array('article_title', 'category_id', 'article_sort'));
 
             $this->load->controller('common/base/redirect', $this->url->link('article/article', $filter, true));
         }
 
-        $this->assign('title', '文章添加');
+        // $this->assign('title', '文章添加');
+        $this->assign('title', $this->language->get('wztj'));
         $this->getForm();
     }
 
@@ -217,13 +222,15 @@ class ControllerArticleArticle extends Controller {
             $this->sys_model_admin_log->addAdminLog($data);
 
             $this->session->data['success'] = '编辑文章成功！';
+			$this->session->data['success'] = $this->language->get('bjwzcg');
 
             $filter = $this->request->get(array('article_title', 'category_id', 'article_sort'));
 
             $this->load->controller('common/base/redirect', $this->url->link('article/article', $filter, true));
         }
 
-        $this->assign('title', '编辑文章');
+        // $this->assign('title', '编辑文章');
+        $this->assign('title', $this->language->get('bjwz'));
         $this->getForm();
     }
 
@@ -254,6 +261,8 @@ class ControllerArticleArticle extends Controller {
             $this->sys_model_admin_log->addAdminLog($data);
 
             $this->session->data['success'] = '删除文章成功！';
+			$this->session->data['success'] = $this->language->get('scwzcg');
+
         }
         $filter = $this->request->get(array('article_title', 'category_id', 'article_sort'));
         $this->load->controller('common/base/redirect', $this->url->link('article/article', $filter, true));
@@ -376,12 +385,14 @@ class ControllerArticleArticle extends Controller {
 
         foreach ($input as $k => $v) {
             if (empty($v)) {
-                $this->error[$k] = '请输入完整！';
+                // $this->error[$k] = '请输入完整！';
+                $this->error[$k] = $this->language->get('qsrwz');
             }
         }
 
         if ($this->error) {
-            $this->error['warning'] = '警告: 存在错误，请检查！';
+            // $this->error['warning'] = '警告: 存在错误，请检查！';
+            $this->error['warning'] = $this->language->get('jgczcwqjc');
         }
         return !$this->error;
     }

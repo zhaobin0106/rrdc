@@ -40,7 +40,9 @@
                                     <label class="col-sm-2 control-label"><?php echo $languages['dcbh'];?></label>
                                     <div class="col-sm-5">
                                         <input type="text" name="bicycle_sn" value="<?php echo $data['bicycle_sn']; ?>" class="form-control" />
-                                        <?php if (isset($error['bicycle_sn'])) { ?><div class="text-danger"><?php echo $error['bicycle_sn']; ?></div><?php } ?>
+                                        <?php if (isset($error['bicycle_sn'])) { ?>
+										<div class="text-danger"><?php echo $error['bicycle_sn']; ?></div>
+										<?php } ?>
                                     </div>
                                 </div>
                                 <div class="form-group">

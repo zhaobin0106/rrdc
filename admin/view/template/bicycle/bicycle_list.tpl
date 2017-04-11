@@ -3,21 +3,26 @@
 <section class="content-header clearfix">
     <h1 class="pull-left">
         <span><?php echo $languages['dcgl'];?></span>
-        <a href="javascript:;" onclick="collect('<?php echo $menu_id ?>',this)"><i class="<?php echo $menu_collect_status == 1? 'fa fa-star no-margin text-yellow' : 'fa fa-star-o text-gray'; ?>"></i></a>
+        <a href="javascript:;" onclick="collect('<?php echo $menu_id ?>',this)">
+			<i class="<?php echo $menu_collect_status == 1? 'fa fa-star no-margin text-yellow' : 'fa fa-star-o text-gray'; ?>">
+			</i>
+		</a>
     </h1>
     <div class="pull-right">
         <div class="pull-left" style="margin-right: 20px;">
             <i class="fa fa-bicycle"></i>
-            <span><?php echo $languages['zongshu'];?>：<?php echo $total_bicycle; ?><?php echo $languages['tai'];?></span>
+            <span><?php echo $languages['zongshu'];?><?php echo $total_bicycle; ?><?php echo $languages['tai'];?></span>
         </div>
         <div class="pull-left" style="margin-right: 20px;">
-            <span><?php echo $languages['shiyongzhong'];?>：<?php echo $using_bicycle; ?><?php echo $languages['tai'];?></span>
+            <span><?php echo $languages['shiyongzhong'];?><?php echo $using_bicycle; ?><?php echo $languages['tai'];?></span>
         </div>
         <div class="pull-left" style="margin-right: 20px;">
-            <span><?php echo $languages['guzhang'];?>：<?php echo $fault_bicycle; ?><?php echo $languages['tai'];?></span>
+            <span><?php echo $languages['guzhang'];?><?php echo $fault_bicycle; ?><?php echo $languages['tai'];?></span>
         </div>
     </div>
 </section>
+
+
 <!-- Main content -->
 <section class="content">
     <div class="row">
@@ -25,8 +30,16 @@
             <div class="nav-tabs-custom">
                 <!-- tab 标签 -->
                 <ul class="nav nav-tabs">
-                    <li class="active"><a href="javascript:;" data-toggle="tab"><?php echo $languages['dcmx'];?></a></li>
-                    <li class=""><a href="<?php echo $lock_action; ?>" data-toggle="tab"><?php echo $languages['csgl'];?></a></li>
+                    <li class="active">
+						<a href="javascript:;" data-toggle="tab">
+							<?php echo $languages['dcmx'];?>
+						</a>
+					</li>
+                    <li class="">
+						<a href="<?php echo $lock_action; ?>" data-toggle="tab">
+							<?php echo $languages['csgl'];?>
+						</a>
+					</li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane active" id="bicycle">
@@ -104,8 +117,8 @@
                                     <td><?php echo $data['bicycle_sn']?></td>
                                     <td><?php echo $data['lock_sn']?></td>
                                     <td><?php echo $data['type']?></td>
-<!--                                     <td><?php echo $data['region_name']?></td>
- -->                                    <td><?php echo $data['is_using']?></td>
+<!--                                     <td><?php echo $data['region_name']?></td> -->
+                                    <td><?php echo $data['is_using']?></td>
                                     <td>
                                         <div class="btn-group">
                                             <button data-url="<?php echo $data['info_action']; ?>" type="button" class="btn btn-info link"><i class="fa fa-fw fa-eye"></i><?php echo $languages['chakan'];?></button>

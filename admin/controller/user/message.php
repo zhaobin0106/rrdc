@@ -5,6 +5,9 @@ class ControllerUserMessage extends Controller {
     
     public function __construct($registry) {
         parent::__construct($registry);
+        $this->language->load('bicycle/bicycle');
+        $languages = $this->language->all();
+        $this->assign('languages',$languages);
 
         // 当前网址
         $this->cur_url = isset($this->request->get['route']) ? $this->url->link($this->request->get['route']) : '';
@@ -124,6 +127,7 @@ class ControllerUserMessage extends Controller {
             }
 
             $this->session->data['success'] = '添加系统消息成功！';
+            $this->session->data['success'] = $this->language->get('tjxtxxcg');
 
             //加载管理员操作日志 model
             $this->load->library('sys_model/admin_log', true);
@@ -142,6 +146,7 @@ class ControllerUserMessage extends Controller {
         }
 
         $this->assign('title', '系统消息加');
+        $this->assign('title', $this->language->get('xtxxj'));
         $this->getForm();
     }
 
@@ -177,6 +182,9 @@ class ControllerUserMessage extends Controller {
         $this->assign('data', $info);
         $this->assign('return_action', $this->url->link('user/message'));
 
+        // $this->assign('title', '系统消息详情');
+        // $this->assign('title', $this->language->get('xtxxxq'));
+		
         $this->response->setOutput($this->load->view('user/message_info', $this->output));
     }
 
@@ -207,12 +215,14 @@ class ControllerUserMessage extends Controller {
 
         foreach ($input as $k => $v) {
             if (empty($v)) {
-                $this->error[$k] = '请输入完整！';
+                // $this->error[$k] = '请输入完整！';
+                $this->error[$k] = $this->language->get('qsrwz');
             }
         }
 
         if ($this->error) {
-            $this->error['warning'] = '警告: 存在错误，请检查！';
+            // $this->error['warning'] = '警告: 存在错误，请检查！';
+            $this->error['warning'] = $this->language->get('jgczcwqjc');
         }
         return !$this->error;
     }

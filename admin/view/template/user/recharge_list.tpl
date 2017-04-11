@@ -2,19 +2,19 @@
 <!-- Content Header (Page header) -->
 <section class="content-header clearfix">
     <h1 class="pull-left">
-        <span>充值管理</span>
+        <span><?php echo $languages['czgl'];?></span>
         <a href="javascript:;" onclick="collect('<?php echo $menu_id ?>',this)"><i class="<?php echo $menu_collect_status == 1? 'fa fa-star no-margin text-yellow' : 'fa fa-star-o text-gray'; ?>"></i></a>
     </h1>
     <div class="pull-right">
         <div class="pull-left" style="margin-right: 20px;">
             <i class="fa fa-bicycle"></i>
-            <span>总数：<?php echo $total_bicycle; ?>台</span>
+            <span><?php echo $languages['zongshu'];?><?php echo $total_bicycle; ?><?php echo $languages['tai'];?></span>
         </div>
         <div class="pull-left" style="margin-right: 20px;">
-            <span>使用中：<?php echo $using_bicycle; ?>台</span>
+            <span><?php echo $languages['shiyongzhong'];?><?php echo $using_bicycle; ?><?php echo $languages['tai'];?></span>
         </div>
         <div class="pull-left" style="margin-right: 20px;">
-            <span>故障：<?php echo $fault_bicycle; ?>台</span>
+            <span><?php echo $languages['guzhang'];?><?php echo $fault_bicycle; ?><?php echo $languages['tai'];?></span>
         </div>
     </div>
 </section>
@@ -25,7 +25,7 @@
             <div class="nav-tabs-custom">
                 <!-- tab 标签 -->
                 <ul class="nav nav-tabs">
-                    <li class="active"><a href="javascript:;" data-toggle="tab">充值记录列表</a></li>
+                    <li class="active"><a href="javascript:;" data-toggle="tab"><?php echo $languages['czjllb'];?></a></li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane active" id="bicycle">
@@ -41,28 +41,28 @@
                                 </select>
                                 <input type="text" name="<?php echo $filter_type; ?>" value="<?php echo isset($filter[$filter_type]) ? $filter[$filter_type] : ''; ?>" id="filter_text" class="input-sm" style="border: 1px solid #a9a9a9;"/>
                                 <select name="pdr_type" class="input-sm">
-                                    <option value>充值类型</option>
+                                    <option value><?php echo $languages['czlx'];?></option>
                                     <?php foreach($pdr_types as $k => $v) { ?>
                                     <option value="<?php echo $k; ?>" <?php echo (string)$k == $filter['pdr_type'] ? 'selected' : ''; ?>><?php echo $v; ?></option>
                                     <?php } ?>
                                 </select>
                                 <select name="pdr_payment_state" class="input-sm">
-                                    <option value>支付状态</option>
+                                    <option value><?php echo $languages['zfzt'];?></option>
                                     <?php foreach($payment_states as $k => $v) { ?>
                                     <option value="<?php echo $k; ?>" <?php echo (string)$k == $filter['pdr_payment_state'] ? 'selected' : ''; ?>><?php echo $v; ?></option>
                                     <?php } ?>
                                 </select>
-                                <input type="text" name="pdr_add_time" value="<?php echo $filter['pdr_add_time']; ?>" class="input-sm date-range" style="border: 1px solid #a9a9a9;" placeholder="注册时间"/>
+                                <input type="text" name="pdr_add_time" value="<?php echo $filter['pdr_add_time']; ?>" class="input-sm date-range" style="border: 1px solid #a9a9a9;" placeholder="<?php echo $languages['zcsj'];?>"/>
 
                                 <div class="pull-right">
-                                    <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-search"></i>&nbsp;搜索</button>
+                                    <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-search"></i>&nbsp;<?php echo $languages['sousuo'];?></button>
                                 </div>
                             </div>
                         </form>
                         <!-- 新增 -->
                         <div class="form-group">
                             <!--<button class="btn btn-default btn-sm button-upload" data-action="<?php echo $import_action; ?>"><i class="fa fa-upload"></i>&nbsp;导入</button>-->
-                            <button class="btn btn-default btn-sm" form="search_form" formmethod="post" formaction="<?php echo $export_action; ?>"><i class="fa fa-download"></i>&nbsp;导出</button>
+                            <button class="btn btn-default btn-sm" form="search_form" formmethod="post" formaction="<?php echo $export_action; ?>"><i class="fa fa-download"></i>&nbsp;<?php echo $languages['daochu'];?></button>
                         </div>
                         <?php if (isset($error['warning'])) { ?>
                         <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i>&nbsp;<?php echo $error['warning']; ?>
@@ -82,7 +82,7 @@
                                     <?php foreach ($data_columns as $column) { ?>
                                     <th><?php echo $column['text']; ?></th>
                                     <?php } ?>
-                                    <th style="min-width:130px;">操作</th>
+                                    <th style="min-width:130px;"><?php echo $languages['caozuo'];?></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -96,7 +96,7 @@
                                     <td><?php echo $data['pdr_payment_state']?></td>
                                     <td><?php echo $data['pdr_admin']?></td>
                                     <td><?php echo $data['pdr_add_time']?></td>
-                                    <td><button data-url="<?php echo $data['info_action']; ?>" type="button" class="btn btn-info link"><i class="fa fa-fw fa-eye"></i>查看</button></td>
+                                    <td><button data-url="<?php echo $data['info_action']; ?>" type="button" class="btn btn-info link"><i class="fa fa-fw fa-eye"></i><?php echo $languages['chakan'];?></button></td>
                                 </tr>
                                 <?php } ?>
                                 </tbody>
