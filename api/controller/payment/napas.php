@@ -78,6 +78,7 @@ class ControllerPaymentNapas extends Controller {
         $this->load->library('sys_model/deposit', true);
         //$out_trade_no=$_GET['vpc_MerchTxnRef'];
         $recharge_info = $this->sys_model_deposit->getRechargeInfo(array('pdr_sn' => $out_trade_no));
+        var_dump($recharge_info);exit;
         if(!$recharge_info || $recharge_info['pdr_payment_state'] != 1){
             //_message("支付失败", WEB_PATH."/member/cart/paysuccess");
             $type = 400;
