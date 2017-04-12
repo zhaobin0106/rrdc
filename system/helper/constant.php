@@ -13,8 +13,9 @@ if (!function_exists('get_bicycle_type'))
 {
     function get_bicycle_type() {
         return array(
-            '1' => '小强一代',
-            '2' => '小强二代',
+            '1' => '单人车',
+            '2' => '双人车',
+            '3' => '家庭车',
         );
     }
 }

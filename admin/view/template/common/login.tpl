@@ -92,7 +92,7 @@
       <!--<div id="footer" class="text-right" style="margin-top:18px;"><a href="<?php echo $forgotten_url; ?>" style="color: #eb474c;">忘记密码？</a></div>-->
     </div>
   </div>
-  <footer id="footer" class="text-center" style="color: #999999;"><!--<a href="http://www.estronger.cn">小强单车</a>--> 小强单车&copy; 2016-2017 版权所有。<br /></footer>
+  <footer id="footer" class="text-center" style="color: #999999;"><!--<a href="http://www.estronger.cn">人人单车</a>--> 人人单车&copy; 2016-2017 版权所有。<br /></footer>
 </div>
 </body>
 </html>
