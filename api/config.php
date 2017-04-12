@@ -64,5 +64,3 @@ define('MD5_KEY', '42ca79ae07cfc60138edc0f04f2f7eba2e0cdae6');
 define('UPDATE_MOBILE_INTERVAL', 3 * 30 * 24 * 60 * 60); //3个月（90天）内只能换一次手机号
 
 define('WX_SSL_CONF_PATH', DIR_SYSTEM . 'library/payment/cert/');
-
-define('VERSION_FAIL', 1);

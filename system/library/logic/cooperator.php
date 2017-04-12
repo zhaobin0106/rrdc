@@ -47,10 +47,10 @@ class cooperator {
         );
         $result = $this->cooperator->getCooperatorInfo($condition);
         if (!$result) {
-            return callback(false, 'error_user_nonexistence');
+            return callback(false, '账号不存在，登录失败！');
         }
         if (!$this->cooperator->checkPassword($password, $result)) {
-            return callback(false, 'error_login_password！');
+            return callback(false, '登录密码错误！');
         }
         // 更新登录信息
         $condition = array(
@@ -64,11 +64,11 @@ class cooperator {
 
         $rec = $this->cooperator->updateCooperator($condition, $data);
         if (!$rec) {
-            return callback(false, 'error_update_user_info');
+            return callback(false, '更新用户登录信息失败');
         }
 
         echo $this->session->data['cooperator_id'] = $result['cooperator_id'];
-        return callback(true, 'success_login', $result);
+        return callback(true, '登录成功', $result);
     }
 
     /**

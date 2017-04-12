@@ -256,6 +256,7 @@ function loadMessageCenter(url, sendData) {
 	messageDropdown.find('.update-info > button').trigger("click");
 })(jQuery);
 
+//点击地图顶部右键按钮
 $(document).on('click','#open-marker',function(){
 	var bicycle_id = $(this).data('bicycleId');
 	localStorage.open_marker_bicycle_id = bicycle_id;

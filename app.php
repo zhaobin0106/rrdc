@@ -17,7 +17,7 @@ $ua = strtolower($_SERVER['HTTP_USER_AGENT']);
 if($ua != '' && preg_match("/MicroMessenger/i", $ua)) {
     header('Location: ' . YINGYONGBAO_URL, true, 302);
 }
-if($ua != '' && preg_match("/(iphone|ipad)/i", $ua)){
+else if($ua != '' && preg_match("/(iphone|ipad)/i", $ua)){
     header('Location: ' . IOS_DOWNLOAD_URL, true, 302);
 }
 else {

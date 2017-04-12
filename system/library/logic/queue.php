@@ -20,8 +20,8 @@ class Queue {
         return callback(true);
     }
 
-    //é€€æ¬¾
+    //ÍË¿î
 
-    //æå…‰æ¨é€
+    //¼«¹âÍÆËÍ
 
 }

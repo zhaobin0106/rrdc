@@ -5,9 +5,6 @@ class ControllerSystemOperator extends Controller {
     
     public function __construct($registry) {
         parent::__construct($registry);
-        $this->language->load('bicycle/bicycle');
-        $languages = $this->language->all();
-        $this->assign('languages',$languages);
 
         // 当前网址
         $this->cur_url = $this->url->link($this->request->get['route']);
@@ -30,8 +27,7 @@ class ControllerSystemOperator extends Controller {
             $this->load->controller('common/base/redirect', $this->url->link('system/operator', '', true));
         }
 
-        // $this->assign('title', '运营设置');
-        $this->assign('title', $this->language->get('yysz'));
+        $this->assign('title', '运营设置');
         $this->getForm();
     }
 

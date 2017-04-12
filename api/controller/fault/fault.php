@@ -6,7 +6,7 @@ class ControllerFaultFault extends Controller {
     public function getFaultType() {
         $this->load->library('sys_model/fault');
         $result = $this->sys_model_fault->getAllFaultType();
-        $this->response->showSuccessResult($result, $this->language->get('success_read'));
+        $this->response->showSuccessResult($result, '数据获取成功');
     }
 
     /**
@@ -14,7 +14,7 @@ class ControllerFaultFault extends Controller {
      */
     public function addFault() {
         if (!isset($this->request->post['bicycle_sn']) || !isset($this->request->post['fault_type'])) {
-            $this->response->showErrorResult($this->language->get('error_missing_parameter'),1);
+            $this->response->showErrorResult('参数错误或缺失',1);
         }
 
         $user_info = $this->startup_user->getUserInfo();
@@ -31,15 +31,15 @@ class ControllerFaultFault extends Controller {
         $data['lng'] = $this->request->post['lng'];
 
         if (empty($data['bicycle_sn'])) {
-            $this->response->showErrorResult($this->language->get('error_empty_bicycle_sn'), 138);
+            $this->response->showErrorResult('单车编号不能为空', 138);
         }
 
         if (empty($data['lat'])) {
-            $this->response->showErrorResult($this->language->get('error_empty_lat'), 136);
+            $this->response->showErrorResult('纬度不能为空', 136);
         }
 
         if (empty($data['lng'])) {
-            $this->response->showErrorResult($this->language->get('error_empty_lng'), 137);
+            $this->response->showErrorResult('经度不能为空', 137);
         }
 
         $data['fault_content'] = isset($this->request->post['fault_content']) ? $this->request->post['fault_content'] : '';
@@ -47,7 +47,7 @@ class ControllerFaultFault extends Controller {
         $this->load->library('sys_model/bicycle', true);
         $bicycle_info = $this->sys_model_bicycle->getBicycleInfo(array('bicycle_sn' => $data['bicycle_sn']));
         if (empty($bicycle_info)) {
-            $this->response->showErrorResult($this->language->get('error_bicycle_sn_nonexistence'), 140);
+            $this->response->showErrorResult('系统不存在此编号的单车' . $data['bicycle_sn'], 140);
         }
         //添加单车编号
         $data['lock_sn'] = $bicycle_info['lock_sn'];
@@ -78,7 +78,7 @@ class ControllerFaultFault extends Controller {
         //更新bicycle表的fault字段
         $this->sys_model_bicycle->updateBicycle(array('bicycle_sn' => $data['bicycle_sn']), array('fault'=>1));
 
-        $insert_id ? $this->response->showSuccessResult(array('fault_id' => $insert_id), $this->language->get('success_submit')) : $this->response->showErrorResult($this->language->get('error_database_operation_failure'), 4);
+        $insert_id ? $this->response->showSuccessResult(array('fault_id' => $insert_id), '上报成功') : $this->response->showErrorResult('数据库操作失败', 4);
     }
 
     /**
@@ -86,20 +86,24 @@ class ControllerFaultFault extends Controller {
      */
     public function addIllegalParking() {
         if (!isset($this->request->post['lat']) || empty($this->request->post['lat'])) {
-            $this->response->showErrorResult($this->language->get('error_empty_lat'), 136);
+            $this->response->showErrorResult('纬度不能为空', 136);
         }
         if (!isset($this->request->post['lng']) || empty($this->request->post['lng'])) {
-            $this->response->showErrorResult($this->language->get('error_empty_lng'), 137);
+            $this->response->showErrorResult('经度不能为空', 137);
         }
         if (!isset($this->request->post['type']) || empty($this->request->post['type'])) {
             $this->request->post['type'] = 1;
         }
         if (!isset($this->request->post['bicycle_sn']) || empty($this->request->post['bicycle_sn'])) {
-            $this->response->showErrorResult($this->language->get('error_empty_bicycle_sn'), 138);
+            $this->response->showErrorResult('单车编号不能为空', 138);
         }
 
         $user_info = $this->startup_user->getUserInfo();
         $data['bicycle_sn'] = $this->request->post['bicycle_sn'];
+        if(strlen($data['bicycle_sn'])==11) {
+            $data['bicycle_sn'] = substr($data['bicycle_sn'], 5);
+        }
+
 
         $data['lat'] = $this->request->post['lat'];
         $data['lng'] = $this->request->post['lng'];
@@ -111,7 +115,7 @@ class ControllerFaultFault extends Controller {
         $this->load->library('sys_model/bicycle', true);
         $bicycle_info = $this->sys_model_bicycle->getBicycleInfo(array('bicycle_sn' => $data['bicycle_sn']));
         if (empty($bicycle_info)) {
-            $this->response->showErrorResult($this->language->get('error_bicycle_sn_nonexistence'), 140);
+            $this->response->showErrorResult('系统不存在此编号的单车', 140);
         }
         $file_info['state'] = 'FAILURE';
         if (isset($this->request->files['file_image']) || isset($this->request->post['file_image'])) {
@@ -137,6 +141,6 @@ class ControllerFaultFault extends Controller {
         //更新bicycle表的illegal_parking字段
         $this->sys_model_bicycle->updateBicycle(array('bicycle_sn' => $data['bicycle_sn']), array('illegal_parking'=>1));
 
-        $insert_id ? $this->response->showSuccessResult(array('parking_id' => $insert_id), $this->language->get('success_submit')) : $this->response->showErrorResult($this->language->get('error_database_operation_failure'),4);
+        $insert_id ? $this->response->showSuccessResult(array('parking_id' => $insert_id), '上报成功') : $this->response->showErrorResult('数据库操作失败',4);
     }
 }

@@ -2,19 +2,19 @@
 <!-- Content Header (Page header) -->
 <section class="content-header clearfix">
     <h1 class="pull-left">
-        <span><?php echo $languages['wzgl'];?></span>
+        <span>文章管理</span>
         <a href="javascript:;" onclick="collect('<?php echo $menu_id ?>',this)"><i class="<?php echo $menu_collect_status == 1? 'fa fa-star no-margin text-yellow' : 'fa fa-star-o text-gray'; ?>"></i></a>
     </h1>
     <div class="pull-right">
         <div class="pull-left" style="margin-right: 20px;">
             <i class="fa fa-bicycle"></i>
-            <span><?php echo $languages['zongshu'];?><?php echo $total_bicycle; ?><?php echo $languages['tai'];?></span>
+            <span>总数：<?php echo $total_bicycle; ?>台</span>
         </div>
         <div class="pull-left" style="margin-right: 20px;">
-            <span><?php echo $languages['shiyongzhong'];?><?php echo $using_bicycle; ?><?php echo $languages['tai'];?></span>
+            <span>使用中：<?php echo $using_bicycle; ?>台</span>
         </div>
         <div class="pull-left" style="margin-right: 20px;">
-            <span><?php echo $languages['guzhang'];?><?php echo $fault_bicycle; ?><?php echo $languages['tai'];?></span>
+            <span>故障：<?php echo $fault_bicycle; ?>台</span>
         </div>
     </div>
 </section>
@@ -37,14 +37,14 @@
                         <form class="form-horizontal" method="post" action="<?php echo $action; ?>">
                             <div class="row">
                                 <div class="form-group">
-                                    <label class="col-sm-2 control-label"><?php echo $languages['wzbt'];?></label>
+                                    <label class="col-sm-2 control-label">文章标题</label>
                                     <div class="col-sm-5">
                                         <input type="text" name="article_title" value="<?php echo $data['article_title']; ?>" class="form-control" />
                                         <?php if (isset($error['article_title'])) { ?><div class="text-danger"><?php echo $error['article_title']; ?></div><?php } ?>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-2 control-label"><?php echo $languages['wzfl'];?></label>
+                                    <label class="col-sm-2 control-label">文章分类</label>
                                     <div class="col-sm-5">
                                         <select name="category_id" class="form-control">
                                             <?php foreach($categories as $k => $v) { ?>
@@ -55,21 +55,21 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-2 control-label"><?php echo $languages['wzgjz'];?></label>
+                                    <label class="col-sm-2 control-label">文章关键字</label>
                                     <div class="col-sm-5">
                                         <input type="text" name="article_code" value="<?php echo $data['article_code']; ?>" class="form-control">
                                         <?php if (isset($error['article_code'])) { ?><div class="text-danger"><?php echo $error['article_code']; ?></div><?php } ?>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-2 control-label"><?php echo $languages['wzpx'];?></label>
+                                    <label class="col-sm-2 control-label">文章排序</label>
                                     <div class="col-sm-5">
                                         <input type="text" name="article_sort" value="<?php echo $data['article_sort']; ?>" class="form-control">
                                         <?php if (isset($error['article_sort'])) { ?><div class="text-danger"><?php echo $error['article_sort']; ?></div><?php } ?>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-2 control-label"><?php echo $languages['wznr'];?></label>
+                                    <label class="col-sm-2 control-label">文章内容</label>
                                     <div class="col-sm-5">
                                         <textarea name="article_content" class="form-control" rows="5"><?php echo $data['article_content']; ?></textarea>
                                         <?php if (isset($error['article_content'])) { ?><div class="text-danger"><?php echo $error['article_content']; ?></div><?php } ?>
@@ -80,8 +80,8 @@
                             <div class="form-group">
                                 <div class="col-sm-7">
                                     <div class="pull-right">
-                                        <button type="submit" class="btn btn-sm btn-success margin-r-5"><?php echo $languages['tijiao'];?></button>
-                                        <a href="<?php echo $return_action; ?>" class="btn btn-sm btn-default"><?php echo $languages['fanhui'];?></a>
+                                        <button type="submit" class="btn btn-sm btn-success margin-r-5">提交</button>
+                                        <a href="<?php echo $return_action; ?>" class="btn btn-sm btn-default">返回</a>
                                     </div>
                                 </div>
                             </div>

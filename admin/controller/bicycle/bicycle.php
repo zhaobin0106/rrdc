@@ -5,9 +5,7 @@ class ControllerBicycleBicycle extends Controller {
     
     public function __construct($registry) {
         parent::__construct($registry);
-        $this->language->load('bicycle/bicycle');
-        $languages = $this->language->all();
-        $this->assign('languages',$languages);
+
         // 当前网址
         $this->cur_url = isset($this->request->get['route']) ? $this->url->link($this->request->get['route']) : '';
 
@@ -83,10 +81,10 @@ class ControllerBicycleBicycle extends Controller {
         }
 
         $filter_types = array(
-            'bicycle_sn' => $this->language->get('dcbh'),
-            'lock_sn' => $this->language->get('csbh'),
-            //'region_name' => $this->language->get('quyu'),
-            // 'cooperator_name' => $this->language->get('hhr'),
+            'bicycle_sn' => '单车编号',
+            'lock_sn' => '车锁编号',
+            'region_name' => '区域',
+            'cooperator_name' => '合伙人',
         );
         $filter_type = $this->request->get('filter_type');
         if (empty($filter_type)) {
@@ -147,14 +145,12 @@ class ControllerBicycleBicycle extends Controller {
      * @return mixed
      */
     protected function getDataColumns() {
-        $this->setDataColumn($this->language->get('dcbh'));
-        $this->setDataColumn($this->language->get('csbh'));
-        $this->setDataColumn($this->language->get('dclx'));
-        // $this->setDataColumn($this->language->get('chengshi'));
-        $this->setDataColumn($this->language->get('sfsyz'));
-        // $this->setDataColumn('城市');
-        // $this->setDataColumn('合伙人');
-        // $this->setDataColumn('是否使用中');
+        $this->setDataColumn('单车编号');
+        $this->setDataColumn('车锁编号');
+        $this->setDataColumn('单车类型');
+        $this->setDataColumn('城市');
+        $this->setDataColumn('合伙人');
+        $this->setDataColumn('是否使用中');
         return $this->data_columns;
     }
 
@@ -297,14 +293,14 @@ class ControllerBicycleBicycle extends Controller {
             $this->load->controller('common/qrcode/buildBackQrCode', $data);
 
 
-            $this->session->data['success'] = $this->language->get('tjdccg');
+            $this->session->data['success'] = '添加单车成功！';
             
             $filter = array('bicycle_sn', 'type', 'lock_sn', 'region_name', 'cooperator_name', 'is_using');
-			
+
             $this->load->controller('common/base/redirect', $this->url->link('bicycle/bicycle', $filter, true));
         }
 
-        $this->assign('title', $this->language->get('xzdc'));
+        $this->assign('title', '新增单车');
         $this->getForm();
     }
 
@@ -356,16 +352,14 @@ class ControllerBicycleBicycle extends Controller {
             $this->load->controller('common/qrcode/buildFrontQrCode', $data);
             $this->load->controller('common/qrcode/buildBackQrCode', $data);
 
-            // $this->session->data['success'] = '编辑单车成功！';
-			$this->session->data['success'] = $this->language->get('bjdccg');
-			$this->session->data['success'] = $this->language->get('tjdccg');
+            $this->session->data['success'] = '编辑单车成功！';
+
             $filter = array('bicycle_sn', 'type', 'lock_sn', 'region_name', 'cooperator_name', 'is_using');
 
             $this->load->controller('common/base/redirect', $this->url->link('bicycle/bicycle', $filter, true));
         }
 
-        // $this->assign('title', '编辑单车');
-		$this->assign('title', $this->language->get('bjdc'));
+        $this->assign('title', '编辑单车');
         $this->getForm();
     }
 
@@ -384,13 +378,13 @@ class ControllerBicycleBicycle extends Controller {
             $data = array(
                 'admin_id' => $this->logic_admin->getId(),
                 'admin_name' => $this->logic_admin->getadmin_name(),
-                'log_description' => $this->language->get('scdc'). $this->request->get['bicycle_id'],
+                'log_description' => '删除单车：' . $this->request->get['bicycle_id'],
                 'log_ip' => $this->request->ip_address(),
                 'log_time' => date('Y-m-d H:i:s')
             );
             $this->sys_model_admin_log->addAdminLog($data);
 
-            $this->session->data['success'] = $this->language->get('scdccg');
+            $this->session->data['success'] = '删除单车成功！';
         }
         $filter = array('bicycle_sn', 'type', 'lock_sn', 'region_name', 'cooperator_name', 'is_using');
         $this->load->controller('common/base/redirect', $this->url->link('bicycle/bicycle', $filter, true));
@@ -499,20 +493,22 @@ class ControllerBicycleBicycle extends Controller {
                     'bicycle_sn' => $bicycle['bicycle_sn'],
                     'lock_sn' => $bicycle['lock_sn'],
                     'type' => $bicycle_types[$bicycle['type']],
-                    // 'region_name' => $bicycle['region_name'],
+                    'region_name' => $bicycle['region_name'],
+                    'cooperator_name' => $bicycle['cooperator_name'],
                     'is_using' => $use_states[$bicycle['is_using']]
                 );
             }
         }
 
         $data = array(
-            'title' => $this->language->get('dclb'),
+            'title' => '单车列表',
             'header' => array(
-                'bicycle_sn' => $this->language->get('dcbh'),
-                'lock_sn' => $this->language->get('csbh'),
-                'type' => $this->language->get('dclx'),
-                // 'region_name' => $this->language->get('quyu'),
-                'is_using' => $this->language->get('sfsyz'),
+                'bicycle_sn' => '单车编号',
+                'lock_sn' => '车锁编号',
+                'type' => '单车类型',
+                'region_name' => '区域',
+                'cooperator_name' => '合伙人',
+                'is_using' => '是否使用中',
             ),
             'list' => $list
         );
@@ -748,11 +744,12 @@ class ControllerBicycleBicycle extends Controller {
 
         foreach ($input as $k => $v) {
             if (empty($v)) {
-                $this->error[$k] = $this->language->get('qsrwz');
+                $this->error[$k] = '请输入完整！';
             }
         }
+
         if ($this->error) {
-            $this->error['warning'] = $this->language->get('jgczcwqjc');
+            $this->error['warning'] = '警告: 存在错误，请检查！';
         }
         return !$this->error;
     }

@@ -5,9 +5,6 @@ class ControllerSystemRole extends Controller {
     
     public function __construct($registry) {
         parent::__construct($registry);
-        $this->language->load('bicycle/bicycle');
-        $languages = $this->language->all();
-        $this->assign('languages',$languages);
 
         // 当前网址
         $this->cur_url = $this->url->link($this->request->get['route']);
@@ -110,9 +107,8 @@ class ControllerSystemRole extends Controller {
                 }
             }
 
-            // $this->session->data['success'] = '添加角色成功！';
-			$this->session->data['success'] = $this->language->get('tjjscg');
-			
+            $this->session->data['success'] = '添加角色成功！';
+
             //加载管理员操作日志 model
             $this->load->library('sys_model/admin_log', true);
             $data = array(
@@ -129,8 +125,7 @@ class ControllerSystemRole extends Controller {
             $this->load->controller('common/base/redirect', $this->url->link('system/role', $filter, true));
         }
 
-        // $this->assign('title', '角色添加');
-        $this->assign('title', $this->language->get('jstj'));
+        $this->assign('title', '角色添加');
         $this->getForm();
     }
 
@@ -168,9 +163,8 @@ class ControllerSystemRole extends Controller {
                 }
             }
 
-            // $this->session->data['success'] = '编辑角色成功！';
-			$this->session->data['success'] = $this->language->get('bjjscg');
-			
+            $this->session->data['success'] = '编辑角色成功！';
+
             //加载管理员操作日志 model
             $this->load->library('sys_model/admin_log', true);
             $data = array(
@@ -187,8 +181,7 @@ class ControllerSystemRole extends Controller {
             $this->load->controller('common/base/redirect', $this->url->link('system/role', $filter, true));
         }
 
-        // $this->assign('title', '编辑角色');
-        $this->assign('title', $this->language->get('bjjs'));
+        $this->assign('title', '编辑角色');
         $this->getForm();
     }
 
@@ -209,8 +202,8 @@ class ControllerSystemRole extends Controller {
             // 删除角色相关权限
             $this->sys_model_rbac->deleteRolePermission($condition);
 
-            // $this->session->data['success'] = '删除角色成功！';
-			$this->session->data['success'] = $this->language->get('scjscg');
+            $this->session->data['success'] = '删除角色成功！';
+
             //加载管理员操作日志 model
             $this->load->library('sys_model/admin_log', true);
             $data = array(
@@ -319,14 +312,12 @@ class ControllerSystemRole extends Controller {
 
         foreach ($input as $k => $v) {
             if (empty($v)) {
-                // $this->error[$k] = '请输入完整！';
-                $this->error[$k] = $this->language->get('qsrwz');
+                $this->error[$k] = '请输入完整！';
             }
         }
 
         if ($this->error) {
-            // $this->error['warning'] = '警告: 存在错误，请检查！';
-            $this->error['warning'] = $this->language->get('jgczcwqjc');
+            $this->error['warning'] = '警告: 存在错误，请检查！';
         }
         return !$this->error;
     }

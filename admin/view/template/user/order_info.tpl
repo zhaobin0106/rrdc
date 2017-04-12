@@ -2,19 +2,19 @@
 <!-- Content Header (Page header) -->
 <section class="content-header clearfix">
     <h1 class="pull-left">
-        <span><?php echo $languages['xfjl'];?></span>
+        <span>消费记录</span>
         <a href="javascript:;" onclick="collect('<?php echo $menu_id ?>',this)"><i class="<?php echo $menu_collect_status == 1? 'fa fa-star no-margin text-yellow' : 'fa fa-star-o text-gray'; ?>"></i></a>
     </h1>
     <div class="pull-right">
         <div class="pull-left" style="margin-right: 20px;">
             <i class="fa fa-bicycle"></i>
-            <span><?php echo $languages['zongshu'];?><?php echo $total_bicycle; ?><?php echo $languages['tai'];?></span>
+            <span>总数：<?php echo $total_bicycle; ?>台</span>
         </div>
         <div class="pull-left" style="margin-right: 20px;">
-            <span><?php echo $languages['shiyongzhong'];?><?php echo $using_bicycle; ?><?php echo $languages['tai'];?></span>
+            <span>使用中：<?php echo $using_bicycle; ?>台</span>
         </div>
         <div class="pull-left" style="margin-right: 20px;">
-            <span><?php echo $languages['guzhang'];?><?php echo $fault_bicycle; ?><?php echo $languages['tai'];?></span>
+            <span>故障：<?php echo $fault_bicycle; ?>台</span>
         </div>
     </div>
 </section>
@@ -38,31 +38,31 @@
                             <div class="row">
 
                                 <div class="form-group col-sm-6">
-                                    <label for="" class="col-sm-4 control-label"><?php echo $languages['ddsn'];?></label>
+                                    <label for="" class="col-sm-4 control-label">订单sn</label>
                                     <div class="col-sm-8">
                                         <h5><?php echo $data['order_sn']; ?></h5>
                                     </div>
                                 </div>
                                 <div class="form-group col-sm-6">
-                                    <label for="" class="col-sm-4 control-label"><?php echo $languages['yhm'];?></label>
+                                    <label for="" class="col-sm-4 control-label">用户名</label>
                                     <div class="col-sm-8">
                                         <h5><?php echo $data['user_name']; ?></h5>
                                     </div>
                                 </div>
                                 <div class="form-group col-sm-6">
-                                    <label for="" class="col-sm-4 control-label"><?php echo $languages['ssn'];?></label>
+                                    <label for="" class="col-sm-4 control-label">锁sn</label>
                                     <div class="col-sm-8">
                                         <h5><?php echo $data['lock_sn']; ?></h5>
                                     </div>
                                 </div>
                                 <div class="form-group col-sm-6">
-                                    <label for="" class="col-sm-4 control-label"><?php echo $languages['dcsn'];?></label>
+                                    <label for="" class="col-sm-4 control-label">单车sn</label>
                                     <div class="col-sm-8">
                                         <h5><?php echo $data['bicycle_sn']; ?></h5>
                                     </div>
                                 </div>
                                 <div class="form-group col-sm-6">
-                                    <label for="" class="col-sm-4 control-label"><?php echo $languages['quyu'];?></label>
+                                    <label for="" class="col-sm-4 control-label">区域</label>
                                     <div class="col-sm-8">
                                         <h5><?php echo $data['region_name']; ?></h5>
                                     </div>
@@ -118,7 +118,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group col-sm-6">
-                                    <label for="" class="col-sm-4 control-label"><?php echo $languages['xdsj'];?></label>
+                                    <label for="" class="col-sm-4 control-label">下单时间</label>
                                     <div class="col-sm-8">
                                         <h5><?php echo $data['add_time']; ?></h5>
                                     </div>
@@ -127,7 +127,7 @@
                             <div class="form-group">
                                 <div class="col-sm-12">
                                     <div class="pull-right">
-                                        <a href="<?php echo $return_action; ?>" class="btn btn-sm btn-default"><?php echo $languages['fanhui'];?></a>
+                                        <a href="<?php echo $return_action; ?>" class="btn btn-sm btn-default">返回</a>
                                     </div>
                                 </div>
                             </div>

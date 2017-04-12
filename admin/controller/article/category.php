@@ -5,9 +5,6 @@ class ControllerArticleCategory extends Controller {
 
     public function __construct($registry) {
         parent::__construct($registry);
-        $this->language->load('bicycle/bicycle');
-        $languages = $this->language->all();
-        $this->assign('languages',$languages);
 
         // 当前网址
         $this->cur_url = isset($this->request->get['route']) ? $this->url->link($this->request->get['route']) : '';
@@ -94,8 +91,8 @@ class ControllerArticleCategory extends Controller {
             );
             $this->sys_model_article->addArticleCategory($data);
 
-            // $this->session->data['success'] = '添加文章分类成功！';
-            $this->session->data['success'] = $this->language->get('tjwzflcg');
+            $this->session->data['success'] = '添加文章分类成功！';
+
             //加载管理员操作日志 model
             $this->load->library('sys_model/admin_log', true);
             $data = array(
@@ -112,8 +109,7 @@ class ControllerArticleCategory extends Controller {
             $this->load->controller('common/base/redirect', $this->url->link('article/category', $filter, true));
         }
 
-        // $this->assign('title', '文章分类添加');
-        $this->assign('title', $this->language->get('wzfltj'));
+        $this->assign('title', '文章分类添加');
         $this->getForm();
     }
 
@@ -133,8 +129,7 @@ class ControllerArticleCategory extends Controller {
             );
             $this->sys_model_article->updateArticleCategory($condition, $data);
 
-            // $this->session->data['success'] = '编辑文章分类成功！';
-            $this->session->data['success'] = $this->language->get('bjwzflcg');
+            $this->session->data['success'] = '编辑文章分类成功！';
 
             //加载管理员操作日志 model
             $this->load->library('sys_model/admin_log', true);
@@ -153,7 +148,6 @@ class ControllerArticleCategory extends Controller {
         }
 
         $this->assign('title', '编辑文章分类');
-        $this->assign('title', $this->language->get('bjwzfl'));
         $this->getForm();
     }
 
@@ -168,7 +162,6 @@ class ControllerArticleCategory extends Controller {
             $this->sys_model_article->deleteArticleCategory($condition);
 
             $this->session->data['success'] = '删除文章分类成功！';
-			$this->session->data['success'] = $this->language->get('scwzflcg');
 
             //加载管理员操作日志 model
             $this->load->library('sys_model/admin_log', true);
@@ -212,14 +205,12 @@ class ControllerArticleCategory extends Controller {
 
         foreach ($input as $k => $v) {
             if (empty($v)) {
-                // $this->error[$k] = '请输入完整！';
-                $this->error[$k] = $this->language->get('qsrwz');
+                $this->error[$k] = '请输入完整！';
             }
         }
 
         if ($this->error) {
-            // $this->error['warning'] = '警告: 存在错误，请检查！';
-            $this->error['warning'] = $this->language->get('jgczcwqjc');
+            $this->error['warning'] = '警告: 存在错误，请检查！';
         }
         return !$this->error;
     }

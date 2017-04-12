@@ -2,19 +2,19 @@
 <!-- Content Header (Page header) -->
 <section class="content-header clearfix">
     <h1 class="pull-left">
-        <span><?php echo $languages['wzfl'];?></span>
+        <span>文章分类</span>
         <a href="javascript:;" onclick="collect('<?php echo $menu_id ?>',this)"><i class="<?php echo $menu_collect_status == 1? 'fa fa-star no-margin text-yellow' : 'fa fa-star-o text-gray'; ?>"></i></a>
     </h1>
     <div class="pull-right">
         <div class="pull-left" style="margin-right: 20px;">
             <i class="fa fa-bicycle"></i>
-            <span><?php echo $languages['zongshu'];?><?php echo $total_bicycle; ?><?php echo $languages['tai'];?></span>
+            <span>总数：<?php echo $total_bicycle; ?>台</span>
         </div>
         <div class="pull-left" style="margin-right: 20px;">
-            <span><?php echo $languages['shiyongzhong'];?><?php echo $using_bicycle; ?><?php echo $languages['tai'];?></span>
+            <span>使用中：<?php echo $using_bicycle; ?>台</span>
         </div>
         <div class="pull-left" style="margin-right: 20px;">
-            <span><?php echo $languages['guzhang'];?><?php echo $fault_bicycle; ?><?php echo $languages['tai'];?></span>
+            <span>故障：<?php echo $fault_bicycle; ?>台</span>
         </div>
     </div>
 </section>
@@ -25,13 +25,13 @@
             <div class="nav-tabs-custom">
                 <!-- tab 标签 -->
                 <ul class="nav nav-tabs">
-                    <li class="active"><a href="javascript:;" data-toggle="tab"><?php echo $languages['wzfllb'];?></a></li>
+                    <li class="active"><a href="javascript:;" data-toggle="tab">文章分类列表</a></li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane active" id="bicycle">
                         <!-- 新增 -->
                         <div class="form-group">
-                            <a href="<?php echo $add_action; ?>" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>&nbsp;<?php echo $languages['xinzeng'];?></a>
+                            <a href="<?php echo $add_action; ?>" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>&nbsp;新增</a>
                             <!--<button class="btn btn-default btn-sm button-upload" data-action="<?php echo $import_action; ?>"><i class="fa fa-upload"></i>&nbsp;导入</button>
                             <button class="btn btn-default btn-sm" form="table_form" formaction="<?php echo $export_action; ?>"><i class="fa fa-download"></i>&nbsp;导出</button>-->
                         </div>
@@ -53,7 +53,7 @@
                                     <?php foreach ($data_columns as $column) { ?>
                                     <th><?php echo $column['text']; ?></th>
                                     <?php } ?>
-                                    <th style="min-width:130px;"><?php echo $languages['caozuo'];?></th>
+                                    <th style="min-width:130px;">操作</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -64,13 +64,13 @@
                                     <td><?php echo $data['category_sort']?></td>
                                     <td>
                                         <div class="btn-group">
-                                            <button data-url="<?php echo $data['edit_action']; ?>" type="button" class="btn btn-info link"><i class="fa fa-fw fa-pencil"></i><?php echo $languages['bianji'];?></button>
+                                            <button data-url="<?php echo $data['edit_action']; ?>" type="button" class="btn btn-info link"><i class="fa fa-fw fa-pencil"></i>编辑</button>
                                             <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
                                                 <span class="caret"></span>
                                                 <span class="sr-only">Toggle Dropdown</span>
                                             </button>
                                             <ul class="dropdown-menu" role="menu">
-                                                <li><a href="<?php echo $data['delete_action']; ?>"><?php echo $languages['shanchu'];?></a></li>
+                                                <li><a href="<?php echo $data['delete_action']; ?>">删除</a></li>
                                             </ul>
                                         </div>
                                     </td>

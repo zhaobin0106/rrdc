@@ -10,9 +10,6 @@ class ControllerUserCashApply extends Controller {
 
     public function __construct($registry) {
         parent::__construct($registry);
-        $this->language->load('bicycle/bicycle');
-        $languages = $this->language->all();
-        $this->assign('languages',$languages);
 
         // 当前网址
         $this->cur_url = $this->url->link($this->request->get['route']);

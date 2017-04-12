@@ -2,19 +2,19 @@
 <!-- Content Header (Page header) -->
 <section class="content-header clearfix">
     <h1 class="pull-left">
-        <span><?php echo $languages['xtxx'];?></span>
+        <span>系统消息</span>
         <a href="javascript:;" onclick="collect('<?php echo $menu_id ?>',this)"><i class="<?php echo $menu_collect_status == 1? 'fa fa-star no-margin text-yellow' : 'fa fa-star-o text-gray'; ?>"></i></a>
     </h1>
     <div class="pull-right">
         <div class="pull-left" style="margin-right: 20px;">
             <i class="fa fa-bicycle"></i>
-            <span><?php echo $languages['zongshu'];?><?php echo $total_bicycle; ?><?php echo $languages['tai'];?></span>
+            <span>总数：<?php echo $total_bicycle; ?>台</span>
         </div>
         <div class="pull-left" style="margin-right: 20px;">
-            <span><?php echo $languages['shiyongzhong'];?><?php echo $using_bicycle; ?><?php echo $languages['tai'];?></span>
+            <span>使用中：<?php echo $using_bicycle; ?>台</span>
         </div>
         <div class="pull-left" style="margin-right: 20px;">
-            <span><?php echo $languages['guzhang'];?><?php echo $fault_bicycle; ?><?php echo $languages['tai'];?></span>
+            <span>故障：<?php echo $fault_bicycle; ?>台</span>
         </div>
     </div>
 </section>
@@ -37,24 +37,24 @@
                         <?php } ?>
                         <div class="row">
                             <div class="form-group">
-                                <label class="col-sm-2 control-label"><?php echo $languages['biaoti'];?></label>
+                                <label class="col-sm-2 control-label">标题</label>
                                 <div class="col-sm-5">
                                     <input type="text" name="msg_title" value="<?php echo $data['msg_title']; ?>" class="form-control">
                                     <?php if (isset($error['msg_title'])) { ?><div class="text-danger"><?php echo $error['msg_title']; ?></div><?php } ?>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-sm-2 control-label"><?php echo $languages['xxtp'];?></label>
+                                <label class="col-sm-2 control-label">消息图片</label>
                                 <div class="col-sm-5">
                                     <button type="button" class="img-thumbnail button-upload" style="outline: none;" data-tag="logo" data-action="<?php echo $upload_action; ?>" data-tage="image">
-                                        <img src="<?php echo $data['msg_image_url']; ?>" alt="<?php echo $languages['xxtp'];?>" style="max-width: 100px; max-height: 100px;" class="imageurl">
-                                        <input type="hidden" name="msg_image" value="<?php echo $data['msg_image']; ?>" placeholder="<?php echo $languages['xxtp'];?>" class="filepath">
+                                        <img src="<?php echo $data['msg_image_url']; ?>" alt="消息图片" style="max-width: 100px; max-height: 100px;" class="imageurl">
+                                        <input type="hidden" name="msg_image" value="<?php echo $data['msg_image']; ?>" placeholder="消息图片" class="filepath">
                                     </button>
                                     <?php if (isset($error['msg_image'])) { ?><div class="text-danger"><?php echo $error['msg_image']; ?></div><?php } ?>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-sm-2 control-label"><?php echo $languages['yonghu'];?></label>
+                                <label class="col-sm-2 control-label">用户</label>
                                 <div class="col-sm-5">
                                     <label class="margin-r-5">
                                         <input type="radio" name="user_type" value="0" class="button-all-users" <?php echo $data['user_type']==0 ? 'checked' : ''; ?> />
@@ -69,21 +69,21 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-sm-2 control-label"><?php echo $languages['zhaiyao'];?></label>
+                                <label class="col-sm-2 control-label">摘要</label>
                                 <div class="col-sm-5">
                                     <textarea name="msg_abstract" class="form-control" rows="3"><?php echo $data['msg_abstract']; ?></textarea>
                                     <?php if (isset($error['msg_abstract'])) { ?><div class="text-danger"><?php echo $error['msg_abstract']; ?></div><?php } ?>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-sm-2 control-label"><?php echo $languages['wblj'];?></label>
+                                <label class="col-sm-2 control-label">外部链接</label>
                                 <div class="col-sm-5">
                                     <input type="text" name="msg_link" value="<?php echo $data['msg_link']; ?>" class="form-control">
                                     <?php if (isset($error['msg_link'])) { ?><div class="text-danger"><?php echo $error['msg_link']; ?></div><?php } ?>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-sm-2 control-label"><?php echo $languages['zhengwen'];?></label>
+                                <label class="col-sm-2 control-label">正文</label>
                                 <div class="col-sm-5">
                                     <div class="margin-bottom custom_content">
                                         <textarea name="msg_content" class="form-control" rows="5"><?php echo $data['msg_content']; ?></textarea>
@@ -94,8 +94,8 @@
                         <div class="form-group">
                             <div class="col-sm-7">
                                 <div class="pull-right">
-                                    <button type="submit" class="btn btn-sm btn-success margin-r-5"><?php echo $languages['tijiao'];?></button>
-                                    <a href="<?php echo $return_action; ?>" class="btn btn-sm btn-default"><?php echo $languages['fanhui'];?></a>
+                                    <button type="submit" class="btn btn-sm btn-success margin-r-5">提交</button>
+                                    <a href="<?php echo $return_action; ?>" class="btn btn-sm btn-default">返回</a>
                                 </div>
                             </div>
                         </div>
@@ -120,13 +120,13 @@
                     <div class="col-md-12">
                         <div class="row">
                             <div class="form-group">
-                                <label class="col-sm-2 control-label"><?php echo $languages['sousuo'];?></label>
+                                <label class="col-sm-2 control-label">搜索</label>
                                 <div class="col-sm-5">
                                     <input type="text" class="form-control button-search-user">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-sm-2 control-label"><?php echo $languages['yonghu'];?></label>
+                                <label class="col-sm-2 control-label">用户</label>
                                 <div class="col-sm-5">
                                     <ul style="max-height: 150px;overflow-y: auto;list-style-type: none;padding: 0;">
                                         <li class="col-sm-12 no-padding"><label><input class="check_all" type="checkbox" value="0">&nbsp;<span>全选</span></label></li>
@@ -145,8 +145,8 @@
             </div>
             <div class="modal-footer">
                 <div class="pull-right">
-                    <button type="button" class="btn btn-default margin-r-5 button-cancel"><?php echo $languages['quxiao'];?></button>
-                    <button type="button" class="btn btn-primary button-confirm"><?php echo $languages['queding'];?></button>
+                    <button type="button" class="btn btn-default margin-r-5 button-cancel">取消</button>
+                    <button type="button" class="btn btn-primary button-confirm">确定</button>
                 </div>
             </div>
         </div>

@@ -1,17 +1,17 @@
 <?php
 namespace Logic;
 
-define('CREDIT_DESC_ON_REGISTER', 'success_register');
+define('CREDIT_DESC_ON_REGISTER', '注册完成');
 define('CREDIT_POINT_ON_REGISTER', 100);
-define('CREDIT_DESC_ON_VERIFICATION', 'success_passed_identification');
+define('CREDIT_DESC_ON_VERIFICATION', '通过实名验证');
 define('CREDIT_POINT_ON_VERIFICATION', 10);
-define('CREDIT_DESC_ON_FINISH_CYCLING', 'success_cycling_finish');
+define('CREDIT_DESC_ON_FINISH_CYCLING', '骑行完成');
 define('CREDIT_POINT_ON_FINISH_CYCLING', 1);
-define('CREDIT_DESC_ON_INVITE_FRIEND', 'text_invite_friends_to_register');
+define('CREDIT_DESC_ON_INVITE_FRIEND', '邀请好友完成注册');
 define('CREDIT_POINT_ON_INVITE_FRIEND', 2);
-define('CREDIT_DESC_ON_INVITED', 'text_enter_invitation_code');
+define('CREDIT_DESC_ON_INVITED', '输入邀请码完成注册');
 define('CREDIT_POINT_ON_INVITED', 2);
-define('CREDIT_DESC_ON_SHARE_TRIP', 'text_first_share');
+define('CREDIT_DESC_ON_SHARE_TRIP', '首次分享');
 define('CREDIT_POINT_ON_SHARE_TRIP', 2);
 
 class Credit {

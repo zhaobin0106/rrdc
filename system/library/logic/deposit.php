@@ -25,9 +25,9 @@ class Deposit {
         $insert_id = $this->sys_model_deposit->addRecharge($insert);
         if ($insert_id) {
             $data = array('pdr_id' => $insert_id, 'pdr_sn' => $recharge_sn);
-            return callback(true, 'success_deposit_checkout', $data);
+            return callback(true, '生成充值押金订单成功', $data);
         } else {
-            return callback(false, 'error_database_operation_failure');
+            return callback(false, '数据库操作失败，生成订单失败');
         }
     }
 
@@ -45,7 +45,7 @@ class Deposit {
         foreach ($data as &$item) {
             $item['deposit_type'] = $this->_getFriendlyDepositType($item['pdl_type']);
         }
-        return callback(true, 'success_operation', $data);
+        return callback(true, '操作成功', $data);
     }
 
     /**
@@ -59,13 +59,13 @@ class Deposit {
 
     private function _getFriendlyDepositType($type) {
         static $DEPOSIT_TYPE = array(
-            'deposit' => 'success_pay_deposit',
-            'recharge' => 'success_recharged',
-            'order_pay' => 'success_pay',
-            'order_freeze' => 'text_fund_freezing',
-            'cash_apply' => 'success_apply_cash',
-            'cash_pay' => 'success_cash',
-            'cash_cancel' => 'text_cancel_cash'
+            'deposit' => '交押金成功',
+            'recharge' => '充值成功',
+            'order_pay' => '支付成功',
+            'order_freeze' => '资金冻结',
+            'cash_apply' => '申请提现',
+            'cash_pay' => '提现成功',
+            'cash_cancel' => '取消提现申请'
         );
         return isset($DEPOSIT_TYPE[$type]) ? $DEPOSIT_TYPE[$type] : 'UnknownType';
     }

@@ -39,14 +39,14 @@ class User {
         $this->_user_id = $user_id;
         $user_info = $this->getUserInfo();
         if(empty($user_info['uuid'])) {
-            return callback(false, 'success_not_logged');
+            return callback(false, '用户尚未登录');
         }
 
         $user_sign = md5($user_id . $user_info['uuid']);
         if ($user_sign == $sign) {
-            return callback(true, 'success_auth_verification');
+            return callback(true, '验证成功');
         }
-        return callback(false, 'error_auth_verification');
+        return callback(false, '验证失败');
     }
 
     /**
@@ -63,13 +63,13 @@ class User {
         $arr['add_time'] = TIMESTAMP;
         $arr['update_time'] = TIMESTAMP;
         if ($this->sys_model_user->existsMobile($data['mobile'])) {
-            return callback(false, 'error_already_register');
+            return callback(false, '此号码已经被注册');
         }
         $insert_id = $this->sys_model_user->addUser($arr);
         if ($insert_id) {
-            return callback(true, 'success_register', array('user_id' => $insert_id, 'user_sn' => $arr['user_sn']));
+            return callback(true, '注册成功', array('user_id' => $insert_id, 'user_sn' => $arr['user_sn']));
         } else {
-            return callback(false, 'error_database_operation_failure');
+            return callback(false, '注册失败，写入数据库失败');
         }
     }
 
@@ -119,11 +119,11 @@ class User {
     public function login($mobile, $device_id) {
         $result = $this->sys_model_user->getUserInfo(array('mobile' => $mobile));
         if (!$result) {
-            return callback(false, 'error_user_nonexistence');
+            return callback(false, '不存在此号码，登录失败');
         }
         $update = $this->sys_model_user->updateUser(array('mobile' => $mobile), array('ip' => getIP(), 'uuid' => $device_id, 'login_time' => time()));
         if (!$update) {
-            return callback(false, 'error_update_user_info');
+            return callback(false, '更新用户登录信息失败');
         }
 
         $info = array(
@@ -136,7 +136,6 @@ class User {
             'deposit_state' => $result['deposit_state'],
             'available_deposit' => $result['available_deposit'],
             'freeze_deposit' => $result['freeze_deposit'],
-            'freeze_recharge' => $result['freeze_recharge'],
             'credit_point' => $result['credit_point'],
             'real_name' => $result['real_name'],
             'identification' => $result['identification'],
@@ -144,7 +143,7 @@ class User {
             'available_state' => $result['available_state'],
             'recommend_num' => $result['recommend_num']
         );
-        return callback(true, 'success_login', $info);
+        return callback(true, '登录成功', $info);
     }
 
     /**
@@ -155,10 +154,10 @@ class User {
     public function checkDeposit($user_id) {
         $result = $this->sys_model_user->getUserInfo(array('user_id' => $user_id), 'deposit, deposit_state');
         if (empty($result)) {
-            return callback(false, 'error_missing_parameter');
+            return callback(false, '参数错误');
         }
         if ($result['deposit_state'] == 1) {
-            return callback(false, 'error_repeat_pay_deposit');
+            return callback(false, '用户已交押金');
         }
         return callback(true);
     }
@@ -171,15 +170,15 @@ class User {
     public function checkCashDeposit($user_id) {
         $result = $this->sys_model_user->getUserInfo(array('user_id' => $user_id), 'deposit,deposit_state,available_deposit,freeze_recharge,freeze_deposit');
         if (!$result) {
-            return callback(false, 'error_missing_parameter');
+            return callback(false, '参数错误');
         }
 
         if ($result['deposit_state'] != 1) {
-            return callback(false, 'error_no_pay_deposit');
+            return callback(false, '押金未交不可退');
         }
 
-        if ($result['freeze_recharge'] > 0) {
-            return callback(false, 'error_arrears_can_not_refund_deposit');
+        if ($result['freeze_deposit'] > 0) {
+            return callback(false, '您还有欠费未结清，不可退押金');
         }
 
         return callback(true);

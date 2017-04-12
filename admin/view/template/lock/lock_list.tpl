@@ -85,8 +85,8 @@
                                 <!--<td><input type="checkbox" name="selected[]" value="<?php echo $data['lock_sn']?>"></td>-->
                                 <td><?php echo $data['lock_sn']?></td>
                                 <td><?php echo $data['lock_name']?></td>
-<!--                                 <td><?php echo $data['cooperator_name']?></td>
- -->                                <td><?php echo $data['battery']?></td>
+                                <td><?php echo $data['cooperator_name']?></td>
+                                <td><?php echo $data['battery']?></td>
                                 <td><?php echo $data['open_nums']?></td>
                                 <td><?php echo $data['system_time']?></td>
                                 <td><?php echo $data['lock_status']?></td>

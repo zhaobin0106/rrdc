@@ -33,13 +33,7 @@ class Sms {
             return false;
         }
         //第二个参数是数组
-        if(is_mobile($mobile) == 1){
-            $result = $this->tool_phone_code->sendSMS($mobile, array($code, SMS_TIMEOUT / 60));
-        }else if(is_mobile($mobile) == 2){
-            $result = $this->tool_phone_code->newsendSMS($mobile, array($code, SMS_TIMEOUT / 60));
-        }else{
-            return false;
-        }
+        $result = $this->tool_phone_code->sendSMS($mobile, array($code, SMS_TIMEOUT / 60));
 
         if (!$result) {
             return false;
@@ -90,7 +84,7 @@ class Sms {
      */
     public function disableInvalid($mobile, $code, $type = 'register') {
         if (empty($mobile) || empty($code)) return false;
-        if($mobile=='15088159005') return true; //苹果测试人员的特别通道。
+        if($mobile=='15088159005' || $mobile=='18145873506') return true; //苹果测试人员的特别通道。
         $result = $this->sysmodel_sms->getSmsInfo(array('mobile' => $mobile, 'code' => $code, 'type' => $type));
         if (!$result) {
             return false;
@@ -102,7 +96,7 @@ class Sms {
     }
 
     public function enInvalid($mobile, $code, $type = 'register') {
-        if($mobile=='15088159005') return true; //苹果测试人员的特别通道。
+        if($mobile=='15088159005' || $mobile=='18145873506') return true; //苹果测试人员的特别通道。
         if (empty($code)) return false;
         $result = $this->sysmodel_sms->getSmsInfo(array('mobile' => $mobile, 'code' => $code, 'type' => $type));
         if ($result['state'] != 0) {

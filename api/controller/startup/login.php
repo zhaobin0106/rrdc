@@ -18,8 +18,6 @@ class ControllerStartupLogin extends Controller {
             'account/account/getorderdetailbyencrypt',
             'payment/alipay/notify',
             'payment/wxpay/notify',
-            'payment/napas/notify',
-            'payment/napas/qiantai',
             'location/location/getbicyclelocation',
             'location/location/getlocalprice',
             'system/common/wechat_jssdk',
