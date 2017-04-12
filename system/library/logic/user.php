@@ -177,7 +177,7 @@ class User {
             return callback(false, '押金未交不可退');
         }
 
-        if ($result['freeze_deposit'] > 0) {
+        if ($result['freeze_recharge'] > 0) {
             return callback(false, '您还有欠费未结清，不可退押金');
         }
 
