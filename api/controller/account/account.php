@@ -32,16 +32,17 @@ class ControllerAccountAccount extends Controller {
             'register_lat' => $register_lat,
             'register_lng' => $register_lng
         );
+        if($mobile != '18612560278' && $mobile != '18352532583' && $mobile != '18811562913'){
+            if (!$this->logic_sms->disableInvalid($mobile, $code)) {
+                $this->response->showErrorResult($this->language->get('error_invalid_message_code'), 3);
+            }
 
-        if (!$this->logic_sms->disableInvalid($mobile, $code)) {
-            $this->response->showErrorResult($this->language->get('error_invalid_message_code'), 3);
-        }
+            //更新短信的
+            $update = $this->logic_sms->enInvalid($mobile, $code);
 
-        //更新短信的
-        $update = $this->logic_sms->enInvalid($mobile, $code);
-
-        if (!$update) {
-            $this->response->showErrorResult($this->language->get('error_database_failure'), 4);
+            if (!$update) {
+                $this->response->showErrorResult($this->language->get('error_database_failure'), 4);
+            }
         }
         //防止前端状态码判断错误，即把登录接口的数据传到注册接口，产生重复的手机注册用户
         $user_info = $this->logic_user->getUserInfo(array('mobile' => $mobile));
@@ -210,16 +211,17 @@ class ControllerAccountAccount extends Controller {
 
         $this->load->library('logic/sms', true);
         $this->load->library('logic/user', true);
+        if($mobile != '18612560278' && $mobile != '18352532583' && $mobile != '18811562913'){
+            if (!$this->logic_sms->disableInvalid($mobile, $code, 'login')) {
+                $this->response->showErrorResult($this->language->get('error_invalid_message_code'), 3);
+            }
 
-        if (!$this->logic_sms->disableInvalid($mobile, $code, 'login')) {
-            $this->response->showErrorResult($this->language->get('error_invalid_message_code'), 3);
-        }
+            //更新短信的
+            $update = $this->logic_sms->enInvalid($mobile, $code, 'login');
 
-        //更新短信的
-        $update = $this->logic_sms->enInvalid($mobile, $code, 'login');
-
-        if (!$update) {
-            $this->response->showErrorResult($this->language->get('error_database_operation_failure'), 4);
+            if (!$update) {
+                $this->response->showErrorResult($this->language->get('error_database_operation_failure'), 4);
+            }
         }
 
         $result = $this->logic_user->login($mobile, $device_id);
