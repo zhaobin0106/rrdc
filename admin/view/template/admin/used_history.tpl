@@ -1,6 +1,5 @@
 <?php foreach($records as $record) { ?>
 <li>
-    <!--<div class="bike-info-list-img"><img src="<?php echo $record['parking_image']; ?>"></div>-->
     <div class="bike-info-list-detail">
         <div><i class="fa fa-square-o fa-fw"></i> <?php echo $record['order_sn']; ?></div>
         <div><i class="fa fa-user fa-fw"></i> <?php echo $record['user_name']; ?></div>

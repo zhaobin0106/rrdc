@@ -54,7 +54,6 @@
                         </form>
                         <!-- 新增 -->
                         <div class="form-group">
-                            <!-- <button class="btn btn-default btn-sm button-upload" data-action="<?php echo $import_action; ?>"><i class="fa fa-upload"></i>&nbsp;导入</button> -->
                             <button class="btn btn-default btn-sm" form="search_form" formmethod="post" formaction="<?php echo $export_action; ?>"><i class="fa fa-download"></i>&nbsp;导出</button>
                         </div>
                         <?php if (isset($error['warning'])) { ?>
