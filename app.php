@@ -8,9 +8,9 @@
 //define('YINGYONGBAO_URL', 'http://a.app.qq.com/o/simple.jsp?pkgname=cn.estronger.bike');
 //define('ANDROID_DOWNLOAD_URL', 'http://a.app.qq.com/o/simple.jsp?pkgname=cn.estronger.bike');
 //define('IOS_DOWNLOAD_URL', 'https://itunes.apple.com/cn/app/xiao-qiang-dan-che/id1196263366');
-define('YINGYONGBAO_URL', 'http://www.buguyuan.com/');
-define('ANDROID_DOWNLOAD_URL', 'http://www.buguyuan.com/');
-define('IOS_DOWNLOAD_URL', 'http://www.buguyuan.com/');
+define('YINGYONGBAO_URL', 'http://a.app.qq.com/o/simple.jsp?pkgname=cn.renrendc.bike');
+define('ANDROID_DOWNLOAD_URL', 'http://a.app.qq.com/o/simple.jsp?pkgname=cn.renrendc.bike');
+define('IOS_DOWNLOAD_URL', 'https://itunes.apple.com/cn/app/jingpos/id1207566315');
 
 
 $ua = strtolower($_SERVER['HTTP_USER_AGENT']);
