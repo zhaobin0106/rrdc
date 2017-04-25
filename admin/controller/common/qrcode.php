@@ -159,7 +159,7 @@ class ControllerCommonQrcode extends Controller {
 
         // 背景图
         $back = imagecreatefromjpeg($background);
-        imagecopymerge($back, $target_image, 45, 19, 0, 0, imagesx($target_image), imagesy($target_image), 100);
+        imagecopymerge($back, $target_image, 90, 19, 0, 0, imagesx($target_image), imagesy($target_image), 100);
 
         imagedestroy($base_image);
         imagepng($back, $saveFile);
