@@ -126,6 +126,7 @@ class ControllerSystemAdmin extends Controller {
             $data = array(
                 'role_id' => $input['role_id'],
                 'admin_name' => $input['admin_name'],
+                'type' => 1,
                 'password' => $input['password'],
                 'state' => $input['state'] ? 1 : 0,
                 'add_time' => $now
