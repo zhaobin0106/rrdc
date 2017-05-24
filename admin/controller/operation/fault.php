@@ -391,7 +391,7 @@ class ControllerOperationFault extends Controller {
         }
 
         $this->assign('data', $info);
-        $this->assign('types', get_fault_type());
+        //$this->assign('types', get_fault_type());
         $this->assign('action', $this->cur_url . '&fault_id=' . $fault_id);
         $this->assign('error', $this->error);
 
