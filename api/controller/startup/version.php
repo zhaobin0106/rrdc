@@ -43,6 +43,7 @@ class ControllerStartupVersion extends Controller {
             $this->load->library('sys_model/region');
             $device_id = $this->request->post['device_id'];
             $region_city_code = $region_city_ranking = $bicycle_sn = '';
+            $bicycle_sn = $device_id;
             if (strlen($device_id) == 11) {
                 sscanf($device_id, '%03d%02d%06d', $region_city_code, $region_city_ranking, $bicycle_sn);
                 $bicycle_sn = sprintf('%06d', $bicycle_sn);
