@@ -577,8 +577,8 @@ class ControllerAccountAccount extends Controller {
 
         $page = (isset($this->request->post['page']) && intval($this->request->post['page'])) >= 1 ? intval($this->request->post['page']) : 1;
 
-        $count = $this->logic_message->getMessagesCount(array('user_id' => $userInfo = $this->startup_user->userId()));
-        $items = $this->logic_message->getMessages(array('user_id' => $userInfo = $this->startup_user->userId()),$page);
+        $count = $this->logic_message->getMessagesCount(array('user_id' => array(array('eq',$userInfo = $this->startup_user->userId()),array('eq',0),'OR')));
+        $items = $this->logic_message->getMessages(array('user_id' => array(array('eq',$userInfo = $this->startup_user->userId()),array('eq',0),'OR')),$page);
 
         if (!empty($items) && is_array($items)) {
             foreach ($items as &$item) {
