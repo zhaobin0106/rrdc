@@ -145,4 +145,112 @@ class ControllerAccountOrder extends Controller {
         $data = array_merge($data, $arr);
         return $data;
     }
+
+//蓝牙关锁
+    public function changeOrder(){
+        if (strtolower($_SERVER['REQUEST_METHOD']) == 'post') {
+            $post = file_get_contents("php://input");
+            if (isset($post['time'])) {
+                $post['time'] = strtotime($post['time']);
+            }
+
+            $data = array(
+                'userid' => $post['user_id'],
+                'cmd' => isset($post['cmd'])?strtolower($post['cmd']):'close',
+                'order_sn' => isset($post['order_sn'])?$post['order_sn']:'',
+                'battery' => isset($post['battery'])?$post['battery']:'',
+                'lock_status' => $post['lockstatus'],
+                'lng' => $post['lng'],
+                'lat' => $post['lat'],
+                'time' => $post['time'],
+                'serialnum' => $post['serialnum'],
+            );
+            if(empty($data['userid']) || empty($data['order_sn']) || empty($data['battery']) || empty($data['lock_status']) || empty($data['lng']) || empty($data['lat']) || empty($data['serialnum'])){
+                $this->response->showErrorResult('缺少参数', 400);
+            }
+            $lock_data = array(
+                'battery' => $data['battery'],
+                'lng' => $data['lng'],
+                'lat' => $data['lat'],
+                'lock_status' => $data['lock_status'],
+                'system_time' => time(),
+                'device_time' => $data['time'],
+            );
+
+            if ($post['cmd'] == 'open') {
+                $lock_data['open_nums'] = array('exp', 'open_nums+1');
+            }
+
+            $line_data = array(
+                'lat' => $data['lat'],
+                'lng' => $data['lng'],
+            );
+
+            $this->load->library('sys_model/location_records', true);
+            $this->load->library('logic/orders', true);
+            $this->load->library('sys_model/orders', true);
+            $this->load->library('sys_model/lock', true);
+
+            $price_unit = $this->config->get('config_price_unit') ? $this->config->get('config_price_unit') : 1;
+            $time_recharge_unit = $this->config->get('config_time_charge_unit') ? $this->config->get('config_time_charge_unit') : 30 * 60;
+            define('PRICE_UNIT', $price_unit); //价格单元
+            define('TIME_CHARGE_UNIT', $time_recharge_unit);//计费单位 
+            switch ($post['cmd']) {
+                case 'open' :
+                    break;
+                case 'close':
+                    $order_info = $this->sys_model_orders->getOrdersInfo(array('order_sn' => $data['order_sn'], 'user_id' => $data['userid']));
+                    if(empty($order_info)){
+                        $this->response->showErrorResult('订单不存在', 400);
+                        exit();
+                    }
+                    if($order_info['order_state'] != 1){
+                        $this->response->showErrorResult('订单已结束', 400);
+                        exit();                        
+                    }
+                    $data['device_id'] = $order_info['lock_sn'];
+                    $result = $this->logic_orders->finishOrders($data);
+                    $i = 0;
+                    if ($result['state'] == true) {
+                        if ($i == 0) {
+                            $arr = $this->response->_error['success'];
+                            $arr['data'] = $result['data'];
+                            $this->load->library('JPush/JPush', true);
+                            $this->JPush_JPush->message($result['data']['user_id'], json_encode($arr));
+                        }
+                        $i++;
+                    } else {
+                        file_put_contents('close_order_error.log', json_encode($result) . "\n" , 8);
+                    }
+                    break;
+                case 'normal':
+                break;
+            }    
+
+            //更新锁的相关信息
+            $lock_info = $this->sys_model_lock->getLockInfo(array('order_sn' => $data['order_sn']));
+            if ($lock_info) {
+                $this->sys_model_lock->updateLock(array('lock_sn' => $data['device_id']), $lock_data);
+            }
+
+            if ($lock_info) {
+                library('queue/queue_client');
+                library('queue/queue_db');
+                library('queue/queue_server');
+                if ($this->config->get('config_start_queue')) {
+                    $result = \Queue\Queue_Client::push('addLocation', $data, $this->registry);
+                } else {
+                    $result = $this->sys_model_location_records->addLogs($data);
+                }
+
+                if (!$result) {
+                    $this->response->showErrorResult('数据写入失败');
+                }
+                $this->response->showSuccessResult(array('request' => 'ok'));
+            }
+            $this->response->showErrorResult('不存在此锁');
+        } else {
+            $this->response->showErrorResult('Request Method Error');
+        }      
+    }
 }
