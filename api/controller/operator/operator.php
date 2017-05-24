@@ -11,6 +11,8 @@ class ControllerOperatorOperator extends Controller {
      */
     public function openLock() {
         $device_id = trim($this->request->post['device_id']);
+        $cmd = $this->request->post['cmd']?trim($this->request->post['cmd']):'gprsOpenLock';
+
         if (empty($device_id)) {
             $this->response->showErrorResult($this->language->get('error_missing_parameter'),1);
         }
@@ -20,20 +22,31 @@ class ControllerOperatorOperator extends Controller {
         if ($this->config->has('order_add_time')) {
             $time = $this->config->get('order_add_time');
         }
-
-        $this->instructions_instructions = new Instructions\Instructions($this->registry);
-        $result = $this->instructions_instructions->openLock($device_id, $time);
-        if ($result['state']) {
-            $this->response->showSuccessResult($result['data']);
+        $data = array();
+        if($cmd == 'gprsOpenLock'){
+            $this->instructions_instructions = new Instructions\Instructions($this->registry);
+            $result = $this->instructions_instructions->openLock($device_id, $time);
+            if ($result['state']) {
+                $this->response->showSuccessResult($result['data']);
+            }
+        }else if($cmd == 'getBleMessage'){
+            //蓝牙开锁，获取蓝牙信息
+            $lock_info = $this->sys_model_lock->getLockInfo(array('lock_sn' => $device_id));
+            $data['mac'] = $lock_info['mac'];
+            $data['key'] = $lock_info['key'];
+            $data['pass'] = $lock_info['pass'];
+        }else{
+            $this->response->showErrorResult('操作不存在', 188);
         }
 
-        $data = array();
+        
         if ($this->order_result) {
             $data['order_sn'] = $this->order_result->order_sn;
         }
 
         $this->response->showSuccessResult($data, $this->language->get('success_send_open_lock_instruction'));
     }
+
 
     /**
      * 响铃
