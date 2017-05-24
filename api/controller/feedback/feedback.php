@@ -42,7 +42,9 @@ class ControllerFeedbackFeedback extends Controller {
 
         $user_info = $this->startup_user->getUserInfo();
         $data['bicycle_sn'] = $this->request->post['bicycle_sn'];
-
+        if(strlen($data['bicycle_sn'])==11) {
+            $data['bicycle_sn'] = substr($data['bicycle_sn'], 5);
+        }
         $data['lat'] = $this->request->post['lat'];
         $data['lng'] = $this->request->post['lng'];
         $data['content'] = isset($this->request->post['content']) ? $this->request->post['content'] : '';
