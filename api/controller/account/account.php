@@ -60,9 +60,10 @@ class ControllerAccountAccount extends Controller {
                 $time = $this->config->get('config_register_coupon_number');
                 $this->addCoupon(array('user_id' => $result['data']['user_id'], 'mobile' => $mobile), $time, 1, 1);
             }
-
+            $result['data']['operator_deposit'] = $this->config->get('config_operator_deposit');
             $this->response->showSuccessResult($result['data'], $this->language->get('success_register'));
         }
+        $user_info['operator_deposit'] = $this->config->get('config_operator_deposit');
         $this->response->showSuccessResult($user_info, $this->language->get('success_login'));
     }
 
@@ -228,6 +229,7 @@ class ControllerAccountAccount extends Controller {
         if (!$result['state']) {
             $this->response->showErrorResult($this->language->get($result['msg']), 106);
         }
+        $result['data']['operator_deposit'] = $this->config->get('config_operator_deposit');
         $this->response->showSuccessResult($result['data'], $this->language->get($result['msg']));
     }
 
@@ -265,6 +267,7 @@ class ControllerAccountAccount extends Controller {
                 $info['user_state'] = 3;
             }
         }
+        $info['operator_deposit'] = $this->config->get('config_operator_deposit');
         if(!empty($result)) {
             $this->response->showSuccessResult($info, $this->language->get('success_operation'));
         } else {
