@@ -113,7 +113,11 @@ class Deposit {
 
                 $user_info = $this->db->table('user')->field('user_id,available_deposit,freeze_recharge,available_state')->where(array('user_id' => $data['user_id']))->find();
                 if (!empty($user_info) && $user_info['freeze_recharge'] > 0) {
-                    $data_pd['freeze_recharge'] = array('exp', 'freeze_recharge-' . $data['amount']);
+                    if($data['amount'] - $user_info['freeze_recharge'] > 0){
+                        $data_pd['freeze_recharge'] = 0;
+                    }else{
+                        $data_pd['freeze_recharge'] = array('exp', 'freeze_recharge-' . $data['amount']);
+                    }
                     $data['amount'] = $data['amount'] - $user_info['freeze_recharge'];
                 }
 
